@@ -1,0 +1,37 @@
+{
+  "name": "CryptannaReact",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "ios": "open ios/CryptannaReact.xcworkspace"
+  },
+  "dependencies": {
+    "art": "^0.10.3",
+    "ccxt": "^1.16.9",
+    "d3": "^5.7.0",
+    "d3-shape": "^1.2.2",
+    "react": "^16.6.3",
+    "react-native": "^0.57.8",
+    "react-native-elements": "^0.19.1",
+    "react-native-firebase": "^4.3.8",
+    "react-native-range-slider": "^0.1.2",
+    "react-native-responsive-screen": "^1.1.9",
+    "react-native-swiper": "^1.5.14",
+    "react-native-vector-icons": "^4.6.0",
+    "react-native-view-overflow": "0.0.4",
+    "react-navigation": "^2.18.3",
+    "toggle-switch-react-native": "^2.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "babel-jest": "23.2.0",
+    "babel-preset-react-native": "^5",
+    "jest": "23.3.0",
+    "react-test-renderer": "16.4.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
