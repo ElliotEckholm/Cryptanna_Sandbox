@@ -13,15 +13,15 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.darkGrayBackground,
     flexDirection: "column",
-    justifyContent: "space-between"
+    justifyContent: "space-around"
   },
   formContainer: {
     width: "90%",
-    alignItems: "center",
-    justifyContent: "center"
+    marginLeft: 20,
+    marginRight: 20
   },
   inputContainer: {
-    width: "90%",
+    width: "100%",
     height: 60
   },
   inputTitle: {
@@ -30,10 +30,10 @@ export default StyleSheet.create({
   button: {
     backgroundColor: "#21CE99",
     borderRadius: 5,
-    height: 40,
-    width: wp("80%")
+    height: 50,
+    width: "100%",
+    fontSize: 16
   },
-  disabledButtonTitle: {},
   disabledButton: {
     backgroundColor: Colors.lightBlue
   },
@@ -41,17 +41,14 @@ export default StyleSheet.create({
     fontSize: 12,
     alignItems: "center",
     justifyContent: "center",
-    textAlign: "center", // <-- the magic
+    textAlign: "center",
     color: Colors.white
   },
   termsLink: {
     fontSize: 12,
     alignItems: "center",
     justifyContent: "center",
-    textAlign: "center", // <-- the magic
-    color: Colors.red
-  },
-  titleImage: {
-    paddingTop: 10
+    textAlign: "center",
+    color: Colors.lightBlue
   }
 });

@@ -75,7 +75,7 @@ export default class Settings extends Component {
   loading = () => {
     if (this.state.loading) {
       return (
-        <View style={{ paddingTop: 100 }}>
+        <View style={[Styles.container, {paddingTop:300}]}>
           <Spinner />
         </View>
       );

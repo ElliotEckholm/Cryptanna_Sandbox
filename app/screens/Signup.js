@@ -18,6 +18,10 @@ export default class SignUp extends Component {
   }
 
   _SignUp = () => {
+    if(this.state.password !== this.state.confirmPassword) {
+        alert('Your passwords do not match');
+        return;
+    }
     createEmailAccount(this.state.email, this.state.password);
     const { navigate } = this.props.navigation;
     navigate("Onboaring");
@@ -30,60 +34,52 @@ export default class SignUp extends Component {
   render() {
     return (
       <View style={Styles.container}>
-        <View style={Styles.titleImage}>
-          <Image source={require("../assets/images/White_Eye.png")} />
-        </View>
+        <Image source={require("../assets/images/White_Eye.png")} />
 
-        <ScrollView>
-          <View style={Styles.formContainer}>
-            <View style={Styles.inputContainer}>
-              <FormLabel style={Styles.inputTitle}>Email</FormLabel>
-              <FormInput
-                onChangeText={email => this.setState({ email })}
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View style={Styles.inputContainer}>
-              <FormLabel style={Styles.inputTitle}>Password</FormLabel>
-              <FormInput
-                onChangeText={password => this.setState({ password })}
-                secureTextEntry={true}
-                password={true}
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View style={[Styles.inputContainer, { marginBottom: 10 }]}>
-              <FormLabel style={Styles.inputTitle}>Confirm Password</FormLabel>
-
-              <FormInput
-                onChangeText={confirmPassword =>
-                  this.setState({ confirmPassword })
-                }
-                secureTextEntry={true}
-                password={true}
-                autoCapitalize="none"
-              />
-            </View>
+        <View style={Styles.formContainer}>
+          <View style={Styles.inputContainer}>
+            <FormLabel style={Styles.inputTitle}>Email</FormLabel>
+            <FormInput
+              onChangeText={email => this.setState({ email })}
+              autoCapitalize="none"
+            />
           </View>
-        </ScrollView>
+
+          <View style={Styles.inputContainer}>
+            <FormLabel style={Styles.inputTitle}>Password</FormLabel>
+            <FormInput
+              onChangeText={password => this.setState({ password })}
+              secureTextEntry={true}
+              password={true}
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={[Styles.inputContainer, { marginBottom: 10 }]}>
+            <FormLabel style={Styles.inputTitle}>Confirm Password</FormLabel>
+
+            <FormInput
+              onChangeText={confirmPassword =>
+                this.setState({ confirmPassword })
+              }
+              secureTextEntry={true}
+              password={true}
+              autoCapitalize="none"
+            />
+          </View>
+        </View>
 
         <View style={{ paddingBottom: 30 }}>
           <Button
-            title="SIGN UP"
+            title="Sign Up"
             onPress={this._SignUp}
             buttonStyle={Styles.button}
-            disabledTitleStyle={Styles.disabledButtonTitle}
-            disabledStyle={Styles.disabledButton}
           />
         </View>
+
         <TouchableOpacity onPress={this._TermsConds}>
           <Text style={Styles.terms}>
-            By continuing you indicate that you have read and agree to the
-            <Text style={[Styles.termsLink, { color: "#fff" }]}>
-              Terms of Service
-            </Text>
+            By continuing you indicate that you have read and agree to the<Text style={Styles.termsLink}> Terms of Service</Text>
           </Text>
         </TouchableOpacity>
       </View>
