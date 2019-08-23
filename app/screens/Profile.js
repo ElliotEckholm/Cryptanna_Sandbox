@@ -89,39 +89,33 @@ export default class Profile extends Component {
           <Text style={Styles.title}>SETTINGS</Text>
         </View>
 
-        <View style={{ flex: 0.7}}>
+        <View style={{ flex: 0.7 }}>
           <View style={{ flex: 1 }}>
-            <View style={{ flex: 0.7,flexFirection: "column"}}>
-              <Text style={Styles.detailText}>Username:</Text>
-              <View style={Styles.inputRow}>
-                <TextInput style={Styles.editInfo} onChangeText={username => this.setState({ username })} value={this.state.username} />
-              </View>
-
-              <Text style={Styles.detailText}>Name:</Text>
-              <View style={Styles.inputRow}>
-                <TextInput style={Styles.editInfo} onChangeText={name => this.setState({ name })} value={this.state.name}/>
-              </View>
-
-              <Text style={Styles.detailText}>Password:</Text>
-              <View style={Styles.inputRow}>
-                <TextInput style={Styles.editInfo} onChangeText={password => this.setState({ password })} value={this.state.password} />
-              </View>
-
-              <TouchableOpacity style={Styles.apiSettingsContainer} onPress={this._Settings}>
+            <View style={{ flex: 0.7, flexFirection: "column" }}>
+              <TouchableOpacity
+                style={Styles.apiSettingsContainer}
+                onPress={this._Settings}
+              >
                 <Text style={Styles.apiSettingsText}>API SETTINGS</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        <View style={{ flex: 0.1, justifyContent:'center' }}>
-          <TouchableOpacity style={Styles.logoutContainer} onPress={this._LogOut}>
+        <View style={{ flex: 0.1, justifyContent: "center" }}>
+          <TouchableOpacity
+            style={Styles.logoutContainer}
+            onPress={this._LogOut}
+          >
             <Text style={Styles.logoutText}>Log Out</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={{ flex: 0.1, justifyContent:'center' }}>
-          <TouchableOpacity style={Styles.termsContainer} onPress={this._TermsConds}>
+        <View style={{ flex: 0.1, justifyContent: "center" }}>
+          <TouchableOpacity
+            style={Styles.termsContainer}
+            onPress={this._TermsConds}
+          >
             <Text style={Styles.termsText}>Terms and Conditions</Text>
           </TouchableOpacity>
         </View>

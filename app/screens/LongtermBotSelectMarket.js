@@ -43,13 +43,10 @@ export default class SelectMarket extends Component {
 
   _displayPriceExtrema = data => {
     this.state.rangeData = data;
-
     this.state.daySelected = data.selectedMaximum;
 
     setTimeout(() => {
       const { params } = this.props.navigation.state;
-
-      //
       //buy on day low and high
       let priceExtrema = [];
       // let minPrice = 0
@@ -64,11 +61,7 @@ export default class SelectMarket extends Component {
         console.log("In Render Max Price: " + maxPrice);
 
         this.setState({ minPrice, maxPrice });
-
-        // this.state.priceExtrema[1] = historyMaxPrice;
       });
-
-      // console.log('Prices', this.state.priceExtrema);
     }, 1000);
   };
 
@@ -104,16 +97,10 @@ export default class SelectMarket extends Component {
       ],
       { cancelable: false }
     );
-
-    // bot.strategy.basic_strategy_function();
   };
 
   render() {
     const { params } = this.props.navigation.state;
-    //
-    //
-    // console.log("\n\nIN RENDER: Max Price: " + maxPrice)
-    // console.log("\n\nIN RENDER: Min Price: " + minPrice)
 
     return (
       <View style={Styles.container}>
@@ -124,7 +111,6 @@ export default class SelectMarket extends Component {
             {"Longterm Bot \n" + params.marketName + " Market"}{" "}
           </Text>
           <Text style={Styles.price}>
-            {" "}
             {"Current Holdings: " +
               params.marketBalance +
               " " +
@@ -132,16 +118,24 @@ export default class SelectMarket extends Component {
           </Text>
 
           <Text style={Styles.days}>
-            {" "}
             {"Prices from the Last " + this.state.daySelected + " Days:"}
           </Text>
-          <Text style={Styles.price}> {"Min: $ " + this.state.minPrice}</Text>
-          <Text style={Styles.price}> {"Max: $ " + this.state.maxPrice}</Text>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              marginTop: 20
+            }}
+          >
+            <Text style={Styles.price}> {"Min: $ " + this.state.minPrice}</Text>
+            <Text style={Styles.price}> {"Max: $ " + this.state.maxPrice}</Text>
+          </View>
         </View>
 
-        <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <RangeSlider
-            disableRange={true}
+            disableRange
             lineHeight={2}
             handleDiameter={18}
             minValue={0}

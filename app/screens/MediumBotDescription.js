@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Text, View, FlatList, Image, StyleSheet } from "react-native";
 import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";
 import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
+import styles from "../styles/BotDescription.style";
+import Spinner from "./../config/Spinner";
 import ccxt from "ccxt";
 
 export default class MediumBotDescription extends Component {
@@ -13,7 +15,8 @@ export default class MediumBotDescription extends Component {
       selectedBotString: navigation.getParam("selectedBot"),
       selectedBot: "",
       exchangeList: [],
-      data: []
+      data: [],
+      loading: true
     };
   }
 
@@ -51,7 +54,7 @@ export default class MediumBotDescription extends Component {
         _exchangeList.push(exchangeObj);
       });
 
-      this.setState({ exchangeList: _exchangeList });
+      this.setState({ exchangeList: _exchangeList, loading: false });
     }, 2000);
   }
 
@@ -87,6 +90,25 @@ export default class MediumBotDescription extends Component {
     );
   };
 
+  loading() {
+    if (this.state.loading) {
+      return (
+        <View style={{ marginTop: 100 }}>
+          <Spinner />
+        </View>
+      );
+    }
+
+    return (
+      <FlatList
+        ListEmptyComponent={this.renderExchanges}
+        data={this.state.exchangeList}
+        keyExtractor={this._keyExtractor}
+        renderItem={this._renderItem}
+      />
+    );
+  }
+
   _keyExtractor = (item, index) => item.id.toString();
 
   render() {
@@ -100,45 +122,8 @@ export default class MediumBotDescription extends Component {
 
         <Text style={styles.h4}>Select Exchange:</Text>
 
-        <FlatList
-          ListEmptyComponent={this.renderExchanges}
-          data={this.state.exchangeList}
-          keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}
-        />
+        {this.loading()}
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#171717"
-  },
-  title: {
-    textAlign: "center",
-    paddingBottom: 20,
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#ffffff"
-  },
-  h4: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#3B3F42"
-  },
-  imageContainer: {
-    paddingTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    height: 100,
-    paddingBottom: 20
-  },
-  botTitle: {
-    color: "#ffffff",
-    fontSize: 30,
-    fontWeight: "bold"
-  }
-});
