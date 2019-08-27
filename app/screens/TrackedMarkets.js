@@ -9,12 +9,6 @@ import ccxt from "ccxt";
 import Styles from "../styles/Markets.style";
 import Spinner from "./../config/Spinner";
 
-import {
-  fetchMarkets_Item_Info,
-  fetchTicker,
-  fetchBalance
-} from "../scripts/ccxt.js";
-
 // TODO take out this global markets -- Elliot
 let markets = [];
 
@@ -100,7 +94,6 @@ export default class TrackedMarkets extends Component {
       .toString()
       .replace("_", "")
       .toUpperCase();
-    // let marketTitle = params.marketTitle.toString();
 
     return (
       <View style={Styles.container}>

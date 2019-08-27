@@ -25,7 +25,7 @@ export let red_shades = [
 
 export const Colors = {
   black: "#000000",
-  white: "#ffffff",
+  white: "#dddddd",
   gray: "#777777",
   defaultBackground: "#DFF0FB",
   shadow: "#cccccc",
