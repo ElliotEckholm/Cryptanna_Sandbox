@@ -40,7 +40,8 @@ export default StyleSheet.create({
     flex: 0.46
   },
   graphs: {
-    flex: 0.9
+    flex: 0.9,
+    paddingTop: 20
   },
   toggleContainer: {
     flex: 0.1,

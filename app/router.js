@@ -7,6 +7,7 @@ import {
   HeaderBackButton
 } from "react-navigation";
 import { Icon } from "react-native-elements";
+import { logo } from "./assets/images/images.js";
 import Command from "./screens/Command.js";
 import Onboarding from "./screens/Onboarding.js";
 import Bots from "./screens/Bots.js";
@@ -19,7 +20,6 @@ import Markets from "./screens/Markets.js";
 import SelectMarket from "./screens/SelectMarket.js";
 import Login from "./screens/Login.js";
 import LoadingScreen from "./screens/LoadingScreen.js";
-import { logo } from "./assets/images/images.js";
 import Signup from "./screens/Signup.js";
 import Settings from "./screens/Settings.js";
 import TrackExchange from "./screens/TrackExchange.js";

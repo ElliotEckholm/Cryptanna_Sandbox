@@ -29,6 +29,7 @@ import {
   resumeAllBots
 } from "../scripts/firebase.js";
 import { botRunner } from "../scripts/Bots_Database.js";
+import firebase from "react-native-firebase";
 
 const deviceWidth = Dimensions.get("window");
 const deviceHeight = Dimensions.get("window");
@@ -54,8 +55,9 @@ export default class Command extends Component {
   };
 
   componentDidMount() {
-    pauseAllBots();
+    this.firstTimeUser();
 
+    pauseAllBots();
     setTimeout(() => {
       this.setState({ loading: false });
     }, 7000);
@@ -118,6 +120,26 @@ export default class Command extends Component {
         this.setState({ exchangeList: _exchangeList });
       }, 3000);
     }, 4000);
+  }
+
+  firstTimeUser() {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then(doc => {
+        if (doc.data().firstTimeUser) {
+          this.props.navigation.navigate("Onboarding");
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(firebase.auth().currentUser.uid)
+            .update({
+              firstTimeUser: false
+            });
+        }
+      });
   }
 
   commandBotRunner(exchangeList, currentBots) {
@@ -185,8 +207,7 @@ export default class Command extends Component {
             <Button
               title="Learn More"
               onPress={() => {
-                const { navigate } = this.props.navigation;
-                navigate("Onboarding");
+                this.props.navigation.navigate("Onboarding");
               }}
             />
           </View>
@@ -205,7 +226,7 @@ export default class Command extends Component {
             <Text style={Styles.balanceText}>$ {this.state.totalBalance}</Text>
           </View>
           <View style={Styles.graphs}>
-            <ScrollView>
+            <ScrollView indicatorStyle={"white"}>
               {this.state.exchangeList.map(exchange => (
                 <PriceLineGraph chart_exchange={exchange} />
               ))}
@@ -244,7 +265,7 @@ export default class Command extends Component {
 
             <TouchableOpacity
               style={Styles.infoContainer}
-              onPress={() => this.props.navigation.navigate("Onboarding")}
+              onPress={() => this.firstTimeUser()}
             >
               <Image
                 style={Styles.infoBtn}
