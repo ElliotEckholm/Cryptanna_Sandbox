@@ -55,7 +55,7 @@ export default class Bots extends Component {
             <View style={{padding:10}}>
             <TouchableOpacity onPress={this._onSelectMedium}>
               <View style={{borderWidth:1,borderColor:'#fff'}}>
-                <Text style={Styles.botConvservativeTitle}>Medium</Text>
+                <Text style={Styles.botConvservativeTitle}>Moving Average Safe</Text>
                 <Image
                   source={require('../assets/images/White_Eye.png')}
                   style={{height:50,width:50,alignSelf:'center', padding:20}}
@@ -68,7 +68,7 @@ export default class Bots extends Component {
               <View style={{padding:10}}>
               <TouchableOpacity onPress={this._onSelectAggressive}>
                 <View style={{borderWidth:1,borderColor:'#fff'}}>
-                  <Text style={Styles.botAgressiveTitle}>Aggressive</Text>
+                  <Text style={Styles.botAgressiveTitle}>Moving Average Aggresive</Text>
                   <Image
                     source={require('../assets/images/White_Eye.png')}
                     style={{height:50,width:50,alignSelf:'center'}}
@@ -83,7 +83,7 @@ export default class Bots extends Component {
               <View style={{padding:10}}>
               <TouchableOpacity onPress={this._onSelectLongterm}>
                 <View style={{borderWidth:1,borderColor:'#fff'}}>
-                  <Text style={Styles.botLongtermTitle}>Longterm</Text>
+                  <Text style={Styles.botLongtermTitle}>Multiday Low and High</Text>
                   <Image
                     source={require('../assets/images/White_Eye.png')}
                     style={{height:50,width:50,alignSelf:'center', paddingBottom:20}}

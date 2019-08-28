@@ -31,7 +31,7 @@ export default StyleSheet.create({
   botAgressiveTitle: {
     // borderTopWidth:2,
     // borderColor:Colors.white,
-    color: Colors.blue,
+    color: '#2CA5FD',//Colors.blue,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign:'center',
@@ -45,7 +45,7 @@ export default StyleSheet.create({
     padding: 10,
   },
   botLongtermTitle: {
-    color: "#035795",
+    color:  '#2CA5FD',//"#035795",
     fontSize: 20,
     fontWeight: 'bold',
     textAlign:'center',

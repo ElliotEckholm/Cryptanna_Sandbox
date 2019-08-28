@@ -155,7 +155,13 @@ export default class BotDescription extends Component {
         />
         </View>
 
-        <Text style={Styles.title}>Aggressive Bot</Text>
+        <Text style={Styles.title}>Moving Average Aggresive Bot</Text>
+
+        <Text style={Styles.description}>
+          Trades on long term Exponential Moving Average and short term Exponential Moving Average intersections to predict market trend.
+          If market is predcicted to move upwards, the bot will sell once coin is at a 25% increases and buys at 10% decreases.
+          User sets percentage of balance to use.
+        </Text>
 
 
         <Text style={Styles.h4}>Select Exchange:</Text>

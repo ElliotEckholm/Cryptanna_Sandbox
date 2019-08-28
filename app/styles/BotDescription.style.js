@@ -14,15 +14,23 @@ export default StyleSheet.create({
   title: {
     textAlign: 'center',
     paddingBottom: hp('3%'),
-    fontSize: hp('6%'),
+    fontSize: hp('4%'),
     fontWeight: 'bold',
     color: Colors.white
+  },
+
+  description: {
+    textAlign: 'center',
+    paddingBottom: hp('3%'),
+    fontSize: hp('2%'),
+    fontWeight: 'bold',
+    color: Colors.lightGray
   },
   h4:{
     textAlign: 'center',
     fontSize: hp('3%'),
     fontWeight: 'bold',
-    color: Colors.mediumDarkGray
+    color: Colors.white
   },
   imageContainer: {
     paddingTop: 30,
