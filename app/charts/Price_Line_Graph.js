@@ -84,6 +84,9 @@ export default class Price_Line_Graph extends Component {
     yAxis: [],
     minY: [],
     maxY:[],
+    
+    //defualt price history to last 100 days
+    timeFrame: 100,
 
     loading: true,
 
@@ -281,6 +284,13 @@ loading() {
   }
 
    fetchHistory = async (exchange, market) => {
+     //convert timeFrame given in days to UTC time
+     let d = new Date();
+     d.setDate(d.getDate() - (this.state.timeFrame + 1));
+     let parsedUnixTime = d.getTime();
+     // console.log('\n\n\n UTC time: ',parsedUnixTime);
+
+
      this.setState({marketSelected : exchange});
      exchange = this.props.chart_exchange;
      market = market.replace("-","/");
@@ -290,7 +300,7 @@ loading() {
     if (exchange.has.fetchOHLCV) {
           await sleep (exchange.rateLimit) // milliseconds
           this.state.historyList = [];
-          historyList = await exchange.fetchOHLCV (market, '1d');
+          historyList = await exchange.fetchOHLCV (market, '1d',parsedUnixTime,undefined,{});
           historyList.reverse();
           let min = Infinity;
           let max = -Infinity;
