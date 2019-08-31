@@ -121,7 +121,7 @@ export default class SelectMarket extends Component {
 
         <View>
           <Text style={Styles.title}>
-            {"Longterm Bot \n" + params.marketName + " Market"}{" "}
+            {"Multiday Low and High Bot \n" + params.marketName + " Market"}{" "}
           </Text>
           <Text style={Styles.price}>
             {" "}
