@@ -133,10 +133,14 @@ export default class SelectMarket extends Component {
 
           <Text style={Styles.days}>
             {" "}
-            {"Prices from the Last " + this.state.daySelected + " Days:"}
+            {"From the Last " + this.state.daySelected + " Days:"}
           </Text>
-          <Text style={Styles.price}> {"Min: $ " + this.state.minPrice}</Text>
-          <Text style={Styles.price}> {"Max: $ " + this.state.maxPrice}</Text>
+          <Text style={Styles.price}> {"Low: " + this.state.minPrice + " USD"} </Text>
+          <Text style={Styles.price}> {"High: " + this.state.maxPrice + " USD"}</Text>
+
+          <Text style={Styles.selectDays}>
+            Select Day Range for Bot to Buy at Lows and Sell at Highs:
+          </Text>
         </View>
 
         <View style={{ flex: 1, flexDirection: "row" }}>
@@ -155,7 +159,7 @@ export default class SelectMarket extends Component {
         </View>
 
         <View style={Styles.inputRow}>
-          <Text style={Styles.detailText}>Basic Trader will Buy</Text>
+          <Text style={Styles.detailText}>Allow Bot to Use</Text>
           <TextInput
             style={Styles.editInfo}
             onChangeText={btc_amount => this.setState({ btc_amount })}
@@ -167,24 +171,28 @@ export default class SelectMarket extends Component {
           <Text style={Styles.detailText}>BTC</Text>
         </View>
 
-        <View style={Styles.inputRow}>
-          <Text style={Styles.detailText}>For the Price of</Text>
-          <TextInput
-            style={Styles.editInfo}
-            onChangeText={usd_amount => this.setState({ usd_amount })}
-            value={this.state.usd_amount}
-            placeholder="0.0"
-            placeholderTextColor="white"
-            height={40}
-          />
-          <Text style={Styles.detailText}>USD</Text>
-        </View>
+        {
+        // <View style={Styles.inputRow}>
+        //   <Text style={Styles.detailText}>For the Price of</Text>
+        //   <TextInput
+        //     style={Styles.editInfo}
+        //     onChangeText={usd_amount => this.setState({ usd_amount })}
+        //     value={this.state.usd_amount}
+        //     placeholder="0.0"
+        //     placeholderTextColor="white"
+        //     height={40}
+        //   />
+        //   <Text style={Styles.detailText}>USD</Text>
+        // </View>
+        }
 
-        <TouchableOpacity onPress={this._onImplementBot}>
-          <View style={Styles.implement}>
-            <Text style={Styles.implementText}>Add Bot</Text>
-          </View>
-        </TouchableOpacity>
+        <View style={{paddingBottom:20}}>
+          <TouchableOpacity onPress={this._onImplementBot}>
+            <View style={Styles.implement}>
+              <Text style={Styles.implementText}>Add Bot</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
