@@ -22,6 +22,14 @@ export default StyleSheet.create({
     color: Colors.lightGray
   },
 
+  selectDays: {
+    textAlign: "center",
+    paddingTop: 20,
+    paddingBottom: 20,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: Colors.white
+  },
   days: {
     textAlign: "center",
     paddingTop: 20,
@@ -37,12 +45,13 @@ export default StyleSheet.create({
     borderColor: Colors.white,
     backgroundColor: Colors.darkGray,
     width: 100,
-    height: 50
+    height: 50,
+
   },
   implementText: {
     padding: 10,
     color: Colors.green,
-    fontSize: 16,
+    fontSize: 20,
     textAlign: "center",
     fontWeight: "bold"
   },
@@ -51,13 +60,16 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
+    paddingBottom: 60,
   },
   detailText: {
     textAlign: "left",
     flexDirection: "row",
     color: Colors.white,
-    fontSize: 16
+    fontSize: 18,
+    fontWeight: "bold"
+
   },
   editInfo: {
     textAlign: "center",
