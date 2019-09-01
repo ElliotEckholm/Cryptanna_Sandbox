@@ -435,7 +435,7 @@ async function longterm_strategy_function(bot) {
         let exchange = new ccxt[exchangeTitle]();
         let marketInfo = {};
 
-        //buy on day low and high
+        //buy on X day low and high
         let priceExtrema = [];
         // let minPrice = 0
         priceExtrema = fetchHistory(exchange, market, bot.maxDays).then(
@@ -444,6 +444,93 @@ async function longterm_strategy_function(bot) {
             historyMaxPrice = priceExtrema[1];
             console.log("Returned Min Price: " + historyMinPrice);
             console.log("Returned Max Price: " + historyMaxPrice);
+
+
+
+            //Grab Current Price of coin
+            fetchTicker(exchange, market, marketInfo)
+              .then(() => {
+                let currentPrice_string =
+                  "Current Price of Bitcoin: $" + Number(marketInfo.bid).toFixed(2);
+                let currentPrice = parseFloat(Number(marketInfo.bid).toFixed(2));
+
+                let currentPriceOfUserSpecificedAmount = currentPrice * bot.btc_amount;
+
+                console.log("BOT CURRENT PRICE")
+                console.log(currentPrice)
+
+
+                //Check if current price is lower than X day Min
+                //If lower then buy user specificed amount
+                //TODO add buy to Firebase to save price
+                if (currentPrice < historyMinPrice){
+
+
+
+                    //IF at Low of Last X days, buy User Specificed of USD Wallet,
+                    //TODO: Store buy time and amount in Firebase
+                    limitBuyOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
+
+                      bot.exchange.fetchOrderBook(bot.market)
+                      .then(res => {
+                          let bid = res.bids.length ? res.bids[0][0] : undefined
+                          let buyAsk = res.asks.length ? res.asks[0][0] : undefined
+                          let spread = (bid && buyAsk) ? buyAsk - bid : undefined
+                          console.log (exchange.id, 'market price', { bid, buyAsk, spread });
+
+                          // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+
+                          // waits 30 seconds before placing a sell
+                          setTimeout(() => {
+                              let sellAsk = res.asks.length ? res.asks[0][0] : undefined
+                              console.log(`Will sell when price reaches ${bid * 1.2}`);
+                              // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
+
+                          }, 30000)
+
+                      })
+                      .catch(err => console.log(err))
+
+                }
+                //If Price is higher than max of last X days and higher than buy order and bot has already bought then Sell
+                // else if(currentPrice > historyMaxPrice){
+                //   // if(currentPrice > Check Fireabase for buy order){
+                //   limitSellOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
+                //
+                //     bot.exchange.fetchOrderBook(bot.market)
+                //     .then(res => {
+                //         let bid = res.bids.length ? res.bids[0][0] : undefined
+                //         let buyAsk = res.asks.length ? res.asks[0][0] : undefined
+                //         let spread = (bid && buyAsk) ? buyAsk - bid : undefined
+                //         console.log (exchange.id, 'market price', { bid, buyAsk, spread });
+                //
+                //         // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+                //
+                //         // waits 30 seconds before placing a sell
+                //         setTimeout(() => {
+                //             let sellAsk = res.asks.length ? res.asks[0][0] : undefined
+                //             console.log(`Will sell when price reaches ${bid * 1.2}`);
+                //             // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
+                //
+                //         }, 30000)
+                //
+                //     })
+                //     .catch(err => console.log(err))
+                //   // }
+                //
+                // }
+
+              })
+              .catch(err => {
+                console.log(err);
+              });
+
+
+
+
+
+
+
           }
         );
 
