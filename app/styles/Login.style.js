@@ -56,7 +56,7 @@ export default StyleSheet.create({
     paddingTop: 100,
   },
   button: {
-    backgroundColor: Colors.robinHoodGreen,
+    backgroundColor: Colors.lightBlue,
     borderRadius: 5,
     width: wp('80%'),
     height: hp('8%'),

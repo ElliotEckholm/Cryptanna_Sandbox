@@ -28,7 +28,7 @@ export default StyleSheet.create({
     width: "90%"
   },
   button: {
-    backgroundColor: "#21CE99",
+    backgroundColor: Colors.lightBlue,
     borderRadius: 5,
     height: 50,
     width: "100%",
