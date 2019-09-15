@@ -16,8 +16,18 @@ title: {
     paddingBottom: hp('1%'),
     fontSize: hp('6%'),
     fontWeight: 'bold',
+    color: Colors.white
+  	},
+instructions: {
+    textAlign: 'center',
+    paddingTop: hp('3%'),
+    paddingBottom: hp('1%'),
+    fontSize: hp('3%'),
+    fontWeight: 'bold',
     color: Colors.mediumDarkGray
   	},
+
+
   sectionTitle: {
   	fontSize: 30,
   	color: Colors.white,

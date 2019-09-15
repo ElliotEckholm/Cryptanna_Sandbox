@@ -23,7 +23,7 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontSize: hp('3%'),
     fontWeight: 'bold',
-    color: Colors.mediumDarkGray
+    color: Colors.white
   },
 
 

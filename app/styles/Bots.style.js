@@ -21,6 +21,14 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.white,
   },
+
+  subTitle: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.mediumDarkGray,
+    paddingBottom: 150,
+  },
   imageContainer: {
     flex:.2,
     justifyContent: 'center',

@@ -53,6 +53,10 @@ export default class TrackExchange extends Component {
                 Adding {this.state.exchangeTitle_string}
         	</Text>
 
+          <Text style={Styles.instructions}>
+                Copy and Paste your API information from the {this.state.exchangeTitle_string} Website:
+        	</Text>
+
         	<View style = {Styles.inputRow}>
             	<Text style = {Styles.detailText}>
               		API key:
