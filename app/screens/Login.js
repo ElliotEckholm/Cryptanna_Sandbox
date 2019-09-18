@@ -109,7 +109,7 @@ export default class Login extends Component {
 
         </View>
 
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView keyboardDismissMode='on-drag'  style={styles.scrollContainer}>
 
         <View style={styles.formContainer}>
         <FormInput
