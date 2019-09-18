@@ -12,6 +12,8 @@ import {
   FormValidationMessage,
   Button
 } from 'react-native-elements';
+import DoneButton from 'react-native-keyboard-done-button';
+
 
 import styles from "../styles/Login.style.js";
 
@@ -96,6 +98,7 @@ export default class Login extends Component {
 
   render() {
     return (
+
       <View style={styles.container}>
 
         <View style={styles.imageContainer}>
@@ -118,6 +121,8 @@ export default class Login extends Component {
           autoCapitalize= 'none'
             placeholderTextColor={'white'}
           placeholder = "Email"
+          returnKeyLabel='Done'
+          returnKeyType='done'
         />
           <FormValidationMessage>{this.checkEmail()}</FormValidationMessage>
         </View>
@@ -131,6 +136,8 @@ export default class Login extends Component {
           autoCapitalize= 'none'
             placeholderTextColor={'white'}
           placeholder = 'Password'
+          returnKeyLabel='Done'
+          returnKeyType='done'
         />
         <FormValidationMessage>{this.checkPassword()}</FormValidationMessage>
         </View>
@@ -156,6 +163,8 @@ export default class Login extends Component {
               <Text style={styles.rowTextSignUp}>Don't Have An Account?</Text>
           </View>
         </TouchableOpacity>
+      
+
 
       </View>
     );

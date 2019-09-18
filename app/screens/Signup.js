@@ -42,6 +42,8 @@ export default class SignUp extends Component {
             <FormInput
               onChangeText={email => this.setState({ email })}
               autoCapitalize="none"
+              returnKeyLabel='Done'
+              returnKeyType='done'
             />
           </View>
 
@@ -52,6 +54,8 @@ export default class SignUp extends Component {
               secureTextEntry={true}
               password={true}
               autoCapitalize="none"
+              returnKeyLabel='Done'
+              returnKeyType='done'
             />
           </View>
 
@@ -65,6 +69,8 @@ export default class SignUp extends Component {
               secureTextEntry={true}
               password={true}
               autoCapitalize="none"
+              returnKeyLabel='Done'
+              returnKeyType='done' 
             />
           </View>
         </View>
