@@ -43,13 +43,10 @@ export default class SelectMarket extends Component {
 
   _displayPriceExtrema = data => {
     this.state.rangeData = data;
-
     this.state.daySelected = data.selectedMaximum;
 
     setTimeout(() => {
       const { params } = this.props.navigation.state;
-
-      //
       //buy on day low and high
       let priceExtrema = [];
       // let minPrice = 0
@@ -64,11 +61,7 @@ export default class SelectMarket extends Component {
         console.log("In Render Max Price: " + maxPrice);
 
         this.setState({ minPrice, maxPrice });
-
-        // this.state.priceExtrema[1] = historyMaxPrice;
       });
-
-      // console.log('Prices', this.state.priceExtrema);
     }, 1000);
   };
 
@@ -104,16 +97,10 @@ export default class SelectMarket extends Component {
       ],
       { cancelable: false }
     );
-
-    // bot.strategy.basic_strategy_function();
   };
 
   render() {
     const { params } = this.props.navigation.state;
-    //
-    //
-    // console.log("\n\nIN RENDER: Max Price: " + maxPrice)
-    // console.log("\n\nIN RENDER: Min Price: " + minPrice)
 
     return (
       <View style={Styles.container}>
@@ -124,7 +111,6 @@ export default class SelectMarket extends Component {
             {"Multiday Low and High Bot \n" + params.marketName + " Market"}{" "}
           </Text>
           <Text style={Styles.price}>
-            {" "}
             {"Current Holdings: " +
               params.marketBalance +
               " " +
@@ -132,20 +118,23 @@ export default class SelectMarket extends Component {
           </Text>
 
           <Text style={Styles.days}>
-            {" "}
             {"From the Last " + this.state.daySelected + " Days:"}
           </Text>
-          <Text style={Styles.price}> {"Low: " + this.state.minPrice + " USD"} </Text>
-          <Text style={Styles.price}> {"High: " + this.state.maxPrice + " USD"}</Text>
+          <Text style={Styles.price}>
+            {"Low: " + this.state.minPrice + " USD"}{" "}
+          </Text>
+          <Text style={Styles.price}>
+            {"High: " + this.state.maxPrice + " USD"}
+          </Text>
 
           <Text style={Styles.selectDays}>
             Select Day Range for Bot to Buy at Lows and Sell at Highs:
           </Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           <RangeSlider
-            disableRange={true}
+            disableRange
             lineHeight={2}
             handleDiameter={18}
             minValue={0}
@@ -172,21 +161,21 @@ export default class SelectMarket extends Component {
         </View>
 
         {
-        // <View style={Styles.inputRow}>
-        //   <Text style={Styles.detailText}>For the Price of</Text>
-        //   <TextInput
-        //     style={Styles.editInfo}
-        //     onChangeText={usd_amount => this.setState({ usd_amount })}
-        //     value={this.state.usd_amount}
-        //     placeholder="0.0"
-        //     placeholderTextColor="white"
-        //     height={40}
-        //   />
-        //   <Text style={Styles.detailText}>USD</Text>
-        // </View>
+          // <View style={Styles.inputRow}>
+          //   <Text style={Styles.detailText}>For the Price of</Text>
+          //   <TextInput
+          //     style={Styles.editInfo}
+          //     onChangeText={usd_amount => this.setState({ usd_amount })}
+          //     value={this.state.usd_amount}
+          //     placeholder="0.0"
+          //     placeholderTextColor="white"
+          //     height={40}
+          //   />
+          //   <Text style={Styles.detailText}>USD</Text>
+          // </View>
         }
 
-        <View style={{paddingBottom:20}}>
+        <View style={{ paddingBottom: 20 }}>
           <TouchableOpacity onPress={this._onImplementBot}>
             <View style={Styles.implement}>
               <Text style={Styles.implementText}>Add Bot</Text>

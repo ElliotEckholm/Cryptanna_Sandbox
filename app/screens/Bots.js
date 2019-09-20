@@ -1,14 +1,14 @@
 //////////////UI imports//////////////
-import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity,ScrollView } from 'react-native';
-import Styles from '../styles/Bots.style';
+import React, { Component } from "react";
+import { Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import Styles from "../styles/Bots.style";
 
 /////////////Functionality imports//////////
-import ccxt from 'ccxt';
+import ccxt from "ccxt";
 
 export default class Bots extends Component {
   state = {
-    selectedBot: ''
+    selectedBot: ""
   };
 
   /* Goal is to have only one '_onSelect' function which will set state to
@@ -18,26 +18,35 @@ export default class Bots extends Component {
   */
 
   _onSelectAggressive = e => {
-    this.setState({ selectedBot: 'basicBot' });
+    this.setState({ selectedBot: "basicBot" });
     const { navigate } = this.props.navigation;
     setTimeout(
-      () => navigate('AggressiveBotDescription', { selectedBot: this.state.selectedBot }),
+      () =>
+        navigate("AggressiveBotDescription", {
+          selectedBot: this.state.selectedBot
+        }),
       20
     );
   };
   _onSelectMedium = e => {
-    this.setState({ selectedBot: 'mediumBot' });
+    this.setState({ selectedBot: "mediumBot" });
     const { navigate } = this.props.navigation;
     setTimeout(
-      () => navigate('MediumBotDescription', { selectedBot: this.state.selectedBot }),
+      () =>
+        navigate("MediumBotDescription", {
+          selectedBot: this.state.selectedBot
+        }),
       20
     );
   };
   _onSelectLongterm = e => {
-    this.setState({ selectedBot: 'longtermBot' });
+    this.setState({ selectedBot: "longtermBot" });
     const { navigate } = this.props.navigation;
     setTimeout(
-      () => navigate('LongtermBotDescription', { selectedBot: this.state.selectedBot }),
+      () =>
+        navigate("LongtermBotDescription", {
+          selectedBot: this.state.selectedBot
+        }),
       20
     );
   };
@@ -73,36 +82,35 @@ export default class Bots extends Component {
   render() {
     return (
       <View style={Styles.container}>
-         <View style={{flex:.1,borderColor:'#fff', padding:20}}>
-             <Text style={Styles.title}>BOTS</Text>
-         </View>
-
-
+        <View style={{ flex: 0.1, borderColor: "#fff" }}>
+          <Text style={Styles.title}>BOTS</Text>
+        </View>
 
         <ScrollView>
-            <View style={Styles.imageContainer}>
-
-
-
-
-
-              <View style={{padding:10}}>
+          <View style={Styles.imageContainer}>
+            <View style={{ padding: 10 }}>
               <TouchableOpacity onPress={this._onSelectLongterm}>
-                <View style={{borderWidth:1,borderColor:'#fff'}}>
-                  <Text style={Styles.botLongtermTitle}>Multiday Low and High</Text>
+                <View style={{ borderWidth: 1, borderColor: "#fff" }}>
+                  <Text style={Styles.botLongtermTitle}>
+                    Multiday Low and High
+                  </Text>
                   <Image
-                    source={require('../assets/images/White_Eye.png')}
-                    style={{height:50,width:50,alignSelf:'center', paddingBottom:20}}
-                    resizeMode='contain'
+                    source={require("../assets/images/White_Eye.png")}
+                    style={{
+                      height: 50,
+                      width: 50,
+                      alignSelf: "center",
+                      paddingBottom: 20
+                    }}
+                    resizeMode="contain"
                   />
                 </View>
               </TouchableOpacity>
-              </View>
-
             </View>
+          </View>
         </ScrollView>
 
-         <Text style={Styles.subTitle}>More Bots Coming Soon</Text>
+        <Text style={Styles.subTitle}>More Bots Coming Soon</Text>
       </View>
     );
   }

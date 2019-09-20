@@ -12,7 +12,6 @@ import {
 import Styles from "../styles/Settings.style.js";
 import ccxt from "ccxt";
 import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
-/////////////Navigation Imports///////////
 import Profile from "./Profile.js";
 import Spinner from "./../config/Spinner";
 
@@ -27,8 +26,8 @@ export default class Settings extends Component {
           secret: "",
           passphrase: ""
         }
-    ], // This is supposed to hold the exchange objects
-    loading: true
+      ],
+      loading: true
     };
   }
 
@@ -38,9 +37,8 @@ export default class Settings extends Component {
   };
 
   componentWillMount() {
-
     setTimeout(() => {
-        this.setState({ loading: false });
+      this.setState({ loading: false });
     }, 1000);
 
     pulledExchangeList = [];
@@ -69,58 +67,69 @@ export default class Settings extends Component {
       this.setState({ exchanges: _exchanges });
 
       console.log(this.state.exchanges);
-  }, 1000);
+    }, 1000);
   }
 
   loading = () => {
     if (this.state.loading) {
       return (
-        <View style={[Styles.container, {paddingTop:300}]}>
+        <View style={[Styles.container, { paddingTop: 300 }]}>
           <Spinner />
         </View>
       );
     }
 
     return (
-        <View style={Styles.container}>
-          <Text style={Styles.title}>API SETTINGS</Text>
-          <ScrollView>
-            {this.state.exchanges.map(e => (
+      <View style={Styles.container}>
+        <Text style={Styles.title}>API SETTINGS</Text>
+        <ScrollView>
+          {this.state.exchanges.map(e => (
+            <View>
               <View>
-                <View>
-                  <Text style={Styles.sectionTitle}>{e.name}</Text>
-                </View>
-
-                <Text style={[Styles.detailText,{marginTop:20}]}>API key:</Text>
-                <View style={Styles.inputRow}>
-                  <TextInput style={Styles.editInfo} value={e.apiKey} />
-                </View>
-
-                <Text style={Styles.detailText}>API secret:</Text>
-                <View style={Styles.inputRow}>
-                  <TextInput style={Styles.editInfo} value={e.secret} />
-                </View>
-
-                <Text style={Styles.detailText}>Passphrase:</Text>
-                <View style={Styles.inputRow}>
-                  <TextInput style={Styles.editInfo} value={e.passphrase} />
-                </View>
-
-                <View style={Styles.buttonContainer}>
-                  <Button title="Remove" color="#FFFFFF" />
-                </View>
-
-                <View style={{ borderBottomWidth: 2,borderColor:"#fff",margin: 20, marginTop:50}}/>
+                <Text style={Styles.sectionTitle}>{e.name}</Text>
               </View>
-            ))}
-          </ScrollView>
-        </View>
+
+              <Text style={[Styles.detailText, { marginTop: 20 }]}>
+                API key:
+              </Text>
+              <View style={Styles.inputRow}>
+                <TextInput style={Styles.editInfo} value={e.apiKey} />
+              </View>
+
+              <Text style={Styles.detailText}>API secret:</Text>
+              <View style={Styles.inputRow}>
+                <TextInput style={Styles.editInfo} value={e.secret} />
+              </View>
+
+              <Text style={Styles.detailText}>Passphrase:</Text>
+              <View style={Styles.inputRow}>
+                <TextInput style={Styles.editInfo} value={e.passphrase} />
+              </View>
+
+              <View style={Styles.buttonContainer}>
+                <Button title="Remove" color="#FFFFFF" />
+              </View>
+
+              <View
+                style={{
+                  borderBottomWidth: 2,
+                  borderColor: "#fff",
+                  margin: 20,
+                  marginTop: 50
+                }}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     );
-}
+  };
 
   render() {
     return (
-        <View style={{flex:1, backgroundColor:"black"}}>{this.loading()}</View>
+      <View style={{ flex: 1, backgroundColor: "black" }}>
+        {this.loading()}
+      </View>
     );
   }
 }
