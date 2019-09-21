@@ -117,9 +117,9 @@ export default class LongTermBotDescription extends Component {
           <Image source={require("../assets/images/White_Eye.png")} />
         </View>
 
-        <Text style={Styles.title}>Multiday Low and High Bot</Text>
+        <Text style={styles.title}>Multiday Low and High Bot</Text>
 
-        <Text style={Styles.description}>
+        <Text style={styles.description}>
           User sets percentage of balance to use and selects the timeframe the
           bot will buy and sell at. For example the bot will buy at 10, 50, or
           100 day lows and sell at 10, 50, or 100 day highs.
