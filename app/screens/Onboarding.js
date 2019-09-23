@@ -13,6 +13,10 @@ export default class Onboarding extends Component {
     return " << Got it? Swipe. >>";
   }
 
+  finish() {
+    return " << Finish >>";
+  }
+
   render() {
     return (
       <Swiper
@@ -114,7 +118,7 @@ export default class Onboarding extends Component {
           </View>
           <View style={{ flex: 0.05 }}>
             <Text onPress={() => this.goToCommand()} style={styles.bottomText}>
-              {this.gotItSwipe()}
+              {this.finish()}
             </Text>
           </View>
         </View>

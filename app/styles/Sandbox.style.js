@@ -1,44 +1,40 @@
-import { Colors } from './global/colors'
-
-import {
-  StyleSheet,
-} from 'react-native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { Colors } from "./global/colors";
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.darkGrayBackground,
-    flexDirection:'column',
-    justifyContent:'space-between',
-    paddingTop:30,
+    flexDirection: "column",
+    justifyContent: "space-around",
+    paddingTop: 30
   },
   title: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.white
   },
   inputContainer: {
     flex: 1,
     backgroundColor: Colors.lightGray,
     borderRadius: 4,
-    shadowOffset:{  width: 1,  height: 1,  },
+    shadowOffset: { width: 1, height: 1 },
     shadowColor: Colors.shadow,
     shadowOpacity: 1.0,
     shadowRadius: 1
   },
   balance: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 20,
-    fontWeight: '400',
+    fontWeight: "400",
     color: Colors.white
   },
   priceText: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.lightGray,
-    paddingBottom:10
-  },
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.white,
+    paddingBottom: 10
+  }
 });

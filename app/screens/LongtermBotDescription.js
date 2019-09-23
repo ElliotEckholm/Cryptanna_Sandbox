@@ -1,109 +1,61 @@
-//////////////UI imports//////////////
-import React, { Component } from 'react';
-import { Text, View, FlatList, Image  } from 'react-native';
-import Styles from '../styles/BotDescription.style';
-import {BasicBotClass,AdvancedBotClass} from '../scripts/Bots_Database.js';
+import React, { Component } from "react";
+import { Text, View, FlatList, Image, StyleSheet } from "react-native";
+import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";
+import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
+import styles from "../styles/BotDescription.style";
+import Spinner from "./../config/Spinner";
+import ccxt from "ccxt";
 
-import { SearchBar } from 'react-native-elements';
-import BotTrackedExchangeItem from '../items/BotTrackedExchangeItem';
-import { sandbox_exchange} from '../scripts/ccxt.js';
-import {pullTrackedExchangesDocuments} from '../scripts/firebase.js';
-
-/////////////Functionality imports//////////
-import ccxt from 'ccxt';
-
-
-let exchangeList = [];
-// ccxt.exchanges.forEach(id => {
-//   exchanges[id] = new ccxt[id]();
-// });
-
-export default class BotDescription extends Component {
+export default class LongTermBotDescription extends Component {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
-    // const selectedBotString = navigation.getParam('selectedBot');
 
     this.state = {
-      selectedBotString:navigation.getParam('selectedBot'),
-      selectedBot : '',
-      exchangeList : [],
-      data: []
+      selectedBotString: navigation.getParam("selectedBot"),
+      selectedBot: "",
+      exchangeList: [],
+      data: [],
+      loading: true
     };
-    //
-    // switch (this.state.selectedBotString) {
-    //   case 'basicBot':
-    //     this.state.selectedBot = new BasicBotClass('Coinbase','BTC/USD',true,100.0);
-    //     break;
-    //   case 'advancedBot':
-    //     this.state.selectedBot = new AdvancedBotClass('Coinbase','BTC/USD',true,100.0);
-    //     break;
-    //
-    //
-    //
-    // }
   }
 
-
-
-
   componentWillMount() {
-
     pulledExchangeList = [];
     pullTrackedExchangesDocuments(pulledExchangeList);
 
     setTimeout(() => {
       let _exchangeList = [];
 
-      pulledExchangeList.forEach(function(exchange,id){
-
+      pulledExchangeList.forEach(function(exchange, id) {
         let exchangeObj = {};
 
-        let name = exchange.name.toString().toLowerCase().replace(/\s+/g, '');;
-        // console.log(name);
+        let name = exchange.name
+          .toString()
+          .toLowerCase()
+          .replace(/\s+/g, "");
 
         exchangeObj.id = id;
         exchangeObj.title = name;
-        let setExchange = new ccxt[name] ();
+        let setExchange = new ccxt[name]();
         setExchange.apiKey = exchange.apiKey;
         setExchange.secret = exchange.secret;
         setExchange.password = exchange.passphrase;
 
         //make sandbox custom url
-        if (exchange.name == 'gdax'){
+        if (exchange.name == "gdax") {
           console.log("GDAX TEST");
-          setExchange.urls.api = 'https://api-public.sandbox.pro.coinbase.com';
-
+          setExchange.urls.api = "https://api-public.sandbox.pro.coinbase.com";
         }
-
 
         let img = setExchange.urls.logo;
         exchangeObj.thumbnail = img.toString();
-
         exchangeObj.exchange = setExchange;
-
-
-
-
-
-        // console.log("Set Exchange object", exchangeObj.exchange);
-
         _exchangeList.push(exchangeObj);
-
-
-      })
-
-         // _exchangeList.push(sandbox_exchange)
-        this.setState({ exchangeList:_exchangeList });
-
-
-
-
-    }, 2000)
-
-    // console.log("Pulled Exchanges ",pulledExchangeList);
-
-}
+      });
+      this.setState({ exchangeList: _exchangeList, loading: false });
+    }, 2000);
+  }
 
   searchFilterFunction_Exchanges(text) {
     const newData = this.state.exchangeList.filter(item => {
@@ -121,63 +73,62 @@ export default class BotDescription extends Component {
       id={item.id}
       title={item.title}
       thumbnail={item.thumbnail}
-
       exchange={item.exchange}
       navigation={this.props.navigation}
       botType="Longterm"
-
     />
   );
 
   renderExchanges = () => {
-    // console.log("This state Exchanges ",this.state.exchangeList);
     return (
       <FlatList
         data={this.state.exchangeList}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
-
       />
     );
   };
 
-  _keyExtractor = (item, index) => item.id.toString();
-  //
-  // <Text>{this.state.selectedBot.exchange}</Text>
-  // <Text>{this.state.selectedBot.market}</Text>
-  // <Text>{this.state.selectedBot.strategy_name}</Text>
-  render() {
-    return (
-      <View style={Styles.container}>
-
-        <View style={Styles.imageContainer}>
-        <Image
-          // style={styles.cryptannaImage}
-          source={require('../assets/images/White_Eye.png')}
-        />
+  loading() {
+    if (this.state.loading) {
+      return (
+        <View style={{ marginTop: 100 }}>
+          <Spinner />
         </View>
+      );
+    }
 
-        <Text style={Styles.title}>Multiday Low and High Bot</Text>
-
-        <Text style={Styles.description}>
-          User sets percentage of balance to use and selects the timeframe the bot will buy and sell at.
-          For example the bot will buy at 10, 50, or 100 day lows and sell at 10, 50, or 100 day highs.
-
-
-        </Text>
-
-
-        <Text style={Styles.h4}>Select Exchange:</Text>
-
-
-        <FlatList
-          // ListEmptyComponent={this.renderExchanges}
-          data={this.state.exchangeList}
-          keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}
-        />
-      </View>
+    return (
+      <FlatList
+        ListEmptyComponent={this.renderExchanges}
+        data={this.state.exchangeList}
+        keyExtractor={this._keyExtractor}
+        renderItem={this._renderItem}
+      />
     );
   }
 
+  _keyExtractor = (item, index) => item.id.toString();
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image source={require("../assets/images/White_Eye.png")} />
+        </View>
+
+        <Text style={styles.title}>Multiday Low and High Bot</Text>
+
+        <Text style={styles.description}>
+          User sets percentage of balance to use and selects the timeframe the
+          bot will buy and sell at. For example the bot will buy at 10, 50, or
+          100 day lows and sell at 10, 50, or 100 day highs.
+        </Text>
+
+        <Text style={styles.h4}>Select Exchange:</Text>
+
+        {this.loading()}
+      </View>
+    );
+  }
 }
