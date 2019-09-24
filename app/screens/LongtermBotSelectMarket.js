@@ -14,7 +14,7 @@ import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
 import RangeSlider from "react-native-range-slider";
 
-import { LongtermBotClass, AggressiveBotClass, BasicBotClass } from "../scripts/Bots_Database.js";
+import { LongtermBotClass, AggressiveBotClass, BasicBotClass, fetchHistory } from "../scripts/Bots_Database.js";
 
 import { addBotsSubCollection } from "../scripts/firebase.js";
 import {
@@ -38,7 +38,7 @@ export default class SelectMarket extends Component {
       minPrice: 0.0,
       maxPrice: 0.0,
       maxDays: 0,
-      daySelected: 0,
+      daySelected: 50,
       rangeData: {},
       exchange: {},
       marketName:"",
@@ -46,71 +46,70 @@ export default class SelectMarket extends Component {
   }
 
 
-  fetchHistory = async (exchange, market,timeFrame) => {
-    let historyExchange = {};
-    historyExchange = exchange;
-
-    let min = parseFloat(Infinity);
-    let max = parseFloat(-Infinity);
-
-    //convert timeFrame given in days to UTC time
-    let d = new Date();
-    d.setDate(d.getDate() - (timeFrame + 1));
-    let parsedUnixTime = d.getTime();
-    // console.log('\n\n\n UTC time: ',parsedUnixTime);
-
-    console.log("\n\n\n Fetching History for Market: ", market);
-    console.log("FETCH HISTORY TEST", historyExchange.timeframes);
-    let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-    if (historyExchange.has.fetchOHLCV) {
-      await sleep(historyExchange.rateLimit); // milliseconds
-      let historyList = [];
-      historyList = await historyExchange.fetchOHLCV(
-        market,
-        "1d",
-        parsedUnixTime,
-        undefined,
-        {}
-      );
-      historyList.reverse();
-
-      // // console.log(historyList);
-      // // let openList = [];
-      // // let closeList = [];
-      // // let minList = [];
-      // // let maxList = [];
-      // // let yAxisArr = [];
-      // // let i;
-      //
-      // let dataList = [];
-      //
-      // for (i = 0; i <= historyList.length - 1; i++) {
-      //   let d = new Date(historyList[i][0]);
-      //   dataList.push("\n" + d.toLocaleDateString());
-      //
-      //   if (historyList[i][4] < min) {
-      //     min = parseFloat(historyList[i][4]);
-      //   }
-      //   if (max < historyList[i][4]) {
-      //     max = parseFloat(historyList[i][4]);
-      //   }
-      // }
-      //
-      // console.log("\n\n-----FETCH History Info-----\n\n");
-      // console.log("Data List: " + historyList);
-      // console.log("Data List Length: " + dataList.length);
-      // console.log("History Timeframe: " + timeFrame);
-      // console.log("History Length: " + historyList.length);
-      // console.log("In History Function Min Price: " + min);
-      // console.log("Max Price: " + max);
-
-      // let priceExtremaArray = [min, max];
-
-      historyList = [];
-      historyExchange = {};
-      return 100.0;
-    }
-  }
+  // fetchHistory = async (exchange, market,timeFrame) => {
+  //   let historyExchange = {};
+  //   historyExchange = exchange;
+  //
+  //   let min = parseFloat(Infinity);
+  //   let max = parseFloat(-Infinity);
+  //
+  //   //convert timeFrame given in days to UTC time
+  //   let d = new Date();
+  //   d.setDate(d.getDate() - (timeFrame + 1));
+  //   let parsedUnixTime = d.getTime();
+  //   // console.log('\n\n\n UTC time: ',parsedUnixTime);
+  //
+  //   console.log("\n\n\n Fetching History for Market: ", market);
+  //   console.log("FETCH HISTORY TEST", historyExchange.timeframes);
+  //   let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  //   if (historyExchange.has.fetchOHLCV) {
+  //     await sleep(historyExchange.rateLimit); // milliseconds
+  //     let historyList = [];
+  //     historyList = await historyExchange.fetchOHLCV(
+  //       market,
+  //       "1d",
+  //       parsedUnixTime,
+  //       undefined,
+  //       {}
+  //     );
+  //     historyList.reverse();
+  //
+  //     // console.log(historyList);
+  //     // let openList = [];
+  //     // let closeList = [];
+  //     // let minList = [];
+  //     // let maxList = [];
+  //     // let yAxisArr = [];
+  //     // let i;
+  //
+  //     let dataList = [];
+  //
+  //     for (i = 0; i <= historyList.length - 1; i++) {
+  //       let d = new Date(historyList[i][0]);
+  //       dataList.push("\n" + d.toLocaleDateString());
+  //
+  //       if (historyList[i][4] < min) {
+  //         min = parseFloat(historyList[i][4]);
+  //       }
+  //       if (max < historyList[i][4]) {
+  //         max = parseFloat(historyList[i][4]);
+  //       }
+  //     }
+  //
+  //     console.log("\n\n-----FETCH History Info-----\n\n");
+  //     console.log("Data List: " + historyList);
+  //     console.log("Data List Length: " + dataList.length);
+  //     console.log("History Timeframe: " + timeFrame);
+  //     console.log("History Length: " + historyList.length);
+  //     console.log("In History Function Min Price: " + min);
+  //     console.log("Max Price: " + max);
+  //
+  //     let priceExtremaArray = [min, max];
+  //
+  //
+  //     return priceExtremaArray;
+  //   }
+  // }
 
 
   _displayPriceExtrema = data => {
@@ -132,13 +131,13 @@ export default class SelectMarket extends Component {
       var priceExtrema = 0.0;
       let minPrice = 0
 
-      this.fetchHistory(
+      priceExtrema = fetchHistory(
         exchange,
         this.state.marketName.replace("-", "/"),
         this.state.daySelected
       ).then(priceExtrema => {
-        minPrice = priceExtrema;
-        maxPrice = priceExtrema;
+        minPrice = priceExtrema[0];
+        maxPrice = priceExtrema[1];
         console.log("\n\nIn Render Min Price: " + minPrice);
         console.log("In Render Max Price: " + maxPrice);
 
@@ -150,18 +149,14 @@ export default class SelectMarket extends Component {
 
 
   _onImplementBot = () => {
-    // const { params } = this.props.navigation.state;
+    const { params } = this.props.navigation.state;
 
-
-
-
-    // this.setState({exchange:params.exchange, marketName:params.marketName});
 
     let bot = new LongtermBotClass(
-      this.state.exchange,
-      this.state.marketName,
+      params.exchange.name.toString(),
+      params.marketName,
       false,
-      this.state.marketBalance,
+      params.marketBalance,
       this.state.btc_amount,
       this.state.usd_amount,
       this.state.daySelected,
