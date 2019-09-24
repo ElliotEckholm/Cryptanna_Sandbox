@@ -15,7 +15,7 @@ export default StyleSheet.create({
   },
   h4: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     color: Colors.white
   },
@@ -33,6 +33,8 @@ export default StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: Colors.white
+    color: Colors.white,
+    textAlign: "center",
+    paddingBottom: 10,
   }
 });

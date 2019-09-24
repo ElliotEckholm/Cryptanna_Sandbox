@@ -84,7 +84,7 @@ export default class Price_Line_Graph extends Component {
     yAxis: [],
     minY: [],
     maxY:[],
-    
+
     //defualt price history to last 100 days
     timeFrame: 100,
 
@@ -212,7 +212,11 @@ loading() {
                 */}
                 {   this.state.showLineGraph &&(
                   <View style = {styles.graph}>
+                  <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
+                      100 Days
+                  </Text>
                     <Surface width={width} height={height}>
+
                       <Group x={0} y={height/2}>
                         {
                           // Actual Line based on the  data of fetch history
@@ -265,6 +269,7 @@ loading() {
                         }
                       </Group>
                     </Surface>
+
                   </View>
                 )}
               </View>
