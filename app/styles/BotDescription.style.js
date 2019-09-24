@@ -13,6 +13,11 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: Colors.white
   },
+  description: {
+    fontSize: 16,
+    color: Colors.white,
+    textAlign: "center"
+  },
   h4: {
     textAlign: "center",
     fontSize: 20,
