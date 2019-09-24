@@ -118,9 +118,9 @@ export default class MediumBotDescription extends Component {
           <Image source={require("../assets/images/White_Eye.png")} />
         </View>
 
-        <Text style={Styles.title}>Moving Average Safe Bot</Text>
+        <Text style={styles.title}>Moving Average Safe Bot</Text>
 
-        <Text style={Styles.description}>
+        <Text style={styles.description}>
           Trades on long term Exponential Moving Average and short term
           Exponential Moving Average intersections to predict market trend. If
           market is predcicted to move upwards, the bot will sell once coin is

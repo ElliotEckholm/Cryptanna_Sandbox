@@ -53,18 +53,7 @@ export default class Bots extends Component {
 
   //BOT bottoms that are comming soon!
 
-  // <View style={{padding:10}}>
-  // <TouchableOpacity onPress={this._onSelectMedium}>
-  //   <View style={{borderWidth:1,borderColor:'#fff'}}>
-  //     <Text style={Styles.botConvservativeTitle}>Moving Average Safe</Text>
-  //     <Image
-  //       source={require('../assets/images/White_Eye.png')}
-  //       style={{height:50,width:50,alignSelf:'center', padding:20}}
-  //       resizeMode='contain'
-  //     />
-  //   </View>
-  // </TouchableOpacity>
-  // </View>
+
   //
   //   <View style={{padding:10}}>
   //   <TouchableOpacity onPress={this._onSelectAggressive}>
@@ -108,6 +97,25 @@ export default class Bots extends Component {
               </TouchableOpacity>
             </View>
           </View>
+
+          <View style={{padding:10}}>
+          <TouchableOpacity onPress={this._onSelectMedium}>
+            <View style={{borderWidth:1,borderColor:'#fff'}}>
+              <Text style={Styles.botConvservativeTitle}>Moving Average Safe</Text>
+              <Image
+                source={require('../assets/images/White_Eye.png')}
+                style={{height:50,width:50,alignSelf:'center', padding:20}}
+                resizeMode='contain'
+              />
+            </View>
+          </TouchableOpacity>
+          </View>
+
+
+
+
+
+
         </ScrollView>
 
         <Text style={Styles.subTitle}>More Bots Coming Soon</Text>
