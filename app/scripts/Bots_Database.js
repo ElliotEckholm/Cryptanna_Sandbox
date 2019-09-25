@@ -12,6 +12,7 @@ export async function fetchHistory(exchange, market, timeFrame) {
   let min = parseFloat(Infinity);
   let max = parseFloat(-Infinity);
 
+
   //convert timeFrame given in days to UTC time
   let d = new Date();
   d.setDate(d.getDate() - (timeFrame + 1));
@@ -19,7 +20,7 @@ export async function fetchHistory(exchange, market, timeFrame) {
   // console.log('\n\n\n UTC time: ',parsedUnixTime);
 
   console.log("\n\n\n Fetching History for Market: ", market);
-  console.log("FETCH HISTORY TEST", exchange.timeframes);
+  // console.log("FETCH HISTORY TEST", exchange.timeframes);
   let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   if (exchange.has.fetchOHLCV) {
     await sleep(exchange.rateLimit); // milliseconds
@@ -33,7 +34,7 @@ export async function fetchHistory(exchange, market, timeFrame) {
     );
     historyList.reverse();
 
-    console.log(historyList);
+    // console.log(historyList);
     // let openList = [];
     // let closeList = [];
     // let minList = [];
@@ -56,7 +57,7 @@ export async function fetchHistory(exchange, market, timeFrame) {
     }
 
     console.log("\n\n-----FETCH History Info-----\n\n");
-    console.log("Data List: " + historyList);
+    // console.log("Data List: " + historyList);
     console.log("Data List Length: " + dataList.length);
     console.log("History Timeframe: " + timeFrame);
     console.log("History Length: " + historyList.length);
@@ -435,22 +436,120 @@ async function longterm_strategy_function(bot) {
         let exchange = new ccxt[exchangeTitle]();
         let marketInfo = {};
 
-        //buy on day low and high
+        //buy on X day low and high
         let priceExtrema = [];
         // let minPrice = 0
         priceExtrema = fetchHistory(exchange, market, bot.maxDays).then(
           priceExtrema => {
             historyMinPrice = priceExtrema[0];
             historyMaxPrice = priceExtrema[1];
-            console.log("Returned Min Price: " + historyMinPrice);
-            console.log("Returned Max Price: " + historyMaxPrice);
+            console.log("Returned Min Price from : " +bot.maxDays+" days: "+ historyMinPrice);
+            console.log("Returned Max Price from : " +bot.maxDays+" days: "+ historyMaxPrice);
+
+
+
+            //Grab Current Price of coin
+            fetchTicker(exchange, market, marketInfo)
+              .then(() => {
+                let currentPrice_string =
+                  "Current Price of Bitcoin: $" + Number(marketInfo.bid).toFixed(2);
+                let currentPrice = parseFloat(Number(marketInfo.bid).toFixed(2));
+
+                let currentPriceOfUserSpecificedAmount = currentPrice * bot.btc_amount;
+
+                console.log("\n\nLongterm BOT CURRENT PRICE")
+                console.log(currentPrice)
+
+
+                //Check if current price is lower than X day Min
+                //If lower then buy user specificed amount
+                //TODO add buy to Firebase to save price
+
+
+                // if (currentPrice < historyMinPrice){
+                //
+                //
+                //
+                //     console.log("\n\nCurrent Price is Less than last "+bot.maxDays+" day minimum.")
+                //     console.log("Current Price: "+currentPrice)
+                //     console.log("History Min Price : "+historyMinPrice)
+                //     console.log("\n\n Place buy order for user specificed amount of current price: "+currentPriceOfUserSpecificedAmount)
+                //
+                //     //IF at Low of Last X days, buy User Specificed of USD Wallet,
+                //     //TODO: Store buy time and amount in Firebase
+                //     limitBuyOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
+                //
+                //       bot.exchange.fetchOrderBook(bot.market)
+                //       .then(res => {
+                //           let bid = res.bids.length ? res.bids[0][0] : undefined
+                //           let buyAsk = res.asks.length ? res.asks[0][0] : undefined
+                //           let spread = (bid && buyAsk) ? buyAsk - bid : undefined
+                //           console.log (exchange.id, 'market price', { bid, buyAsk, spread });
+                //
+                //           // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+                //
+                //           // waits 30 seconds before placing a sell
+                //           setTimeout(() => {
+                //               let sellAsk = res.asks.length ? res.asks[0][0] : undefined
+                //               console.log(`Will sell when price reaches ${bid * 1.2}`);
+                //               // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
+                //
+                //           }, 30000)
+                //
+                //       })
+                //       .catch(err => console.log(err))
+                //
+                // }
+
+
+
+
+                //If Price is higher than max of last X days and higher than buy order and bot has already bought then Sell
+                // else if(currentPrice > historyMaxPrice){
+                //   // if(currentPrice > Check Fireabase for buy order){
+                //   limitSellOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
+                //
+                //     bot.exchange.fetchOrderBook(bot.market)
+                //     .then(res => {
+                //         let bid = res.bids.length ? res.bids[0][0] : undefined
+                //         let buyAsk = res.asks.length ? res.asks[0][0] : undefined
+                //         let spread = (bid && buyAsk) ? buyAsk - bid : undefined
+                //         console.log (exchange.id, 'market price', { bid, buyAsk, spread });
+                //
+                //         // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+                //
+                //         // waits 30 seconds before placing a sell
+                //         setTimeout(() => {
+                //             let sellAsk = res.asks.length ? res.asks[0][0] : undefined
+                //             console.log(`Will sell when price reaches ${bid * 1.2}`);
+                //             // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
+                //
+                //         }, 30000)
+                //
+                //     })
+                //     .catch(err => console.log(err))
+                //   // }
+                //
+                // }
+
+              })
+              .catch(err => {
+                console.log(err);
+              });
+
+
+
+
+
+
+
           }
         );
 
         // setTimeout(() => {
         //
         //   console.log("Fetching history");
-        //
+
         //
         //
         //
@@ -459,92 +558,92 @@ async function longterm_strategy_function(bot) {
         //   console.log("Returned Max Price: " + historyMaxPrice)
         //
         // },1000);
-
-        fetchTicker(exchange, market, marketInfo)
-          .then(() => {
-            let currentPrice_string =
-              "Current Price of Bitcoin: $" + Number(marketInfo.bid).toFixed(2);
-            let currentPrice = parseFloat(Number(marketInfo.bid).toFixed(2));
-
-            // console.log("BOT CURRENT PRICE")
-            // console.log(currentPrice)
-
-            windowPriceArray.push(currentPrice);
-            growingPriceArray.push(currentPrice);
-
-            // interval_price_sum += currentPrice;
-
-            if (windowPriceArray.length == numberOfPrices) {
-              console.log(windowPriceArray);
-
-              let priceArraySum = 0.0;
-              let priceArrayAvg = 0.0;
-              let maxPrice = 0.0;
-              let minPrice = 0.0;
-              let maxMinSpread = 0.0;
-              let priceSpread = 0.0;
-
-              windowPriceArray.forEach(price => {
-                priceArraySum += price;
-              });
-
-              maxPrice = Math.max.apply(null, windowPriceArray);
-              minPrice = Math.min.apply(null, windowPriceArray);
-              maxMinSpread = maxPrice - minPrice;
-              priceSpread =
-                windowPriceArray[numberOfPrices - 1] - windowPriceArray[0];
-              priceArrayAvg = priceArraySum / numberOfPrices;
-
-              // console.log("BOT Average PRICE over 10 seconds")
-              // console.log(priceArrayAvg)
-              // console.log("BOT Max PRICE over 10 seconds")
-              // console.log(maxPrice)
-              // console.log("BOT Min PRICE over 10 seconds")
-              // console.log(minPrice)
-              // console.log("BOT Max Min Spread PRICE over 10 seconds")
-              // console.log(maxMinSpread)
-              // console.log("BOT Price Spread PRICE over 10 seconds")
-              // console.log(priceSpread)
-
-              //Bot enters the market here
-              //buy when the price is going down
-              if (priceSpread < 0 && Math.abs(priceSpread) > 10.0) {
-                limitBuyOrder(
-                  bot.exchange,
-                  bot.market,
-                  bot.btc_amount,
-                  currentPrice
-                );
-              }
-              //sell when the price is going up
-              if (priceSpread > 0) {
-                limitSellOrder(
-                  bot.exchange,
-                  bot.market,
-                  bot.btc_amount,
-                  currentPrice - 500
-                );
-              }
-
-              //clear priceArray
-              windowPriceArray = [];
-            }
-
-            //at interesection of short term and long term EMA
-            //if slope_shortTerm < 0 && slope_longTerm > 0 then Sell
-            //if slope_shortTerm > 0 && slope_longTerm < 0 then Buy
-            shortTerm_EMA = EMACalc(growingPriceArray, 5);
-            longTerm_EMA = EMACalc(growingPriceArray, 10);
-
-            console.log("Short Term EMA");
-            console.log(shortTerm_EMA[shortTerm_EMA.length - 1]);
-
-            console.log("Long Term EMA");
-            console.log(longTerm_EMA[longTerm_EMA.length - 1]);
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        //
+        // fetchTicker(exchange, market, marketInfo)
+        //   .then(() => {
+        //     let currentPrice_string =
+        //       "Current Price of Bitcoin: $" + Number(marketInfo.bid).toFixed(2);
+        //     let currentPrice = parseFloat(Number(marketInfo.bid).toFixed(2));
+        //
+        //     // console.log("BOT CURRENT PRICE")
+        //     // console.log(currentPrice)
+        //
+        //     windowPriceArray.push(currentPrice);
+        //     growingPriceArray.push(currentPrice);
+        //
+        //     // interval_price_sum += currentPrice;
+        //
+        //     if (windowPriceArray.length == numberOfPrices) {
+        //       console.log(windowPriceArray);
+        //
+        //       let priceArraySum = 0.0;
+        //       let priceArrayAvg = 0.0;
+        //       let maxPrice = 0.0;
+        //       let minPrice = 0.0;
+        //       let maxMinSpread = 0.0;
+        //       let priceSpread = 0.0;
+        //
+        //       windowPriceArray.forEach(price => {
+        //         priceArraySum += price;
+        //       });
+        //
+        //       maxPrice = Math.max.apply(null, windowPriceArray);
+        //       minPrice = Math.min.apply(null, windowPriceArray);
+        //       maxMinSpread = maxPrice - minPrice;
+        //       priceSpread =
+        //         windowPriceArray[numberOfPrices - 1] - windowPriceArray[0];
+        //       priceArrayAvg = priceArraySum / numberOfPrices;
+        //
+        //       // console.log("BOT Average PRICE over 10 seconds")
+        //       // console.log(priceArrayAvg)
+        //       // console.log("BOT Max PRICE over 10 seconds")
+        //       // console.log(maxPrice)
+        //       // console.log("BOT Min PRICE over 10 seconds")
+        //       // console.log(minPrice)
+        //       // console.log("BOT Max Min Spread PRICE over 10 seconds")
+        //       // console.log(maxMinSpread)
+        //       // console.log("BOT Price Spread PRICE over 10 seconds")
+        //       // console.log(priceSpread)
+        //
+        //       //Bot enters the market here
+        //       //buy when the price is going down
+        //       if (priceSpread < 0 && Math.abs(priceSpread) > 10.0) {
+        //         limitBuyOrder(
+        //           bot.exchange,
+        //           bot.market,
+        //           bot.btc_amount,
+        //           currentPrice
+        //         );
+        //       }
+        //       //sell when the price is going up
+        //       if (priceSpread > 0) {
+        //         limitSellOrder(
+        //           bot.exchange,
+        //           bot.market,
+        //           bot.btc_amount,
+        //           currentPrice - 500
+        //         );
+        //       }
+        //
+        //       //clear priceArray
+        //       windowPriceArray = [];
+        //     }
+        //
+        //     //at interesection of short term and long term EMA
+        //     //if slope_shortTerm < 0 && slope_longTerm > 0 then Sell
+        //     //if slope_shortTerm > 0 && slope_longTerm < 0 then Buy
+        //     shortTerm_EMA = EMACalc(growingPriceArray, 5);
+        //     longTerm_EMA = EMACalc(growingPriceArray, 10);
+        //
+        //     console.log("Short Term EMA");
+        //     console.log(shortTerm_EMA[shortTerm_EMA.length - 1]);
+        //
+        //     console.log("Long Term EMA");
+        //     console.log(longTerm_EMA[longTerm_EMA.length - 1]);
+        //   })
+        //   .catch(err => {
+        //     console.log(err);
+        //   });
 
         // limitSellOrder(bot.exchange, bot.market,   bot.btc_amount,   bot.usd_amount);
 
