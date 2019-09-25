@@ -5,7 +5,7 @@ import {
   fetchTicker,
   sandbox_exchange
 } from "../scripts/ccxt.js";
-import { isBotRunning } from "../scripts/firebase.js";
+import { isBotRunning, storeBotStrategyBuyOrder } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchange, market, timeFrame) {
@@ -466,15 +466,20 @@ async function longterm_strategy_function(bot) {
                 //TODO add buy to Firebase to save price
 
 
-                // if (currentPrice < historyMinPrice){
-                //
-                //
-                //
-                //     console.log("\n\nCurrent Price is Less than last "+bot.maxDays+" day minimum.")
-                //     console.log("Current Price: "+currentPrice)
-                //     console.log("History Min Price : "+historyMinPrice)
-                //     console.log("\n\n Place buy order for user specificed amount of current price: "+currentPriceOfUserSpecificedAmount)
-                //
+
+
+                if (currentPrice < historyMinPrice){
+
+
+
+
+                    console.log("\n\nCurrent Price is Less than last "+bot.maxDays+" day minimum.")
+                    console.log("Current Price: "+currentPrice)
+                    console.log("History Min Price : "+historyMinPrice)
+                    console.log("\n\n Place buy order for user specificed amount of current price: "+currentPriceOfUserSpecificedAmount)
+
+                    storeBotStrategyBuyOrder(bot, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount);
+
                 //     //IF at Low of Last X days, buy User Specificed of USD Wallet,
                 //     //TODO: Store buy time and amount in Firebase
                 //     limitBuyOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
@@ -498,8 +503,8 @@ async function longterm_strategy_function(bot) {
                 //
                 //       })
                 //       .catch(err => console.log(err))
-                //
-                // }
+
+                }
 
 
 

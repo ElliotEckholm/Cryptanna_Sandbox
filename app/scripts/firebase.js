@@ -174,7 +174,7 @@ export async function resumeAllBots() {
   }, 2000);
 }
 
-//Adding an exchange subcollection
+//Checking if specific bot is running or not
 export async function isBotRunning(botName, isRunning) {
   let currentUserID = getCurrentUserID();
   // console.log('BOT RUNNING', botName);
@@ -193,6 +193,33 @@ export async function isBotRunning(botName, isRunning) {
     });
   });
 }
+
+//Storing longtermBuyOrderObject in Bot's document
+export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount) {
+    let currentUserID = getCurrentUserID();
+
+    let longtermBuyOrderObject = {
+        currentPrice:currentPrice,
+        historyMinPrice:historyMinPrice,
+        historyMaxPrice:historyMaxPrice,
+        currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount
+    }
+
+    bot.longtermBuyOrderObject = longtermBuyOrderObject;
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(bot.name);
+
+    ref.set(bot);
+
+    console.log("Bot buy order stored successfully!");
+}
+
+
 
 //Adding an exchange subcollection
 export async function addSandBoxSubCollection(starting_usd_balance) {
