@@ -8,7 +8,8 @@ import {
 import { isBotRunning, storeBotStrategyBuyOrder } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
-export async function fetchHistory(exchange, market, timeFrame) {
+export async function fetchHistory(exchangeTitle, market, timeFrame) {
+  let exchange = new ccxt[exchangeTitle]();
   let min = parseFloat(Infinity);
   let max = parseFloat(-Infinity);
 
@@ -439,7 +440,7 @@ async function longterm_strategy_function(bot) {
         //buy on X day low and high
         let priceExtrema = [];
         // let minPrice = 0
-        priceExtrema = fetchHistory(exchange, market, bot.maxDays).then(
+        priceExtrema = fetchHistory(exchangeTitle, market, bot.maxDays).then(
           priceExtrema => {
             historyMinPrice = priceExtrema[0];
             historyMaxPrice = priceExtrema[1];

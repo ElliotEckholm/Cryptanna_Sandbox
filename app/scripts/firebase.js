@@ -206,6 +206,7 @@ export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPric
     }
 
     bot.longtermBuyOrderObject = longtermBuyOrderObject;
+    bot.running = true;
 
     let ref = firebase
       .firestore()
