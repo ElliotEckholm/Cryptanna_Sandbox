@@ -206,7 +206,7 @@ export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPric
     }
 
     bot.longtermBuyOrderObject = longtermBuyOrderObject;
-    bot.running = true;
+
 
     let ref = firebase
       .firestore()
@@ -218,6 +218,29 @@ export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPric
     ref.set(bot);
 
     console.log("Bot buy order stored successfully!");
+}
+
+//Fetching and then Deleting longtermBuyOrderObject in Bot's document
+export async function fetchBotStrategyBuyOrder(bot, longtermBuyOrderObject) {
+    let currentUserID = getCurrentUserID();
+
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots");
+
+    ref.get().then(botDoc => {
+      botDoc.forEach(doc => {
+        if (doc._data.name == bot.name) {
+          longtermBuyOrderObject.push(doc._data.longtermBuyOrderObject);
+        }
+      });
+    });
+
+
+    console.log("Bot buy order Fetched successfully!");
 }
 
 
