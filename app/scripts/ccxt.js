@@ -35,11 +35,12 @@ coinbase_exchange.secret = 'BCFcR+cyRZjsO6mZbUTLUIV3hA8OamKOpnAjFGRmUGUwcAH5zp71
 coinbase_exchange.password = '2sj111hleg3'
 
 // Takes in an array of symbols, amount and price
-export let limitBuyOrder = async (exchange, symbol, amount, price) => {
+export let limitBuyOrder = async (exchange, orderId, symbol, amount, price) => {
     // List of methods https://github.com/ccxt/ccxt/wiki/Manual
     await exchange.createLimitBuyOrder(symbol, amount, price)
     .then(res => {
         console.log(`Limit buy order ${res.id} is successful!`);
+        orderId.push(res.id);
     })
     .catch(error => {
       const { code, message } = error;

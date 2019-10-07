@@ -169,8 +169,10 @@ async function basic_strategy_function(bot) {
               //Bot enters the market here
               //buy when the price is going down
               if (priceSpread < 0 && Math.abs(priceSpread) > 10.0) {
+                let orderId = [];
                 limitBuyOrder(
                   bot.exchange,
+                  orderId,
                   bot.market,
                   bot.btc_amount,
                   currentPrice
@@ -408,12 +410,18 @@ async function longterm_strategy_function(bot) {
   let growingPriceArray = [];
 
   if (botInterval !== null) return;
+
+  //Only allow one buy order at a time
+  let buyOrderCount = 0;
+
   botInterval = setInterval(() => {
     let isRunning = [];
     isBotRunning(bot.name, isRunning);
     //console.log("\n Bot Name \n", bot.name);
     interval_price_sum = 0.0;
     numberOfPrices = 10;
+
+
 
     setTimeout(() => {
       if (isRunning[0] == true) {
@@ -464,12 +472,15 @@ async function longterm_strategy_function(bot) {
 
                 //Check if current price is lower than X day Min
                 //If lower then buy user specificed amount
-                //TODO add buy to Firebase to save price
 
 
 
 
+                //IF at Low of Last X days, buy User Specificed of USD Wallet,
+                //TODO
+                //Check to make sure only one buy is made at a time
                // if (currentPrice < historyMinPrice){
+               if (buyOrderCount == 0){
 
 
 
@@ -480,42 +491,54 @@ async function longterm_strategy_function(bot) {
                     console.log("\n\n Place buy order for user specificed amount of current price: "+currentPriceOfUserSpecificedAmount)
 
 
+                    let isRunning = [];
+                    isBotRunning(bot.name, isRunning);
 
-                    storeBotStrategyBuyOrder(bot, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount);
+                    let orderId = [];
+                    limitBuyOrder(bot.exchange, orderId, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
+
+                    //Wait to see if bot is even still running
+
+                    setTimeout(() => {
+                      console.log("Order ID: "+orderId[0])
+                      storeBotStrategyBuyOrder(bot, orderId[0], isRunning[0],currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount);
+                      //to make sure the buy happened
+                      buyOrderCount = 1;
+
+                    }, 1000);
 
 
 
-                    //IF at Low of Last X days, buy User Specificed of USD Wallet,
-                    //TODO: Store buy time and amount in Firebase
-                    // limitBuyOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
-                    //
-                    //   bot.exchange.fetchOrderBook(bot.market)
-                    //   .then(res => {
-                    //       let bid = res.bids.length ? res.bids[0][0] : undefined
-                    //       let buyAsk = res.asks.length ? res.asks[0][0] : undefined
-                    //       let spread = (bid && buyAsk) ? buyAsk - bid : undefined
-                    //       console.log (exchange.id, 'market price', { bid, buyAsk, spread });
-                    //
-                    //       // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
-                    //
-                    //       // waits 30 seconds before placing a sell
-                    //       setTimeout(() => {
-                    //           let sellAsk = res.asks.length ? res.asks[0][0] : undefined
-                    //           console.log(`Will sell when price reaches ${bid * 1.2}`);
-                    //           // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
-                    //
-                    //       }, 30000)
-                    //
-                    //   })
-                    //   .catch(err => console.log(err))
 
-                // }
+
+
+                      // bot.exchange.fetchOrderBook(bot.market)
+                      // .then(res => {
+                      //     let bid = res.bids.length ? res.bids[0][0] : undefined
+                      //     let buyAsk = res.asks.length ? res.asks[0][0] : undefined
+                      //     let spread = (bid && buyAsk) ? buyAsk - bid : undefined
+                      //     console.log (exchange.id, 'market price', { bid, buyAsk, spread });
+                      //
+                      //     // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+                      //
+                      //     // waits 30 seconds before placing a sell
+                      //     setTimeout(() => {
+                      //         let sellAsk = res.asks.length ? res.asks[0][0] : undefined
+                      //         console.log(`Will sell when price reaches ${bid * 1.2}`);
+                      //         // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
+                      //
+                      //     }, 30000)
+                      //
+                      // })
+                      // .catch(err => console.log(err))
+
+                }
 
 
 
 
                   //If Price is higher than max of last X days and higher than buy order and bot has already bought then Sell
-                // else if(currentPrice > historyMaxPrice){
+                else if(currentPrice > historyMaxPrice && buyOrderCount == 0){
 
                     let longtermBuyOrderObject = [];
                     fetchBotStrategyBuyOrder(bot, longtermBuyOrderObject);
@@ -523,8 +546,21 @@ async function longterm_strategy_function(bot) {
                       //Wait for bot buy object to be fetched
                     setTimeout(() => {
 
+                      //if currentPrice is also larger than buy price
+                      //And check that there a currentPrice != null
                       console.log(longtermBuyOrderObject[0]);
-                      // if(currentPrice > longtermBuyOrderObject.currentPrice){
+
+                      //// TODO:
+                      //  Check that buy was executed on Exchange before you sell if so
+                      //Set buyCount back to zero if sell is not execute so that another buy can happen in the right circumstance
+                      //Also havea sellCount so more that no buy/sell link can happen if sell hasnt been executed 
+
+
+                      if(currentPrice > longtermBuyOrderObject.currentPrice){
+
+                        //// TODO:
+
+
                           // limitSellOrder(bot.exchange, bot.market,   bot.btc_amount,   currentPriceOfUserSpecificedAmount);
                           //
                           // bot.exchange.fetchOrderBook(bot.market)
@@ -535,6 +571,8 @@ async function longterm_strategy_function(bot) {
                           //     console.log (exchange.id, 'market price', { bid, buyAsk, spread });
                           //
                           //     // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
+
+
                           //
                           //     // waits 30 seconds before placing a sell
                           //     setTimeout(() => {
@@ -546,11 +584,14 @@ async function longterm_strategy_function(bot) {
                           //
                           // })
                           // .catch(err => console.log(err))
-                      // }
+
+
+
+                      }
 
                   },1000);
 
-                // }
+                }
 
 
 

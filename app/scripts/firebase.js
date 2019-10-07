@@ -195,10 +195,11 @@ export async function isBotRunning(botName, isRunning) {
 }
 
 //Storing longtermBuyOrderObject in Bot's document
-export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount) {
+export async function storeBotStrategyBuyOrder(bot, orderId, isRunning, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount) {
     let currentUserID = getCurrentUserID();
 
     let longtermBuyOrderObject = {
+        orderId:orderId,
         currentPrice:currentPrice,
         historyMinPrice:historyMinPrice,
         historyMaxPrice:historyMaxPrice,
@@ -206,7 +207,7 @@ export async function storeBotStrategyBuyOrder(bot, currentPrice, historyMinPric
     }
 
     bot.longtermBuyOrderObject = longtermBuyOrderObject;
-
+    bot.running = isRunning
 
     let ref = firebase
       .firestore()

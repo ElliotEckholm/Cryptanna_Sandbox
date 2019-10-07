@@ -78,7 +78,8 @@ export default class Manual_LimitOrderButton extends Component {
 
 
     _onBuy = () => {
-        limitBuyOrder(this.state.exchange, this.state.market, this.state.want_to_buy,  this.state.your_price);
+        let orderId = [];
+        limitBuyOrder(this.state.exchange, orderId, this.state.market, this.state.want_to_buy,  this.state.your_price);
 
         this.state.want_to_buy = '';
          this.state.your_price = '';
