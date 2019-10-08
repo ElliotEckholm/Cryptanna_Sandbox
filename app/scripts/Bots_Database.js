@@ -3,7 +3,8 @@ import {
   limitSellOrder,
   fetchBalance,
   fetchTicker,
-  sandbox_exchange
+  sandbox_exchange,
+  fetchOrder
 } from "../scripts/ccxt.js";
 import { isBotRunning, storeBotStrategyBuyOrder, fetchBotStrategyBuyOrder } from "../scripts/firebase.js";
 import ccxt from "ccxt";
@@ -538,10 +539,22 @@ async function longterm_strategy_function(bot) {
 
 
                   //If Price is higher than max of last X days and higher than buy order and bot has already bought then Sell
-                else if(currentPrice > historyMaxPrice && buyOrderCount == 0){
+                // else if(currentPrice > historyMaxPrice && buyOrderCount == 0){
 
                     let longtermBuyOrderObject = [];
                     fetchBotStrategyBuyOrder(bot, longtermBuyOrderObject);
+
+
+
+
+
+
+
+
+
+                    // setTimeout(() => {
+                    //
+                    // }, 1000);
 
                       //Wait for bot buy object to be fetched
                     setTimeout(() => {
@@ -550,13 +563,22 @@ async function longterm_strategy_function(bot) {
                       //And check that there a currentPrice != null
                       console.log(longtermBuyOrderObject[0]);
 
+
+                      let fetchedOrderArray = [];
+
+                      fetchOrder(bot.exchange, longtermBuyOrderObject[0].orderId,fetchedOrderArray);
+
+                      setTimeout(() => {
+                        console.log ("\n\nFetched Order Status: "+fetchedOrderArray[0].status +"\n\n")
+                      },1000);
+
                       //// TODO:
                       //  Check that buy was executed on Exchange before you sell if so
                       //Set buyCount back to zero if sell is not execute so that another buy can happen in the right circumstance
-                      //Also havea sellCount so more that no buy/sell link can happen if sell hasnt been executed 
+                      //Also havea sellCount so more that no buy/sell link can happen if sell hasnt been executed
 
 
-                      if(currentPrice > longtermBuyOrderObject.currentPrice){
+                      // if(currentPrice > longtermBuyOrderObject.currentPrice){
 
                         //// TODO:
 
@@ -587,11 +609,11 @@ async function longterm_strategy_function(bot) {
 
 
 
-                      }
+                      // }
 
                   },1000);
 
-                }
+                // }
 
 
 

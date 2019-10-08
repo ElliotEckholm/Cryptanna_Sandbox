@@ -131,6 +131,23 @@ export async function fetchTicker(exchange,market,marketInfo){
     })
 }
 
+//View market of of given exchange and market
+export async function fetchOrder(exchange,order,orderArray){
+    // console.log("Fetching Ticker");
+    // console.log(JSON.stringify(exchange));
+    // console.log(market);
+    // const  data = { info: "" };
+    await exchange.fetchOrder (order)
+    .then(res => {
+        // console.log ("\n\nFetched Order Status: "+order.status)
+        orderArray.push(res);
+    })
+
+    .catch( err => {
+        console.log(err);
+    })
+}
+
 // View your balance given the keys are provided.
 export async function fetchBalance(exchange, _balanceList){
   //Use this if you want to change balance to different base other than USD
