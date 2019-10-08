@@ -84,6 +84,7 @@ export default class Price_Line_Graph extends Component {
     yAxis: [],
     minY: [],
     maxY:[],
+    circle:[],
 
     //defualt price history to last 100 days
     timeFrame: 100,
@@ -267,6 +268,22 @@ loading() {
                             stroke={Colors.white}
                           />
                         }
+                        {
+                          //line representing maxY
+                          <Shape
+                            d={this.state.circle}
+                            strokeWidth={10}
+                            stroke={Colors.green}
+                          />
+                        }
+                        {
+                          //line representing maxY
+                          <Shape
+                            d={this.state.circle}
+                            strokeWidth={10}
+                            stroke={Colors.red}
+                          />
+                        }
                       </Group>
                     </Surface>
 
@@ -366,6 +383,47 @@ loading() {
                       .y(scaleY(max))
                       .curve(shape.curveLinear)([-0.5,0.5]);
 
+          //how to make spiral
+          // spiral = Array.from({ length: 10 }, (_, i) => [
+          //     (Math.PI / 3) * i, // angle (in radians)
+          //     2 * i // radius
+          // ],[10,10])
+
+
+          // let circle = shape.lineRadial()(spiral)
+
+
+          //How to make horizontal line in center of graph
+          // let centerPriceLine = scaleY((max- (max-min)/2))
+          //
+          //
+          // let circle = shape.line()
+          //             .x(d => scaleX(d))
+          //             .y(centerPriceLine)
+          //             .curve(shape.curveLinear)([0,100]);
+
+          //How to make circle in center of graph
+          //make sure stroke is 10
+          let centerPriceLine = scaleY((max- (max-min)/2))
+          let circle = shape.line()
+                        ///use scale functions here
+                      .x(scaleX(25))
+                      .y(centerPriceLine)
+                      .curve(shape.curveLinear)
+                      //use normal 0-this.state.timeframe here
+                      ([-4,4]);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
           this.setState(previousState => {
@@ -376,7 +434,8 @@ loading() {
                       xAxis:xAxis,
                       yAxis:yAxis,
                       minY:minY,
-                      maxY,maxY,
+                      maxY:maxY,
+                      circle:circle,
                       showLineGraph:true,
 
                       //Pie Information
