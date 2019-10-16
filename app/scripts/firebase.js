@@ -206,7 +206,8 @@ export async function storeBotStrategyBuyOrder(bot, orderId, isRunning, currentP
         currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount
     }
 
-    bot.longtermBuyOrderObject = longtermBuyOrderObject;
+    bot.longtermBuyOrderObject = [];
+    bot.longtermBuyOrderObject.push(longtermBuyOrderObject);
     bot.running = isRunning
 
     let ref = firebase

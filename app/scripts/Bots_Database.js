@@ -566,7 +566,7 @@ async function longterm_strategy_function(bot) {
 
                       let fetchedOrderArray = [];
 
-                      fetchOrder(bot.exchange, longtermBuyOrderObject[0].orderId,fetchedOrderArray);
+                      fetchOrder(bot.exchange, longtermBuyOrderObject[0][0].orderId,fetchedOrderArray);
 
                       setTimeout(() => {
                         console.log ("\n\nFetched Order Status: "+fetchedOrderArray[0].status +"\n\n")
