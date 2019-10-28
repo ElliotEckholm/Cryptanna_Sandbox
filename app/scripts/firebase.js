@@ -38,6 +38,27 @@ class Sandbox {
     ];
   }
 }
+// let longtermBuyOrderObject = {
+//     orderId:orderId,
+//     orderType:orderType,
+//     currentPrice:currentPrice,
+//     historyMinPrice:historyMinPrice,
+//     historyMaxPrice:historyMaxPrice,
+//     currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount,
+//     timeOfBuy:timeOfBuy
+// }
+class TradeOrdersClass {
+  cconstructor(orderId, orderType, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount, timeOfBuy) {
+    this.orderId = orderId;
+    this.orderType = orderType;
+    this.currentPrice = currentPrice;
+    this.historyMinPrice = historyMinPrice;
+    this.historyMaxPrice = historyMaxPrice;
+    this.currentPriceOfUserSpecificedAmount = currentPriceOfUserSpecificedAmount;
+    this.timeOfBuy = timeOfBuy;
+
+  }
+}
 
 export async function signOutUser() {
   await firebase
@@ -195,32 +216,39 @@ export async function isBotRunning(botName, isRunning) {
 }
 
 //Storing longtermBuyOrderObject in Bot's document
-export async function storeBotStrategyBuyOrder(bot, orderId, isRunning, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount) {
-    let currentUserID = getCurrentUserID();
-
-    let longtermBuyOrderObject = {
-        orderId:orderId,
-        currentPrice:currentPrice,
-        historyMinPrice:historyMinPrice,
-        historyMaxPrice:historyMaxPrice,
-        currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount
-    }
-
-    bot.longtermBuyOrderObject = [];
-    bot.longtermBuyOrderObject.push(longtermBuyOrderObject);
-    bot.running = isRunning
-
-    let ref = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUserID)
-      .collection("bots")
-      .doc(bot.name);
-
-    ref.set(bot);
-
-    console.log("Bot buy order stored successfully!");
-}
+// export async function storeBotStrategyBuyOrder(bot, orderType, orderId, isRunning, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount, timeOfBuy) {
+//     let currentUserID = getCurrentUserID();
+//
+//     let longtermBuyOrderObject = {
+//         orderId:orderId,
+//         orderType:orderType,
+//         currentPrice:currentPrice,
+//         historyMinPrice:historyMinPrice,
+//         historyMaxPrice:historyMaxPrice,
+//         currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount,
+//         timeOfBuy:timeOfBuy
+//     }
+//
+//     bot.longtermBuyOrderObject = [];
+//     bot.longtermBuyOrderObject.push(longtermBuyOrderObject);
+//     bot.running = isRunning
+//
+//
+//
+//
+//     let ref = firebase
+//       .firestore()
+//       .collection("users")
+//       .doc(currentUserID)
+//       .collection("bots")
+//       .doc(bot.name);
+//
+//     ref.update({
+//       longtermBuyOrderObject: firebase.firestore().FieldValue.arrayUnion(longtermBuyOrderObject)
+//     });
+//
+//     console.log("Bot buy order stored successfully!");
+// }
 
 //Fetching and then Deleting longtermBuyOrderObject in Bot's document
 export async function fetchBotStrategyBuyOrder(bot, longtermBuyOrderObject) {
@@ -243,6 +271,102 @@ export async function fetchBotStrategyBuyOrder(bot, longtermBuyOrderObject) {
 
 
     console.log("Bot buy order Fetched successfully!");
+}
+
+
+
+//Storing longtermBuyOrderObject in Bot's document
+export async function storeBotStrategyOrder(
+  botName,
+  orderId,
+  orderType,
+  currentPrice,
+  historyMinPrice,
+  historyMaxPrice,
+  currentPriceOfUserSpecificedAmount,
+  timeOfBuy
+
+) {
+  let currentUserID = getCurrentUserID();
+  console.log("Adding exchange collection to: ", getCurrentUserEmail());
+
+
+
+  let longtermOrderObject = {
+          orderId:orderId,
+          orderType:orderType,
+          currentPrice:currentPrice,
+          historyMinPrice:historyMinPrice,
+          historyMaxPrice:historyMaxPrice,
+          currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount,
+          timeOfBuy:timeOfBuy
+      }
+
+
+  let ref = firebase
+    .firestore()
+    .collection("users")
+    .doc(currentUserID)
+    .collection("bots")
+    .doc(botName)
+    .collection("Trades")
+    .doc(orderType);
+
+  ref.set(longtermOrderObject);
+}
+
+
+//Storing longtermBuyOrderObject in Bot's document
+export async function storeBotStrategySellOrder(bot, orderType, orderId, isRunning, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount, timeOfSell) {
+    let currentUserID = getCurrentUserID();
+
+    let longtermSellOrderObject = {
+        orderId:orderId,
+        orderType:orderType,
+        currentPrice:currentPrice,
+        historyMinPrice:historyMinPrice,
+        historyMaxPrice:historyMaxPrice,
+        currentPriceOfUserSpecificedAmount:currentPriceOfUserSpecificedAmount,
+        timeOfSell:timeOfSell
+    }
+
+    bot.longtermSellOrderObject = [];
+    bot.longtermSellOrderObject.push(longtermSellOrderObject);
+    bot.running = isRunning
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(bot.name);
+
+    ref.set(bot);
+
+    console.log("Bot Sell order stored successfully!");
+}
+
+//Fetching and then Deleting longtermBuyOrderObject in Bot's document
+export async function fetchBotStrategySellOrder(bot, longtermSellOrderObject) {
+    let currentUserID = getCurrentUserID();
+
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots");
+
+    ref.get().then(botDoc => {
+      botDoc.forEach(doc => {
+        if (doc._data.name == bot.name) {
+          longtermBuyOrderObject.push(doc._data.longtermSellOrderObject);
+        }
+      });
+    });
+
+
+    console.log("Bot Sell order Fetched successfully!");
 }
 
 

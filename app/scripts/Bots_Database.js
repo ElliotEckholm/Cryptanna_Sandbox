@@ -6,7 +6,7 @@ import {
   sandbox_exchange,
   fetchOrder
 } from "../scripts/ccxt.js";
-import { isBotRunning, storeBotStrategyBuyOrder, fetchBotStrategyBuyOrder } from "../scripts/firebase.js";
+import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
@@ -481,7 +481,7 @@ async function longterm_strategy_function(bot) {
                 //TODO
                 //Check to make sure only one buy is made at a time
                // if (currentPrice < historyMinPrice){
-               if (buyOrderCount == 0){
+               // if (buyOrderCount == 0){
 
 
 
@@ -500,9 +500,16 @@ async function longterm_strategy_function(bot) {
 
                     //Wait to see if bot is even still running
 
+
+                    let d = new Date();
+                    let timeOfBuy = d.getTime();//d.getDate();
+
+                    console.log("\n\nDate of Buy: "+timeOfBuy);
+
                     setTimeout(() => {
                       console.log("Order ID: "+orderId[0])
-                      storeBotStrategyBuyOrder(bot, orderId[0], isRunning[0],currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount);
+
+                      storeBotStrategyOrder(bot.name,  orderId[0], "Sell_Order_"+ orderId[0], isRunning[0],currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount,timeOfBuy);
                       //to make sure the buy happened
                       buyOrderCount = 1;
 
@@ -533,7 +540,7 @@ async function longterm_strategy_function(bot) {
                       // })
                       // .catch(err => console.log(err))
 
-                }
+                // }
 
 
 
