@@ -13,7 +13,7 @@
     "d3": "^5.7.0",
     "d3-shape": "^1.2.2",
     "react": "^16.6.3",
-    "react-native": "^0.57.8",
+    "react-native": "^0.58.6",
     "react-native-elements": "^0.19.1",
     "react-native-firebase": "^4.3.8",
     "react-native-keyboard-done-button": "^1.0.0",
@@ -28,11 +28,11 @@
     "toggle-switch-react-native": "^2.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.0.0-bridge.0",
     "babel-jest": "23.2.0",
     "babel-preset-react-native": "^5",
     "jest": "23.3.0",
-    "react-test-renderer": "16.4.1"
+    "react-test-renderer": "16.6.3"
   },
   "jest": {
     "preset": "react-native"
