@@ -29,7 +29,7 @@ import ExchangeDescription from '../screens/ExchangeDescription.js';
 
 
 import {fetchSandBoxBalance, getCurrentUserID} from '../scripts/firebase.js';
-import {fetchTicker,fetchBalance , sandbox_exchange} from '../scripts/ccxt.js';
+import {fetchTicker,fetchBalance , sandbox_exchange, coinbase_exchange} from '../scripts/ccxt.js';
 
 const { Surface, Group, Shape, ArtGroup, Path } = ART;
 
@@ -87,6 +87,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     minY: [],
     maxY:[],
     buy:[],
+    graphTimeFrame: 100,
 
     loading: true,
 
@@ -126,7 +127,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
       .catch(err => {
       })
       console.log("Outside fetch in Holdings",this.state.balanceList);
-      this.fetchHistory(sandbox_exchange);
+      this.fetchHistory(coinbase_exchange);
   }
 
   // _onExchangeSelect = () => {
@@ -162,21 +163,17 @@ loading() {
 
       return (
           <View styles = {styles.container}>
-              <View styles = {styles.textContainer}>
-                  <Text style={styles.exchangeTitle}>
-                      {this.state.chart_exchange.name}
-                  </Text>
-
-                  <View>
-
-                          <Text style={styles.marketTitle}>
-                            {this.props.btcBalance} BTC
-                          </Text>
-
-
-                  </View>
-
-              </View>
+            <View style={{flex:.1, flexDirection:'row', justifyContent:'space-around'}}>
+                <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
+                    Sandbox
+                </Text>
+            </View>
+            <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
+                100 Days
+            </Text>
+            <Text style={[styles.exchangeTitle]} >
+              BTC/USD
+            </Text>
 
           <View styles = {styles.graphContainer}>
 
@@ -185,6 +182,7 @@ loading() {
             - showLineGraph and showPie will always be different
             */}
             {(
+
               <View style = {styles.graph}>
                 <Surface width={width} height={height}>
                   <Group x={0} y={height/2}>
@@ -242,18 +240,24 @@ loading() {
               </View>
             )}
           </View>
+
+
         </View>
       );
   }
 
    fetchHistory = async (exchange) => {
-     console.log("FETCH HISTORY TEST", exchange);
+     //convert timeFrame given in days to UTC time
+     let d = new Date();
+     d.setDate(d.getDate() - (this.state.graphTimeFrame + 1));
+     let parsedUnixTime = d.getTime();
+     // console.log("FETCH HISTORY TEST", exchange);
     let sleep = (ms) => new Promise (resolve => setTimeout (resolve, ms));
     if (exchange.has.fetchOHLCV) {
           await sleep (exchange.rateLimit) // milliseconds
           this.state.historyList = [];
           name = exchange.name.replace("-","/");
-          historyList = await exchange.fetchOHLCV ('BTC/USD', '1d');
+          historyList = await exchange.fetchOHLCV ("BTC/USD", '1d',parsedUnixTime,undefined,{});
           historyList.reverse();
           let min = Infinity;
           let max = -Infinity;
@@ -263,7 +267,7 @@ loading() {
           // let maxList = [];
           let yAxisArr = [];
           let i;
-          for(i = 0; i <= 30; i++){
+          for(i = 0; i <= historyList.length - 1; i++){
             if(historyList[i][4] < min){
               min = historyList[i][4];
             }
@@ -278,11 +282,16 @@ loading() {
             yAxisArr.push({x:i,y:historyList[i][4]});
           }
 
+          // console.log("Sandbox price history length: "+ historyList.length)
+          // console.log("Sandbox price history : "+ historyList)
+
+          console.log("Sandbox Min: "+ min);
+          console.log("Sandbox Max: "+ max);
           yAxisArr[0] = {x:0,y:min - min/4};
           yAxisArr[i - 1] = {x:i - 1 ,y:max + max/4};
 
           //LINE INFORMATION DATA
-          let scaleX =  scaleTime().domain([0,30]).range([xOffset + 40 ,width - xOffset - 20]);
+          let scaleX =  scaleTime().domain([0,historyList.length - 1]).range([xOffset + 40 ,width - xOffset - 20]);
           let scaleY =  scaleLinear().domain([min - min/4,max + max/4]).range([height + yOffset - 20,yOffset + 10]);
 
           //THIS IS WHAT I HAVE TO USE DATA WITH AND FORMAT HOW THE DATA IS ORGANIZED

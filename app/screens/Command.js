@@ -15,8 +15,10 @@ import {
 import Styles from "../styles/Command.style";
 import PauseAllBotsButton from "../buttons/PauseAllBotsButton.js";
 import CommandExchangeItem from "../components/CommandExchangeItem.js";
+import CommandSandboxExchangeItem from "../components/CommandSandboxExchangeItem.js";
 import Spinner from "./../config/Spinner";
 import PriceLineGraph from "../charts/Price_Line_Graph.js";
+import SandboxPriceLineGraph from "../charts/Sandbox_Price_Line_Graph.js";
 import ToggleSwitch from "toggle-switch-react-native";
 import { Colors, red_shades } from "../styles/global/colors.js";
 import ccxt from "ccxt";
@@ -176,16 +178,23 @@ export default class Command extends Component {
   }
 
   checkNumberOfExchanges() {
-    if (this.state.noExchanges !== "") {
-      return (
-        <Text style={[Styles.text, { textAlign: "center" }]}>
-          No Exchanges Added
-        </Text>
-      );
-    } else {
+    // if (this.state.noExchanges !== "") {
+    //   return (
+    //     <Text style={[Styles.text, { textAlign: "center" }]}>
+    //       No Exchanges Added
+    //     </Text>
+    //   );
+    // } else {
       return (
         <ScrollView>
+          <CommandSandboxExchangeItem
+            navigation={this.props.navigation}
+            // chart_exchange={e}
+            // red_shades={red_shades[index]}
+            toggleBot={this.state.bots_toggle}
+          />
           {this.state.exchangeList.map((e, index) => (
+
             <CommandExchangeItem
               navigation={this.props.navigation}
               chart_exchange={e}
@@ -195,7 +204,7 @@ export default class Command extends Component {
           ))}
         </ScrollView>
       );
-    }
+    // }
   }
 
   loading = () => {
@@ -230,6 +239,7 @@ export default class Command extends Component {
               {this.state.exchangeList.map(exchange => (
                 <PriceLineGraph chart_exchange={exchange} />
               ))}
+              <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
             </ScrollView>
           </View>
         </View>
@@ -259,13 +269,13 @@ export default class Command extends Component {
           <View style={Styles.topContainer}>
             <View style={{ flex: 0.7, justifyContent: "center" }}>
               <Text style={[Styles.text, { fontSize: 20, fontWeight: "bold" }]}>
-                YOUR EXCHANGES
+                EXCHANGES
               </Text>
             </View>
 
             <TouchableOpacity
               style={Styles.infoContainer}
-              onPress={() => this.firstTimeUser()}
+              onPress={() => this.props.navigation.navigate("Onboarding")}
             >
               <Image
                 style={Styles.infoBtn}

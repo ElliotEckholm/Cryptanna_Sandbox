@@ -189,9 +189,23 @@ export default class Price_Line_Graph extends Component {
   }
 
 
-//pie chart
-  //
-
+//circle
+// {
+//   //line representing maxY
+//   <Shape
+//     d={this.state.circle}
+//     strokeWidth={10}
+//     stroke={Colors.green}
+//   />
+// }
+// {
+//   //line representing maxY
+//   <Shape
+//     d={this.state.circle}
+//     strokeWidth={10}
+//     stroke={Colors.red}
+//   />
+// }
 
 loading() {
       if (this.state.loading) {
@@ -268,22 +282,7 @@ loading() {
                             stroke={Colors.white}
                           />
                         }
-                        {
-                          //line representing maxY
-                          <Shape
-                            d={this.state.circle}
-                            strokeWidth={10}
-                            stroke={Colors.green}
-                          />
-                        }
-                        {
-                          //line representing maxY
-                          <Shape
-                            d={this.state.circle}
-                            strokeWidth={10}
-                            stroke={Colors.red}
-                          />
-                        }
+
                       </Group>
                     </Surface>
 
@@ -404,14 +403,14 @@ loading() {
 
           //How to make circle in center of graph
           //make sure stroke is 10
-          let centerPriceLine = scaleY((max- (max-min)/2))
-          let circle = shape.line()
-                        ///use scale functions here
-                      .x(scaleX(25))
-                      .y(centerPriceLine)
-                      .curve(shape.curveLinear)
-                      //use normal 0-this.state.timeframe here
-                      ([-4,4]);
+          // let centerPriceLine = scaleY((max- (max-min)/2))
+          // let circle = shape.line()
+          //               ///use scale functions here
+          //             .x(scaleX(25))
+          //             .y(centerPriceLine)
+          //             .curve(shape.curveLinear)
+          //             //use normal 0-this.state.timeframe here
+          //             ([-4,4]);
 
 
 
@@ -435,7 +434,7 @@ loading() {
                       yAxis:yAxis,
                       minY:minY,
                       maxY:maxY,
-                      circle:circle,
+                      // circle:circle,
                       showLineGraph:true,
 
                       //Pie Information
