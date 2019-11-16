@@ -280,6 +280,7 @@ export async function storeBotStrategyOrder(
   botName,
   orderId,
   orderType,
+  orderStatus,
   currentPrice,
   historyMinPrice,
   historyMaxPrice,
@@ -295,6 +296,7 @@ export async function storeBotStrategyOrder(
   let longtermOrderObject = {
           orderId:orderId,
           orderType:orderType,
+          orderStatus:orderStatus,
           currentPrice:currentPrice,
           historyMinPrice:historyMinPrice,
           historyMaxPrice:historyMaxPrice,

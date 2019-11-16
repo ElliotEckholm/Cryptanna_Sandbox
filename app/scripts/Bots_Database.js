@@ -509,7 +509,7 @@ async function longterm_strategy_function(bot) {
                     setTimeout(() => {
                       console.log("Order ID: "+orderId[0])
 
-                      storeBotStrategyOrder(bot.name,  orderId[0], "Sell_Order_"+ orderId[0], isRunning[0],currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount,timeOfBuy);
+                      storeBotStrategyOrder(bot.name,  orderId[0], "Buy_Order_"+ orderId[0],currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount,timeOfBuy);
                       //to make sure the buy happened
                       buyOrderCount = 1;
 
@@ -577,6 +577,8 @@ async function longterm_strategy_function(bot) {
 
                       setTimeout(() => {
                         console.log ("\n\nFetched Order Status: "+fetchedOrderArray[0].status +"\n\n")
+                        storeBotStrategyOrder(bot.name,  orderId[0], "Sell_Order_"+ orderId[0], fetchedOrderArray[0].status,currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount,timeOfBuy);
+
                       },1000);
 
                       //// TODO:
