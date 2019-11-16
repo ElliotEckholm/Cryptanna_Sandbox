@@ -8,10 +8,11 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 
 export default StyleSheet.create({
   container: {
-    backgroundColor: Colors.darkGray,
-    borderWidth : 1,
-    borderColor : Colors.white,
-    opacity : 0.8,
+    // backgroundColor: Colors.darkGray,
+    // borderWidth : 1,
+    // borderColor : Colors.white,
+    // opacity : 0.8,
+    padding: 10,
   },
   title: {
     textAlign: 'center',

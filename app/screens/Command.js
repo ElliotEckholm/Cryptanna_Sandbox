@@ -187,20 +187,23 @@ export default class Command extends Component {
     // } else {
       return (
         <ScrollView>
-          <CommandSandboxExchangeItem
-            navigation={this.props.navigation}
-            // chart_exchange={e}
-            // red_shades={red_shades[index]}
-            toggleBot={this.state.bots_toggle}
-          />
-          {this.state.exchangeList.map((e, index) => (
-
-            <CommandExchangeItem
+          <View style={{ paddingBottom: 10 }}>
+            <CommandSandboxExchangeItem
               navigation={this.props.navigation}
-              chart_exchange={e}
-              red_shades={red_shades[index]}
+              // chart_exchange={e}
+              // red_shades={red_shades[index]}
               toggleBot={this.state.bots_toggle}
             />
+          </View>
+          {this.state.exchangeList.map((e, index) => (
+            <View style={{ paddingBottom: 10 }}>
+              <CommandExchangeItem
+                navigation={this.props.navigation}
+                chart_exchange={e}
+                red_shades={red_shades[index]}
+                toggleBot={this.state.bots_toggle}
+              />
+            </View>
           ))}
         </ScrollView>
       );

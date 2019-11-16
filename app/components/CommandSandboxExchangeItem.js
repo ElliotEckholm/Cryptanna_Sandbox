@@ -464,7 +464,7 @@ loading() {
   render() {
     // console.log("LOOK", this.props.red_shades);
     return (
-      <View style={{flex:1, borderBottomWidth:1, borderColor:'#fff', backgroundColor: Colors.darkGray}}>
+      <View style={{flex:1, width:'95%', alignSelf: 'center', borderWidth: 1, borderColor:'#fff',borderRadius:10 ,backgroundColor: Colors.darkGray}}>
           {this.loading()}
       </View>
 

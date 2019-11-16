@@ -64,8 +64,8 @@ export default StyleSheet.create({
   },
   topContainer: {
     flex: 0.3,
-    borderBottomWidth: 2,
-    borderColor: "#fff",
+    // borderBottomWidth: 2,
+    // borderColor: "#fff",
     flexDirection: "row",
     justifyContent: "space-between",
     paddingLeft: 20,
