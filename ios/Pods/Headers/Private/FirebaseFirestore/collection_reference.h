@@ -1,1 +1,1 @@
-../../../FirebaseFirestore/Firestore/core/include/firebase/firestore/collection_reference.h
+../../../FirebaseFirestore/Firestore/core/src/firebase/firestore/api/collection_reference.h

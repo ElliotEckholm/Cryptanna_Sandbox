@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1F4B28E1BD51B632E91CFAA5A1BC4B43"
+               BlueprintIdentifier = "1C5E43B0A9555E7C2E43A6D7C8A23CF6"
+               BuildableName = "libgRPC-C++.a"
                BlueprintName = "gRPC-C++"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libgRPC-C++.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
