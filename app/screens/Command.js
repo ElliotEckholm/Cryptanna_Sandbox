@@ -238,7 +238,7 @@ export default class Command extends Component {
             <Text style={Styles.balanceText}>$ {this.state.totalBalance}</Text>
           </View>
           <View style={Styles.graphs}>
-            <ScrollView indicatorStyle={"white"}>
+            <ScrollView horizontal={true} indicatorStyle={"white"}>
               {this.state.exchangeList.map(exchange => (
                 <PriceLineGraph chart_exchange={exchange} />
               ))}

@@ -163,11 +163,9 @@ loading() {
 
       return (
           <View styles = {styles.container}>
-            <View style={{flex:.1, flexDirection:'row', justifyContent:'space-around'}}>
-                <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
-                    Sandbox
-                </Text>
-            </View>
+            <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
+                Sandbox
+            </Text>
             <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
                 100 Days
             </Text>

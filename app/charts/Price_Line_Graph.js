@@ -215,11 +215,7 @@ loading() {
       return (
           // Top title of which exchange you are following
           <View styles = {styles.container}>
-              <View style={{flex:.1, flexDirection:'row', justifyContent:'space-around'}}>
-                  <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
-                      {this.props.chart_exchange.name}
-                  </Text>
-              </View>
+            
               <View styles={styles.graphContainer}>
                 {/*
                 - If state variable of lineGraph is true
@@ -227,6 +223,9 @@ loading() {
                 */}
                 {   this.state.showLineGraph &&(
                   <View style = {styles.graph}>
+                  <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
+                      {this.props.chart_exchange.name}
+                  </Text>
                   <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
                       100 Days
                   </Text>
