@@ -66,8 +66,8 @@ export async function fetchHistory(exchangeTitle, market, timeFrame) {
     console.log("In History Function Min Price: " + min);
     console.log("Max Price: " + max);
 
-    let priceExtremaArray = [min, max];
-    return priceExtremaArray;
+    let historicalData = historyList;
+    return historicalData;
   }
 }
 
@@ -400,11 +400,122 @@ async function aggressive_strategy_function(bot) {
   }, set_interval_time);
 }
 
+////////////////////////////////-----Sandbox Multiday Bot Strategy--------////////////////////////////
+///////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+function calculateMinInDayRange(arr, begin, end) {
+    arr = [].slice.apply(arr, [].slice.call(arguments, 1));
+    return Math.min.apply(Math, arr)
+}
+
+function calculateMaxInDayRange(arr, begin, end) {
+    arr = [].slice.apply(arr, [].slice.call(arguments, 1));
+    return Math.max.apply(Math, arr)
+}
+
+
+
+async function multi_day_sandbox_strategy_function(bot) {
+  set_interval_time = 5000; //Bot updates every 5 seconds
+
+  let botInterval = null;
+  if (botInterval !== null) return;
+
+  //Only allow one buy order at a time
+  let buyOrderCount = 0;
+
+  botInterval = setInterval(() => {
+    let isRunning = [];
+    isBotRunning(bot.name, isRunning);
+
+    interval_price_sum = 0.0;
+    numberOfPrices = 10;
+
+
+    setTimeout(() => {
+      if (isRunning[0] == true) {
+        console.log("\n Running: ", bot.name);
+        let market = bot.market;
+
+        let exchangeTitle = bot.exchange.name.toString().toLowerCase();
+        console.log("\n\nSandbox-BOT-Exchange", exchangeTitle);
+        console.log("\n\nSandbox-BOT-Timeframe", bot.maxDays);
+        let exchange = new ccxt[exchangeTitle]();
+        let marketInfo = {};
+
+        //Fetch Historical Data
+        let fetchedHistoricalData = [];
+        let structuredHistoricalData = [];
+
+        fetchedHistoricalData = fetchHistory(exchangeTitle, market, bot.maxDays).then(
+          fetchedHistoricalData => {
+
+            //Create simple array that only contains prices
+            let priceArray = [];
+
+            //Loop through historical prices
+            for (let i = 0; i <= fetchedHistoricalData.length - 1; i++) {
+
+              //Populate price array
+              priceArray.push(fetchedHistoricalData[i][4]);
+
+              //Create scructured historical data
+              historicalPriceObject = {};
+              //Grab Price
+              historicalPriceObject.price = fetchedHistoricalData[i][4];
+              //Grab Unix Time
+              historicalPriceObject.unixTime = fetchedHistoricalData[i][0];
+              //Grab Formatted Human Readable Time
+              let date = new Date(historyList[i][0]);
+              historicalPriceObject.formattedTime = date.toLocaleDateString();
+
+              structuredHistoricalData.push(historicalPriceObject);
+            }
+
+            //Loop through structured historical data
+            structuredHistoricalData.forEach((historicalPriceObject, index) => {
+
+              //Find local min and max for every 10 day window
+              if (index % 10 == 0){
+
+                console.log("Data Range: ")
+                console.log(structuredHistoricalData[index].formattedTime)
+                console.log(structuredHistoricalData[index + 10].formattedTime)
+
+                //Grab min max from last 10 days in price array
+                let localMin = calculateMinInDayRange(priceArray, index, index + 10);
+                let localMax = calculateMaxInDayRange(priceArray, index, index + 10);
+
+                console.log(historicalPriceObject.formattedTime)
+                console.log(localMin)
+                console.log(localMax)
+              }
+
+            });
+
+
+
+          }
+        );
+
+
+      } else if (isRunning[0] == false) {
+        clearInterval(botInterval);
+        botInterval = null;
+        setTimeout(() => {
+          console.log("BOT STOPPED");
+        }, 1000);
+      }
+    }, 1000);
+  }, set_interval_time);
+}
+
 ////////////////////////////////-----Longterm--------////////////////////////////
 ///////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-async function longterm_strategy_function(bot) {
+async function longterm_strategy_function_old(bot) {
   set_interval_time = 5000; //1 seconds
   let botInterval = null;
   let windowPriceArray = [];
@@ -787,7 +898,7 @@ function strategySelector(bot) {
   } else if (bot.strategy_name == "Aggressive") {
     aggressive_strategy_function(bot);
   } else if (bot.strategy_name == "Longterm") {
-    longterm_strategy_function(bot);
+    multi_day_sandbox_strategy_function(bot);
   }
 }
 

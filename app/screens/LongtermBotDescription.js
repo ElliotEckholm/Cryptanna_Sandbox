@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, Image, StyleSheet } from "react-native";
 import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";
+import CommandSandboxExchangeItem from "../components/CommandSandboxExchangeItem.js";
 import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
 import styles from "../styles/BotDescription.style";
 import Spinner from "./../config/Spinner";
@@ -81,11 +82,19 @@ export default class LongTermBotDescription extends Component {
 
   renderExchanges = () => {
     return (
+      <View>
+      <CommandSandboxExchangeItem
+        navigation={this.props.navigation}
+        // chart_exchange={e}
+        // red_shades={red_shades[index]}
+        toggleBot={this.state.bots_toggle}
+      />
       <FlatList
         data={this.state.exchangeList}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
       />
+      </View>
     );
   };
 
