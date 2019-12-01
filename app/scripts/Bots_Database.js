@@ -6,7 +6,7 @@ import {
   sandbox_exchange,
   fetchOrder
 } from "../scripts/ccxt.js";
-import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder } from "../scripts/firebase.js";
+import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder, storeBotSandboxTradeHistory } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
@@ -404,16 +404,13 @@ async function aggressive_strategy_function(bot) {
 ///////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-function calculateMinInDayRange(arr, begin, end) {
+function calculateMinMaxInDayRange(arr, begin, end) {
     arr = [].slice.apply(arr, [].slice.call(arguments, 1));
-    return Math.min.apply(Math, arr)
+    return{
+      'min': Math.min.apply(Math, arr),
+      'max' : Math.max.apply(Math, arr)
+    }
 }
-
-function calculateMaxInDayRange(arr, begin, end) {
-    arr = [].slice.apply(arr, [].slice.call(arguments, 1));
-    return Math.max.apply(Math, arr)
-}
-
 
 
 async function multi_day_sandbox_strategy_function(bot) {
@@ -422,18 +419,29 @@ async function multi_day_sandbox_strategy_function(bot) {
   let botInterval = null;
   if (botInterval !== null) return;
 
-  //Only allow one buy order at a time
-  let buyOrderCount = 0;
-
-  //Timeframe window to check for min and max price
-  let priceRangeWindow = 10;
+  let tradeHistoryArray = [];
 
   botInterval = setInterval(() => {
     let isRunning = [];
     isBotRunning(bot.name, isRunning);
 
+
+
+
     setTimeout(() => {
       if (isRunning[0] == true) {
+
+
+
+        //Only allow one buy order at a time
+        let profitMargin = 0.0;
+        let buyOrderCount = 0;
+        let sellOrderCount = 0;
+        let maxHistoricalTime = 100;
+
+        //Timeframe window to check for min and max price
+        let priceRangeWindow = 10;
+
         console.log("\n Running: ", bot.name);
         let market = bot.market;
 
@@ -447,14 +455,18 @@ async function multi_day_sandbox_strategy_function(bot) {
         let fetchedHistoricalData = [];
         let structuredHistoricalData = [];
 
-        fetchedHistoricalData = fetchHistory(exchangeTitle, market, bot.maxDays).then(
+        fetchedHistoricalData = fetchHistory(exchangeTitle, market, maxHistoricalTime).then(
           fetchedHistoricalData => {
+
+            console.log(fetchedHistoricalData);
 
             //Create simple array that only contains prices
             let priceArray = [];
+            let growingPriceArray = [];
 
             //Loop through historical prices
             for (let i = 0; i <= fetchedHistoricalData.length - 1; i++) {
+
 
               //Populate price array
               priceArray.push(fetchedHistoricalData[i][4]);
@@ -466,40 +478,128 @@ async function multi_day_sandbox_strategy_function(bot) {
               //Grab Unix Time
               historicalPriceObject.unixTime = fetchedHistoricalData[i][0];
               //Grab Formatted Human Readable Time
-              let date = new Date(historyList[i][0]);
+              let date = new Date(fetchedHistoricalData[i][0]);
               historicalPriceObject.formattedTime = date.toLocaleDateString();
 
               structuredHistoricalData.push(historicalPriceObject);
+
             }
 
             //Loop through structured historical data
             structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
 
-              //Find local min and max for every 10 day window
-              if (index % priceRangeWindow == 0 && index <= (bot.maxDays - priceRangeWindow)){
-                let indexMin = index;
-                let indexMax = index + priceRangeWindow;
-                console.log("Index: ", index)
+              //Find local min and max for every X day window
 
-                console.log("Data Range: ")
-                console.log(structuredHistoricalData[indexMin].formattedTime)
-                console.log(structuredHistoricalData[indexMax].formattedTime)
+              if (index >= priceRangeWindow){
+
+
+
+                let indexMin = index - priceRangeWindow;
+                let indexMax = index;
+                // console.log("Index: ", index)
+                //
+                // console.log("Data Range: ")
+                // console.log(structuredHistoricalData[indexMin].formattedTime)
+                // console.log(structuredHistoricalData[indexMax].formattedTime)
 
                 //Grab min max from last 10 days in price array
-                let localMin = calculateMinInDayRange(priceArray, indexMin, indexMax);
-                let localMax = calculateMaxInDayRange(priceArray, indexMin, indexMax);
+                let localMinMax = calculateMinMaxInDayRange(priceArray, indexMin, indexMax);
 
-                console.log(localMin)
-                console.log(localMax)
+                // console.log("Local Maximums: ")
+                // console.log("Min: ",localMinMax['min'])
+                // console.log("Min Index: ",priceArray.indexOf(localMinMax['min']))
+                // console.log("Max: ",localMinMax['max'])
+                // console.log("Max Index: ",priceArray.indexOf(localMinMax['max']))
+
+                //Buy if current price is less than the min over the entire window buy
+                if ((localMinMax['min'] / structuredHistoricalData[index].price) > 0.90 && (buyOrderCount - sellOrderCount) == 0){
+                  console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
+                  console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
+                  buyOrderCount += 1
+                  console.log('\nBUY Count: ',buyOrderCount)
+
+                  //Subract Buy from Profit Margin
+                  profitMargin -= structuredHistoricalData[index].price;
+
+                  //Create trade history buy object and push to trade history array
+                  let tradeHistoryObject = {};
+                  tradeHistoryObject.type = "Buy";
+                  tradeHistoryObject.price = structuredHistoricalData[index].price;
+                  tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                  tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                  tradeHistoryObject.currentProfitMargin = profitMargin;
+                  tradeHistoryObject.count = buyOrderCount;
+
+                  tradeHistoryArray.push(tradeHistoryObject);
+                }
+
+                //Sell if current price is greater than the max over the entire window buy
+                if (localMinMax['max'] < structuredHistoricalData[index].price && (buyOrderCount - sellOrderCount) == 1){
+                  console.log('\n\nSell at: ',structuredHistoricalData[index].price)
+                  console.log('\nSell Day: ',structuredHistoricalData[index].formattedTime)
+                  sellOrderCount += 1
+                  console.log('\nSell Count: ',sellOrderCount)
+
+                  //Add Sell to Profit Margin
+                  profitMargin += structuredHistoricalData[index].price;
+
+
+                  //Create trade history sell object and push to trade history array
+                  let tradeHistoryObject = {};
+                  tradeHistoryObject.type = "Sell";
+                  tradeHistoryObject.price = structuredHistoricalData[index].price;
+                  tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                  tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                  tradeHistoryObject.currentProfitMargin = profitMargin;
+                  tradeHistoryObject.count = sellOrderCount;
+
+                  tradeHistoryArray.push(tradeHistoryObject);
+
+                }
+
+
               }
+
+
+              //------LOGIC for MACD Bot-------
+
+              // growingPriceArray.push(structuredHistoricalData[index].price);
+              //
+              // //at interesection of short term and long term EMA
+              // //if slope_shortTerm < 0 && slope_longTerm > 0 then Sell
+              // //if slope_shortTerm > 0 && slope_longTerm < 0 then Buy
+              // shortTerm_EMA = EMACalc(growingPriceArray, 12);
+              // longTerm_EMA = EMACalc(growingPriceArray, 26);
+              //
+              // standard_MACD = (shortTerm_EMA - longTerm_EMA)
+              //
+              // if (standard_MACD >= 0){
+              //   console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
+              //   console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
+              //
+              // }
+              // if (standard_MACD < 0){
+              //   console.log('\n\n Sell at: ',structuredHistoricalData[index].price)
+              //   console.log('\n Sell Day: ',structuredHistoricalData[index].formattedTime)
+              // }
+
+              // console.log("Short Term EMA");
+              // console.log(shortTerm_EMA[shortTerm_EMA.length - 1]);
+              //
+              // console.log("Long Term EMA");
+              // console.log(longTerm_EMA[longTerm_EMA.length - 1]);
 
             });
 
+            console.log("\n\n\n Profit Margin: ", profitMargin);
+            console.log("\n\n");
 
 
           }
         );
+
+
 
 
       } else if (isRunning[0] == false) {
@@ -509,6 +609,17 @@ async function multi_day_sandbox_strategy_function(bot) {
           console.log("BOT STOPPED");
         }, 1000);
       }
+
+
+
+      //Store Buys and Sells Array in Firebase
+      console.log("\n\n Trade History")
+      console.log(tradeHistoryArray)
+
+      setTimeout(() => {
+        storeBotSandboxTradeHistory(bot.name, tradeHistoryArray);
+      }, 1000);
+
     }, 1000);
   }, set_interval_time);
 }

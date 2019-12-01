@@ -319,6 +319,31 @@ export async function storeBotStrategyOrder(
 
 
 //Storing longtermBuyOrderObject in Bot's document
+export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray) {
+  let currentUserID = getCurrentUserID();
+  console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
+
+  //Loop through trade history data
+  tradeHistoryArray.forEach((tradeHistoryObject) => {
+    let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(botName)
+      .collection("Trades")
+      .doc(tradeObjectStorageName)
+
+    ref.set(tradeHistoryObject);
+
+  });
+}
+
+
+
+
+//Storing longtermBuyOrderObject in Bot's document
 export async function storeBotStrategySellOrder(bot, orderType, orderId, isRunning, currentPrice, historyMinPrice, historyMaxPrice, currentPriceOfUserSpecificedAmount, timeOfSell) {
     let currentUserID = getCurrentUserID();
 

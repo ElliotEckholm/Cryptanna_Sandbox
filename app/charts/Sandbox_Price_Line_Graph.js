@@ -87,7 +87,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     minY: [],
     maxY:[],
     buy:[],
-    graphTimeFrame: 100,
+    graphTimeFrame: 300,
 
     loading: true,
 
@@ -167,7 +167,7 @@ loading() {
                 Sandbox
             </Text>
             <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
-                100 Days
+                {this.state.graphTimeFrame} Days
             </Text>
             <Text style={[styles.exchangeTitle]} >
               BTC/USD
