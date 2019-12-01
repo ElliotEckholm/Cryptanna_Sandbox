@@ -425,13 +425,12 @@ async function multi_day_sandbox_strategy_function(bot) {
   //Only allow one buy order at a time
   let buyOrderCount = 0;
 
+  //Timeframe window to check for min and max price
+  let priceRangeWindow = 10;
+
   botInterval = setInterval(() => {
     let isRunning = [];
     isBotRunning(bot.name, isRunning);
-
-    interval_price_sum = 0.0;
-    numberOfPrices = 10;
-
 
     setTimeout(() => {
       if (isRunning[0] == true) {
@@ -476,18 +475,21 @@ async function multi_day_sandbox_strategy_function(bot) {
             //Loop through structured historical data
             structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
+
               //Find local min and max for every 10 day window
-              if (index % 10 == 0){
+              if (index % priceRangeWindow == 0 && index <= (bot.maxDays - priceRangeWindow)){
+                let indexMin = index;
+                let indexMax = index + priceRangeWindow;
+                console.log("Index: ", index)
 
                 console.log("Data Range: ")
-                console.log(structuredHistoricalData[index].formattedTime)
-                console.log(structuredHistoricalData[index + 10].formattedTime)
+                console.log(structuredHistoricalData[indexMin].formattedTime)
+                console.log(structuredHistoricalData[indexMax].formattedTime)
 
                 //Grab min max from last 10 days in price array
-                let localMin = calculateMinInDayRange(priceArray, index, index + 10);
-                let localMax = calculateMaxInDayRange(priceArray, index, index + 10);
+                let localMin = calculateMinInDayRange(priceArray, indexMin, indexMax);
+                let localMax = calculateMaxInDayRange(priceArray, indexMin, indexMax);
 
-                console.log(historicalPriceObject.formattedTime)
                 console.log(localMin)
                 console.log(localMax)
               }
