@@ -31,15 +31,15 @@ export default class BotTrackedMarketItem extends Component {
       console.log("BOT TYPE: ",botType)
 
 
-      if(botType == "Medium"){
-        navigate('MediumBotSelectMarket', {exchangeTitle: exchangeTitle, exchange:exchange,marketName : marketName, marketBalance : marketBalance});
+      if(botType == "MACD"){
+        navigate('MACDBotSelectMarket', {exchangeTitle: exchangeTitle, exchange:exchange,marketName : marketName, marketBalance : marketBalance});
 
       }else if (botType == "Aggressive"){
         navigate('AggressiveBotSelectMarket', {exchangeTitle: exchangeTitle, exchange:exchange,marketName : marketName, marketBalance : marketBalance});
 
       }
-      else if (botType == "Longterm"){
-        navigate('LongtermBotSelectMarket', {exchangeTitle: exchangeTitle, exchange:exchange,marketName : marketName, marketBalance : marketBalance});
+      else if (botType == "MultiDay"){
+        navigate('MultiDayBotSelectMarket', {exchangeTitle: exchangeTitle, exchange:exchange,marketName : marketName, marketBalance : marketBalance});
 
       }
     }

@@ -76,7 +76,7 @@ export default class LongTermBotDescription extends Component {
       thumbnail={item.thumbnail}
       exchange={item.exchange}
       navigation={this.props.navigation}
-      botType="Longterm"
+      botType="MultiDay"
     />
   );
 

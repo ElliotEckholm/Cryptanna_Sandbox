@@ -290,11 +290,11 @@ static NSString *const kFIRParameterLocation NS_SWIFT_NAME(AnalyticsParameterLoc
 /// (NSString).
 /// <pre>
 ///     NSDictionary *params = @{
-///       kFIRParameterMedium : @"email",
+///       kFIRParameterMACD : @"email",
 ///       // ...
 ///     };
 /// </pre>
-static NSString *const kFIRParameterMedium NS_SWIFT_NAME(AnalyticsParameterMedium) = @"medium";
+static NSString *const kFIRParameterMACD NS_SWIFT_NAME(AnalyticsParameterMACD) = @"medium";
 
 /// Number of nights staying at hotel (signed 64-bit integer as NSNumber).
 /// <pre>

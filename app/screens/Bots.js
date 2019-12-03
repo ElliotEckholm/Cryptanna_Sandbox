@@ -28,23 +28,23 @@ export default class Bots extends Component {
       20
     );
   };
-  _onSelectMedium = e => {
+  _onSelectMACD = e => {
     this.setState({ selectedBot: "mediumBot" });
     const { navigate } = this.props.navigation;
     setTimeout(
       () =>
-        navigate("MediumBotDescription", {
+        navigate("MACDBotDescription", {
           selectedBot: this.state.selectedBot
         }),
       20
     );
   };
-  _onSelectLongterm = e => {
+  _onSelectMultiDay = e => {
     this.setState({ selectedBot: "longtermBot" });
     const { navigate } = this.props.navigation;
     setTimeout(
       () =>
-        navigate("LongtermBotDescription", {
+        navigate("MultiDayBotDescription", {
           selectedBot: this.state.selectedBot
         }),
       20
@@ -78,9 +78,9 @@ export default class Bots extends Component {
         <ScrollView>
           <View style={Styles.imageContainer}>
             <View style={{ padding: 10 }}>
-              <TouchableOpacity onPress={this._onSelectLongterm}>
+              <TouchableOpacity onPress={this._onSelectMultiDay}>
                 <View style={{ borderWidth: 1, borderColor: "#fff" }}>
-                  <Text style={Styles.botLongtermTitle}>
+                  <Text style={Styles.botMultiDayTitle}>
                     Multiday Low and High
                   </Text>
                   <Image
@@ -99,9 +99,9 @@ export default class Bots extends Component {
           </View>
 
           <View style={{padding:10}}>
-          <TouchableOpacity onPress={this._onSelectMedium}>
+          <TouchableOpacity onPress={this._onSelectMACD}>
             <View style={{borderWidth:1,borderColor:'#fff'}}>
-              <Text style={Styles.botConvservativeTitle}>Moving Average Safe</Text>
+              <Text style={Styles.botConvservativeTitle}>Moving Average</Text>
               <Image
                 source={require('../assets/images/White_Eye.png')}
                 style={{height:50,width:50,alignSelf:'center', padding:20}}

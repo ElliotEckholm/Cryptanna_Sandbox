@@ -13,7 +13,7 @@ import MarketItem from '../items/MarketItem.js';
 import ccxt from 'ccxt';
 import Styles from "../styles/BotSelectMarket.style";
 
-import {BasicBotClass} from '../scripts/Bots_Database.js';
+import {MACDBotClass} from '../scripts/Bots_Database.js';
 
 import {addBotsSubCollection} from '../scripts/firebase.js';
 import {fetchTicker,fetchMarket_badway,fetchMarkets_Item_Info,fetchTicker_promise} from '../scripts/ccxt.js';
@@ -39,7 +39,7 @@ export default class SelectMarket extends Component {
   _onImplementBot = () => {
     const { params } = this.props.navigation.state;
 
-    let bot = new BasicBotClass(params.exchange,params.marketName,false, params.marketBalance, this.state.btc_amount, this.state.usd_amount);
+    let bot = new MACDBotClass(params.exchange,params.marketName,false, params.marketBalance, this.state.btc_amount, this.state.usd_amount);
 
 
     Alert.alert(
@@ -77,7 +77,7 @@ export default class SelectMarket extends Component {
         />
 
         <View >
-          <Text style={Styles.title}>{'Medium Trader \n' +params.marketName+' Market'} </Text>
+          <Text style={Styles.title}>{'MACD Trader \n' +params.marketName+' Market'} </Text>
           <Text style={Styles.price}> {'Current Holdings: '+params.marketBalance+' '+params.marketName.substring(0, params.marketName.indexOf('-'))}</Text>
 
 

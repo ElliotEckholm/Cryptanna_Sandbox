@@ -90,11 +90,11 @@ static NSString *const kFIREventBeginCheckout NS_SWIFT_NAME(AnalyticsEventBeginC
 
 /// Campaign Detail event. Log this event to supply the referral details of a re-engagement
 /// campaign. Note: you must supply at least one of the required parameters kFIRParameterSource,
-/// kFIRParameterMedium or kFIRParameterCampaign. Params:
+/// kFIRParameterMACD or kFIRParameterCampaign. Params:
 ///
 /// <ul>
 ///     <li>@c kFIRParameterSource (NSString)</li>
-///     <li>@c kFIRParameterMedium (NSString)</li>
+///     <li>@c kFIRParameterMACD (NSString)</li>
 ///     <li>@c kFIRParameterCampaign (NSString)</li>
 ///     <li>@c kFIRParameterTerm (NSString) (optional)</li>
 ///     <li>@c kFIRParameterContent (NSString) (optional)</li>

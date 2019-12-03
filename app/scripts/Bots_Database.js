@@ -86,151 +86,229 @@ function EMACalc(mArray, mRange) {
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-async function basic_strategy_function(bot) {
-  set_interval_time = 1000; //1 seconds
-  let botInterval = null;
-  let windowPriceArray = [];
-  let growingPriceArray = [];
+async function MACD_strategy_function(bot) {
+  console.log("MACD Bot Initiated");
+  set_interval_time = 5000; //Bot updates every 5 seconds
 
+  let botInterval = null;
   if (botInterval !== null) return;
+
+  let tradeHistoryArray = [];
+
   botInterval = setInterval(() => {
     let isRunning = [];
     isBotRunning(bot.name, isRunning);
-    //console.log("\n Bot Name \n", bot.name);
-    interval_price_sum = 0.0;
-    numberOfPrices = 10;
+
+
+
 
     setTimeout(() => {
       if (isRunning[0] == true) {
-        // console.log("BASIC-BOT-Exchange",bot.exchange);
-        // console.log("BASIC-BOT-Market",bot.market);
-        // console.log("BASIC-BOT-USD-Amount",bot.usd_amount);
-        // console.log("BASIC-BOT-BTC-Amount",bot.btc_amount);
 
-        // let market = bot.market;
-        //
-        // let exchangeTitle = bot.exchange.name;
-        // let exchange = new ccxt[exchangeTitle] ();
 
-        // let currentPrice = 0.0;
 
+        //Only allow one buy order at a time
+        let profitMargin = 0.0;
+        let buyOrderCount = 0;
+        let sellOrderCount = 0;
+        let maxHistoricalTime = 300;
+
+        //Timeframe window to check for min and max price
+        let priceRangeWindow = 10;
+
+        console.log("\n Running: ", bot.name);
         let market = bot.market;
 
         let exchangeTitle = bot.exchange.name.toString().toLowerCase();
-        console.log("BASIC-BOT-Exchange", exchangeTitle);
+        console.log("\n\nSandbox-BOT-Exchange", exchangeTitle);
+        console.log("\n\nSandbox-BOT-Timeframe", maxHistoricalTime);
         let exchange = new ccxt[exchangeTitle]();
         let marketInfo = {};
 
-        fetchTicker(exchange, market, marketInfo)
-          .then(() => {
-            let currentPrice_string =
-              "Current Price of Bitcoin: $" + Number(marketInfo.bid).toFixed(2);
-            let currentPrice = parseFloat(Number(marketInfo.bid).toFixed(2));
+        //Fetch Historical Data
+        let fetchedHistoricalData = [];
+        let structuredHistoricalData = [];
 
-            // console.log("BOT CURRENT PRICE")
-            // console.log(currentPrice)
+        fetchedHistoricalData = fetchHistory(exchangeTitle, market, maxHistoricalTime).then(
+          fetchedHistoricalData => {
 
-            windowPriceArray.push(currentPrice);
-            growingPriceArray.push(currentPrice);
+            console.log(fetchedHistoricalData);
 
-            // interval_price_sum += currentPrice;
+            //Create simple array that only contains prices
+            let priceArray = [];
+            let growingPriceArray = [];
 
-            if (windowPriceArray.length == numberOfPrices) {
-              console.log(windowPriceArray);
+            //Loop through historical prices
+            for (let i = 0; i <= fetchedHistoricalData.length - 1; i++) {
 
-              let priceArraySum = 0.0;
-              let priceArrayAvg = 0.0;
-              let maxPrice = 0.0;
-              let minPrice = 0.0;
-              let maxMinSpread = 0.0;
-              let priceSpread = 0.0;
 
-              windowPriceArray.forEach(price => {
-                priceArraySum += price;
-              });
+              //Populate price array
+              priceArray.push(fetchedHistoricalData[i][4]);
 
-              maxPrice = Math.max.apply(null, windowPriceArray);
-              minPrice = Math.min.apply(null, windowPriceArray);
-              maxMinSpread = maxPrice - minPrice;
-              priceSpread =
-                windowPriceArray[numberOfPrices - 1] - windowPriceArray[0];
-              priceArrayAvg = priceArraySum / numberOfPrices;
+              //Create scructured historical data
+              historicalPriceObject = {};
+              //Grab Price
+              historicalPriceObject.price = fetchedHistoricalData[i][4];
+              //Grab Unix Time
+              historicalPriceObject.unixTime = fetchedHistoricalData[i][0];
+              //Grab Formatted Human Readable Time
+              let date = new Date(fetchedHistoricalData[i][0]);
+              historicalPriceObject.formattedTime = date.toLocaleDateString();
 
-              // console.log("BOT Average PRICE over 10 seconds")
-              // console.log(priceArrayAvg)
-              // console.log("BOT Max PRICE over 10 seconds")
-              // console.log(maxPrice)
-              // console.log("BOT Min PRICE over 10 seconds")
-              // console.log(minPrice)
-              // console.log("BOT Max Min Spread PRICE over 10 seconds")
-              // console.log(maxMinSpread)
-              // console.log("BOT Price Spread PRICE over 10 seconds")
-              // console.log(priceSpread)
+              structuredHistoricalData.push(historicalPriceObject);
 
-              //Bot enters the market here
-              //buy when the price is going down
-              if (priceSpread < 0 && Math.abs(priceSpread) > 10.0) {
-                let orderId = [];
-                limitBuyOrder(
-                  bot.exchange,
-                  orderId,
-                  bot.market,
-                  bot.btc_amount,
-                  currentPrice
-                );
-              }
-              //sell when the price is going up
-              if (priceSpread > 0) {
-                limitSellOrder(
-                  bot.exchange,
-                  bot.market,
-                  bot.btc_amount,
-                  currentPrice - 500
-                );
-              }
-
-              //clear priceArray
-              windowPriceArray = [];
             }
 
-            //at interesection of short term and long term EMA
-            //if slope_shortTerm < 0 && slope_longTerm > 0 then Sell
-            //if slope_shortTerm > 0 && slope_longTerm < 0 then Buy
-            shortTerm_EMA = EMACalc(growingPriceArray, 5);
-            longTerm_EMA = EMACalc(growingPriceArray, 10);
+            //Loop through structured historical data
+            structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
-            console.log("Short Term EMA");
-            console.log(shortTerm_EMA[shortTerm_EMA.length - 1]);
 
-            console.log("Long Term EMA");
-            console.log(longTerm_EMA[longTerm_EMA.length - 1]);
-          })
-          .catch(err => {
-            console.log(err);
-          });
+              //Find local min and max for every X day window
 
-        // limitSellOrder(bot.exchange, bot.market,   bot.btc_amount,   bot.usd_amount);
+              // if (index >= priceRangeWindow){
+              //
+              //
+              //
+              //   let indexMin = index - priceRangeWindow;
+              //   let indexMax = index;
+              //   // console.log("Index: ", index)
+              //   //
+              //   // console.log("Data Range: ")
+              //   // console.log(structuredHistoricalData[indexMin].formattedTime)
+              //   // console.log(structuredHistoricalData[indexMax].formattedTime)
+              //
+              //   //Grab min max from last 10 days in price array
+              //   let localMinMax = calculateMinMaxInDayRange(priceArray, indexMin, indexMax);
+              //
+              //   // console.log("Local Maximums: ")
+              //   // console.log("Min: ",localMinMax['min'])
+              //   // console.log("Min Index: ",priceArray.indexOf(localMinMax['min']))
+              //   // console.log("Max: ",localMinMax['max'])
+              //   // console.log("Max Index: ",priceArray.indexOf(localMinMax['max']))
 
-        //   await bot.exchange.fetchOrderBook(bot.market)
-        //   .then(res => {
-        //       let bid = res.bids.length ? res.bids[0][0] : undefined
-        //       let buyAsk = res.asks.length ? res.asks[0][0] : undefined
-        //       let spread = (bid && buyAsk) ? buyAsk - bid : undefined
-        //       console.log (exchange.id, 'market price', { bid, buyAsk, spread });
-        //
-        //       // limitBuyOrder(exchange.market[0], 1, buyAsk.toFixed(2));
-        //
-        //       // waits 30 seconds before placing a sell
-        //       setTimeout(() => {
-        //           let sellAsk = res.asks.length ? res.asks[0][0] : undefined
-        //           console.log(`Will sell when price reaches ${bid * 1.2}`);
-        //           // limitSellOrder(exchange.market[0], 1, (sellAsk * 1.2).toFixed(2));
-        //
-        //       }, 30000)
-        //
-        //   })
-        //   .catch(err => console.log(err))
-        //
+                //Buy if current price is less than the min over the entire window buy
+                // if ((localMinMax['min'] / structuredHistoricalData[index].price) > 0.90 && (buyOrderCount - sellOrderCount) == 0){
+                //   console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
+                //   console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
+                //   buyOrderCount += 1
+                //   console.log('\nBUY Count: ',buyOrderCount)
+                //
+                //   //Subract Buy from Profit Margin
+                //   profitMargin -= structuredHistoricalData[index].price;
+                //
+                //   //Create trade history buy object and push to trade history array
+                //   let tradeHistoryObject = {};
+                //   tradeHistoryObject.type = "Buy";
+                //   tradeHistoryObject.price = structuredHistoricalData[index].price;
+                //   tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                //   tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                //   tradeHistoryObject.currentProfitMargin = profitMargin;
+                //   tradeHistoryObject.count = buyOrderCount;
+                //
+                //   tradeHistoryArray.push(tradeHistoryObject);
+                // }
+                //
+                // //Sell if current price is greater than the max over the entire window buy
+                // if (localMinMax['max'] < structuredHistoricalData[index].price && (buyOrderCount - sellOrderCount) == 1){
+                //   console.log('\n\nSell at: ',structuredHistoricalData[index].price)
+                //   console.log('\nSell Day: ',structuredHistoricalData[index].formattedTime)
+                //   sellOrderCount += 1
+                //   console.log('\nSell Count: ',sellOrderCount)
+                //
+                //   //Add Sell to Profit Margin
+                //   profitMargin += structuredHistoricalData[index].price;
+                //
+                //
+                //   //Create trade history sell object and push to trade history array
+                //   let tradeHistoryObject = {};
+                //   tradeHistoryObject.type = "Sell";
+                //   tradeHistoryObject.price = structuredHistoricalData[index].price;
+                //   tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                //   tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                //   tradeHistoryObject.currentProfitMargin = profitMargin;
+                //   tradeHistoryObject.count = sellOrderCount;
+                //
+                //   tradeHistoryArray.push(tradeHistoryObject);
+                //
+                // }
+
+              //
+              // }
+
+
+              //------LOGIC for MACD Bot-------
+
+              growingPriceArray.push(structuredHistoricalData[index].price);
+
+              //at interesection of short term and long term EMA
+              //if slope_shortTerm < 0 && slope_longTerm > 0 then Sell
+              //if slope_shortTerm > 0 && slope_longTerm < 0 then Buy
+              shortTerm_EMA = EMACalc(growingPriceArray, 12);
+              longTerm_EMA = EMACalc(growingPriceArray, 26);
+
+              standard_MACD = (shortTerm_EMA - longTerm_EMA)
+
+              if (standard_MACD >= 0){
+                console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
+                console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
+
+                  buyOrderCount += 1
+
+                //Subract Buy from Profit Margin
+                profitMargin -= structuredHistoricalData[index].price;
+
+                //Create trade history buy object and push to trade history array
+                let tradeHistoryObject = {};
+                tradeHistoryObject.type = "Buy";
+                tradeHistoryObject.price = structuredHistoricalData[index].price;
+                tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                tradeHistoryObject.currentProfitMargin = profitMargin;
+                tradeHistoryObject.count = buyOrderCount;
+
+                tradeHistoryArray.push(tradeHistoryObject);
+
+              }
+              if (standard_MACD < 0){
+                console.log('\n\n Sell at: ',structuredHistoricalData[index].price)
+                console.log('\n Sell Day: ',structuredHistoricalData[index].formattedTime)
+
+                sellOrderCount += 1
+
+                //Add Sell to Profit Margin
+                profitMargin += structuredHistoricalData[index].price;
+
+
+                //Create trade history sell object and push to trade history array
+                let tradeHistoryObject = {};
+                tradeHistoryObject.type = "Sell";
+                tradeHistoryObject.price = structuredHistoricalData[index].price;
+                tradeHistoryObject.formattedTime = structuredHistoricalData[index].formattedTime;
+                tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
+                tradeHistoryObject.currentProfitMargin = profitMargin;
+                tradeHistoryObject.count = sellOrderCount;
+
+                tradeHistoryArray.push(tradeHistoryObject);
+              }
+
+              // console.log("Short Term EMA");
+              // console.log(shortTerm_EMA[shortTerm_EMA.length - 1]);
+              //
+              // console.log("Long Term EMA");
+              // console.log(longTerm_EMA[longTerm_EMA.length - 1]);
+
+            });
+
+            console.log("\n\n\n Profit Margin: ", profitMargin);
+            console.log("\n\n");
+
+
+          }
+        );
+
+
+
+
       } else if (isRunning[0] == false) {
         clearInterval(botInterval);
         botInterval = null;
@@ -238,6 +316,17 @@ async function basic_strategy_function(bot) {
           console.log("BOT STOPPED");
         }, 1000);
       }
+
+
+
+      //Store Buys and Sells Array in Firebase
+      console.log("\n\n Trade History")
+      console.log(tradeHistoryArray)
+
+      setTimeout(() => {
+        storeBotSandboxTradeHistory(bot.name, tradeHistoryArray);
+      }, 1000);
+
     }, 1000);
   }, set_interval_time);
 }
@@ -624,7 +713,7 @@ async function multi_day_sandbox_strategy_function(bot) {
   }, set_interval_time);
 }
 
-////////////////////////////////-----Longterm--------////////////////////////////
+////////////////////////////////-----MultiDay--------////////////////////////////
 ///////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -665,8 +754,8 @@ async function longterm_strategy_function_old(bot) {
         let market = bot.market;
 
         let exchangeTitle = bot.exchange.name.toString().toLowerCase();
-        console.log("\n\nLongterm-BOT-Exchange", exchangeTitle);
-        console.log("\n\nLongterm-BOT-Max Days", bot.maxDays);
+        console.log("\n\nMultiDay-BOT-Exchange", exchangeTitle);
+        console.log("\n\nMultiDay-BOT-Max Days", bot.maxDays);
         let exchange = new ccxt[exchangeTitle]();
         let marketInfo = {};
 
@@ -691,7 +780,7 @@ async function longterm_strategy_function_old(bot) {
 
                 let currentPriceOfUserSpecificedAmount = currentPrice * bot.btc_amount;
 
-                console.log("\n\nLongterm BOT CURRENT PRICE")
+                console.log("\n\nMultiDay BOT CURRENT PRICE")
                 console.log(currentPrice)
 
 
@@ -1004,13 +1093,13 @@ async function longterm_strategy_function_old(bot) {
 }
 
 function strategySelector(bot) {
-  if (bot.strategy_name == "Basic") {
-    //console.log("\n Basic Strategy Selected! \n");
+  if (bot.strategy_name == "MACD") {
+    //console.log("\n MACD Strategy Selected! \n");
 
-    basic_strategy_function(bot);
+    MACD_strategy_function(bot);
   } else if (bot.strategy_name == "Aggressive") {
     aggressive_strategy_function(bot);
-  } else if (bot.strategy_name == "Longterm") {
+  } else if (bot.strategy_name == "MultiDay") {
     multi_day_sandbox_strategy_function(bot);
   }
 }
@@ -1021,7 +1110,7 @@ export function botRunner(bot) {
   strategySelector(bot);
 }
 
-class BasicStrategy {
+class MACDStrategy {
   constructor(exchange, market, amount, botName, btc_amount, usd_amount) {
     this.exchange = exchange;
     this.market = market.replace("-", "/");
@@ -1032,7 +1121,7 @@ class BasicStrategy {
   }
 }
 
-class LongtermStrategy {
+class MultiDayStrategy {
   constructor(
     exchange,
     market,
@@ -1052,19 +1141,19 @@ class LongtermStrategy {
   }
 }
 
-export class BasicBotClass {
+export class MACDBotClass {
   constructor(exchange, market, running, tradeAmount, btc_amount, usd_amount) {
-    let strategy_name = exchange.name + "-" + market + "-Basic Strategy";
+    let strategy_name = exchange.name + "-" + market + "-MACD Strategy";
 
-    this.name = "Basic_Trader_" + exchange.name + "_" + market;
-    this.strategy_name = "Basic";
+    this.name = "MACD_Trader_" + exchange.name + "_" + market;
+    this.strategy_name = "MACD";
     this.exchange = exchange;
     this.market = market;
     this.running = running;
     this.tradeAmount = tradeAmount;
     this.btc_amount = btc_amount;
     this.usd_amount = usd_amount;
-    this.strategy = new BasicStrategy(
+    this.strategy = new MACDStrategy(
       exchange,
       market,
       tradeAmount,
@@ -1077,7 +1166,7 @@ export class BasicBotClass {
 
 export class AggressiveBotClass {
   constructor(exchange, market, running, tradeAmount, btc_amount, usd_amount) {
-    let strategy_name = exchange.name + "-" + market + "-Basic Strategy";
+    let strategy_name = exchange.name + "-" + market + "-MACD Strategy";
 
     this.name = "Aggressive" + "_" + exchange.name + "_" + market;
     this.strategy_name = "Aggressive";
@@ -1087,7 +1176,7 @@ export class AggressiveBotClass {
     this.tradeAmount = tradeAmount;
     this.btc_amount = btc_amount;
     this.usd_amount = usd_amount;
-    this.strategy = new BasicStrategy(
+    this.strategy = new MACDStrategy(
       exchange,
       market,
       tradeAmount,
@@ -1098,7 +1187,7 @@ export class AggressiveBotClass {
   }
 }
 
-export class LongtermBotClass {
+export class MultiDayBotClass {
   constructor(
     exchangeName,
     market,
@@ -1113,9 +1202,9 @@ export class LongtermBotClass {
     let exchange = new ccxt[exchangeName.toLowerCase()] ();
 
 
-    let strategy_name = exchange.name + "-" + market + "-Basic Strategy";
-    this.name = "Longterm" + "_" + exchange.name + "_" + market;
-    this.strategy_name = "Longterm";
+    let strategy_name = exchange.name + "-" + market + "-MultiDay Strategy";
+    this.name = "MultiDay" + "_" + exchange.name + "_" + market;
+    this.strategy_name = "MultiDay";
     this.exchange = exchange;
     this.market = market;
     this.running = running;
@@ -1123,7 +1212,7 @@ export class LongtermBotClass {
     this.btc_amount = btc_amount;
     this.usd_amount = usd_amount;
     this.maxDays = maxDays;
-    this.strategy = new LongtermStrategy(
+    this.strategy = new MultiDayStrategy(
       exchange,
       market,
       tradeAmount,
@@ -1134,24 +1223,3 @@ export class LongtermBotClass {
     );
   }
 }
-
-// class AdvancedBotClass {
-//     constructor(exchange, market, running, tradeAmount) {
-//
-//         let strategy_name = exchange + '-' + market + '-Advanced Strategy';
-//
-//         this.strategy_name = strategy_name;
-//         this.exchange = exchange;
-//         this.market = market;
-//         this.running = running;
-//         this.tradeAmount = tradeAmount;
-//         this.strategy = new BasicStrategy(exchange,market,tradeAmount);
-//
-//     }
-// }
-//
-// export const BasicBot = new BasicBotClass('Coinbase','BTC/USD',true,100.0);
-//
-//
-//
-// export const AdvancedBot = new AdvancedBotClass('Binance','LTC/USD',true,100.0);

@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, Image, StyleSheet } from "react-native";
 import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";
+import BotTrackedSandboxExchangeItem from "../items/BotTrackedSandboxExchangeItem";
 import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
 import styles from "../styles/BotDescription.style";
 import Spinner from "./../config/Spinner";
 import ccxt from "ccxt";
 
-export default class MediumBotDescription extends Component {
+export default class MACDBotDescription extends Component {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
@@ -70,23 +71,35 @@ export default class MediumBotDescription extends Component {
   }
 
   _renderItem = ({ item }) => (
+
+
     <BotTrackedExchangeItem
       id={item.id}
       title={item.title}
       thumbnail={item.thumbnail}
       exchange={item.exchange}
       navigation={this.props.navigation}
-      botType="Medium"
+      botType="MACD"
     />
   );
 
   renderExchanges = () => {
     return (
+      <View>
+      <BotTrackedSandboxExchangeItem
+        id={item.id}
+        title={item.title}
+        thumbnail={item.thumbnail}
+        exchange={item.exchange}
+        navigation={this.props.navigation}
+        botType="MACD"
+      />
       <FlatList
         data={this.state.exchangeList}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
       />
+      </View>
     );
   };
 
@@ -100,12 +113,22 @@ export default class MediumBotDescription extends Component {
     }
 
     return (
+      <View>
+      <BotTrackedSandboxExchangeItem
+        id="1"
+        title="Sandbox"
+        thumbnail="None"
+        exchange="coinbasepro"
+        navigation={this.props.navigation}
+        botType="MACD"
+      />
       <FlatList
         ListEmptyComponent={this.renderExchanges}
         data={this.state.exchangeList}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
       />
+      </View>
     );
   }
 
@@ -118,7 +141,7 @@ export default class MediumBotDescription extends Component {
           <Image source={require("../assets/images/White_Eye.png")} />
         </View>
 
-        <Text style={styles.title}>Moving Average Safe Bot</Text>
+        <Text style={styles.title}>Moving Average Bot</Text>
 
         <Text style={styles.description}>
           Trades on long term Exponential Moving Average and short term

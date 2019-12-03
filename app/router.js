@@ -11,9 +11,9 @@ import { logo } from "./assets/images/images.js";
 import Command from "./screens/Command.js";
 import Onboarding from "./screens/Onboarding.js";
 import Bots from "./screens/Bots.js";
-import MediumBotDescription from "./screens/MediumBotDescription.js";
+import MACDBotDescription from "./screens/MACDBotDescription.js";
 import AggressiveBotDescription from "./screens/AggressiveBotDescription.js";
-import LongtermBotDescription from "./screens/LongtermBotDescription.js";
+import MultiDayBotDescription from "./screens/MultiDayBotDescription.js";
 import Exchanges from "./screens/Exchanges.js";
 import Profile from "./screens/Profile.js";
 import Markets from "./screens/Markets.js";
@@ -25,8 +25,8 @@ import Settings from "./screens/Settings.js";
 import TrackExchange from "./screens/TrackExchange.js";
 import Sandbox from "./screens/Sandbox.js";
 import TrackedMarkets from "./screens/TrackedMarkets.js";
-import MediumBotSelectMarket from "./screens/MediumBotSelectMarket.js";
-import LongtermBotSelectMarket from "./screens/LongtermBotSelectMarket.js";
+import MACDBotSelectMarket from "./screens/MACDBotSelectMarket.js";
+import MultiDayBotSelectMarket from "./screens/MultiDayBotSelectMarket.js";
 import AggressiveBotSelectMarket from "./screens/AggressiveBotSelectMarket.js";
 import ExchangeDescription from "./screens/ExchangeDescription.js";
 import MarketDescription from "./screens/MarketDescription.js";
@@ -260,8 +260,8 @@ export const BotsStack = createStackNavigator({
       tabBarVisible: true
     })
   },
-  MediumBotDescription: {
-    screen: MediumBotDescription,
+  MACDBotDescription: {
+    screen: MACDBotDescription,
     navigationOptions: ({ navigation }) => ({
       headerStyle: {
         backgroundColor: Colors.darkGrayBackground,
@@ -284,8 +284,8 @@ export const BotsStack = createStackNavigator({
       gesturesEnabled: true
     })
   },
-  LongtermBotDescription: {
-    screen: LongtermBotDescription,
+  MultiDayBotDescription: {
+    screen: MultiDayBotDescription,
     navigationOptions: ({ navigation }) => ({
       headerStyle: {
         backgroundColor: Colors.darkGrayBackground,
@@ -308,8 +308,8 @@ export const BotsStack = createStackNavigator({
       gesturesEnabled: false
     })
   },
-  MediumBotSelectMarket: {
-    screen: MediumBotSelectMarket,
+  MACDBotSelectMarket: {
+    screen: MACDBotSelectMarket,
     navigationOptions: ({ navigation }) => ({
       headerStyle: {
         backgroundColor: Colors.darkGrayBackground,
@@ -332,8 +332,8 @@ export const BotsStack = createStackNavigator({
       gesturesEnabled: false
     })
   },
-  LongtermBotSelectMarket: {
-    screen: LongtermBotSelectMarket,
+  MultiDayBotSelectMarket: {
+    screen: MultiDayBotSelectMarket,
     navigationOptions: ({ navigation }) => ({
       headerStyle: {
         backgroundColor: Colors.darkGrayBackground,

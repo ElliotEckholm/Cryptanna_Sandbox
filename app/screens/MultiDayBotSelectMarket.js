@@ -14,7 +14,7 @@ import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
 import RangeSlider from "react-native-range-slider";
 
-import { LongtermBotClass, AggressiveBotClass, BasicBotClass, fetchHistory } from "../scripts/Bots_Database.js";
+import { MultiDayBotClass, AggressiveBotClass, MACDBotClass, fetchHistory } from "../scripts/Bots_Database.js";
 
 import { addBotsSubCollection } from "../scripts/firebase.js";
 import {
@@ -87,7 +87,7 @@ export default class SelectMarket extends Component {
     const { params } = this.props.navigation.state;
 
 
-    let bot = new LongtermBotClass(
+    let bot = new MultiDayBotClass(
       params.exchange.name.toString(),
       params.marketName,
       false,
@@ -97,7 +97,7 @@ export default class SelectMarket extends Component {
       this.state.daySelected,
     );
 
-    // let bot = new BasicBotClass(this.state.exchange,this.state.marketName,false, params.marketBalance, 0.5, 0.5);
+    // let bot = new MACDBotClass(this.state.exchange,this.state.marketName,false, params.marketBalance, 0.5, 0.5);
 
     Alert.alert(
       "Adding Bot",

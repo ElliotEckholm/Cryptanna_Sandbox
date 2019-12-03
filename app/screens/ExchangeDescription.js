@@ -9,7 +9,7 @@ import {
   Dimensions
 } from "react-native";
 import Styles from "../styles/ExchangeDescription.style";
-import { BasicBotClass, AdvancedBotClass } from "../scripts/Bots_Database.js";
+import { MACDBotClass, AdvancedBotClass } from "../scripts/Bots_Database.js";
 import Spinner from "./../config/Spinner";
 import { SearchBar } from "react-native-elements";
 import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";

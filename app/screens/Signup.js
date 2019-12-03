@@ -70,7 +70,7 @@ export default class SignUp extends Component {
               password={true}
               autoCapitalize="none"
               returnKeyLabel='Done'
-              returnKeyType='done' 
+              returnKeyType='done'
             />
           </View>
         </View>

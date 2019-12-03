@@ -52,7 +52,7 @@ export default StyleSheet.create({
     textAlign:'center',
     padding: 10,
   },
-  botLongtermTitle: {
+  botMultiDayTitle: {
     color:  '#2CA5FD',//"#035795",
     fontSize: 20,
     fontWeight: 'bold',
