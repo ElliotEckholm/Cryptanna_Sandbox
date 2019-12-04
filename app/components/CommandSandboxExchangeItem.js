@@ -328,13 +328,15 @@ loading() {
       return (
           // Top title of which exchange you are following
               <TouchableOpacity style={{flex:1,flexDirection:'row',justifyContent:'space-between'}} onPress={this._onExchangeSelect}>
-                  <View style={{flex:.85}}>
-                      <Text style={{color:'#fff', fontSize:20, paddingTop:10,paddingBottom:10,paddingLeft:20}}>Sandbox</Text>
+                  <View style={{flex:1}}>
+                      <Text style={{flex:.85,color:Colors.lightBlue, fontWeight:'bold',fontSize:23, alignSelf:'center', justifyContent: 'center',textAlign: 'center',paddingTop:10,paddingBottom:10}}>Sandbox</Text>
+
+                      <View style={{flex:.15,alignSelf:'center'}}>
+                           {this.toggleBotFunction(this.state.toggleBot)}
+                      </View>
                   </View>
 
-                   <View style={{flex:.15,alignSelf:'center'}}>
-                        {this.toggleBotFunction(this.state.toggleBot)}
-                   </View>
+
               </TouchableOpacity>
       );
   }
@@ -464,7 +466,7 @@ loading() {
   render() {
     // console.log("LOOK", this.props.red_shades);
     return (
-      <View style={{flex:1, width:'95%', alignSelf: 'center', borderWidth: 1, borderColor:'#fff',borderRadius:10 ,backgroundColor: Colors.darkGray}}>
+      <View style={{flex:1, width:'80%', height: 50, alignSelf: 'center', borderWidth: 1, borderColor:'#fff',borderRadius:10 ,backgroundColor: Colors.darkGray}}>
           {this.loading()}
       </View>
 

@@ -95,6 +95,7 @@ export default class commandExchangeItem extends Component {
 
 
     toggleBot: [],
+    exchangeLogo:"",
 
     // this._handleTextChange = this._handleTextChange.bind(this);
 
@@ -129,6 +130,8 @@ export default class commandExchangeItem extends Component {
 
 
 
+
+
   }
 
   _onExchangeSelect = () => {
@@ -141,10 +144,19 @@ export default class commandExchangeItem extends Component {
   }
 
   componentDidMount(){
+        let logo = this.props.chart_exchange.urls.logo.toString();
+        this.state.exchangeLogo = logo;
+        console.log("\n\nLogo Link\n");
+
+
         this.setState({
             chart_exchange: this.props.chart_exchange,
               toggleBot:false,
         });
+
+        console.log(this.state.exchangeLogo);
+
+
 
 
         setInterval(() => {
@@ -217,7 +229,7 @@ toggleBotFunction = (toggleBot) => {
     // console.log("\n\n\n toggle:", this.props.toggleBot)
     if (toggleBot == true && this.props.toggleBot == 'On'){
         return (
-          <View style={styles.image} >
+          <View >
             <Image
               source={require('../assets/images/White_Eye.png')}
               resizeMode="contain"
@@ -228,7 +240,7 @@ toggleBotFunction = (toggleBot) => {
         );
     }else if (toggleBot == true && this.props.toggleBot == 'Off'){
         return (
-          <View style={styles.image} >
+          <View >
             <Image
               source={require('../assets/images/Black_eye.png')}
               resizeMode="contain"
@@ -327,15 +339,20 @@ loading() {
       }
       return (
           // Top title of which exchange you are following
-              <TouchableOpacity style={{flex:1,flexDirection:'row',justifyContent:'space-between'}} onPress={this._onExchangeSelect}>
-                  <View style={{flex:.85}}>
-                      <Text style={{color:'#fff', fontSize:20, paddingTop:10,paddingBottom:10,paddingLeft:20}}>{this.props.chart_exchange.name.toString()}</Text>
+          <TouchableOpacity style={{flex:1,flexDirection:'row',justifyContent:'center'}} onPress={this._onExchangeSelect}>
+              <View style={{flex:1,flexDirection:'row',justifyContent:'center'}}>
+                  <Image
+                    source={{uri: this.state.exchangeLogo}}
+                    resizeMode="contain"
+                    style={{flex:.85,alignSelf:'center', justifyContent: 'center',paddingTop:10,paddingBottom:10,height:30,width:80}}
+                  />
+                  <View style={{flex:.15,alignSelf:'center',paddingTop:10,paddingBottom:10,}}>
+                       {this.toggleBotFunction(this.state.toggleBot)}
                   </View>
+              </View>
 
-                   <View style={{flex:.15,alignSelf:'center'}}>
-                        {this.toggleBotFunction(this.state.toggleBot)}
-                   </View>
-              </TouchableOpacity>
+
+          </TouchableOpacity>
       );
   }
   getTitle(){
@@ -464,7 +481,7 @@ loading() {
   render() {
     // console.log("LOOK", this.props.red_shades);
     return (
-      <View style={{flex:1, width:'95%', alignSelf: 'center', borderWidth: 1, borderColor:'#fff', borderRadius:10 ,backgroundColor: Colors.darkGray}}>
+      <View style={{flex:1, width:'80%', height: 50,alignSelf: 'center', borderWidth: 1, borderColor:'#fff', borderRadius:10 ,backgroundColor: Colors.darkGray}}>
           {this.loading()}
       </View>
 

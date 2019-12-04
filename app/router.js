@@ -27,6 +27,7 @@ import Sandbox from "./screens/Sandbox.js";
 import TrackedMarkets from "./screens/TrackedMarkets.js";
 import MACDBotSelectMarket from "./screens/MACDBotSelectMarket.js";
 import MultiDayBotSelectMarket from "./screens/MultiDayBotSelectMarket.js";
+import MultiDayBotSandboxImplementation from "./screens/MultiDayBotSandboxImplementation.js";
 import AggressiveBotSelectMarket from "./screens/AggressiveBotSelectMarket.js";
 import ExchangeDescription from "./screens/ExchangeDescription.js";
 import MarketDescription from "./screens/MarketDescription.js";
@@ -294,6 +295,18 @@ export const BotsStack = createStackNavigator({
       headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} />,
       tabBarVisible: true,
       gesturesEnabled: true
+    })
+  },
+  MultiDayBotSandboxImplementation: {
+    screen: MultiDayBotSandboxImplementation,
+    navigationOptions: ({ navigation }) => ({
+      headerStyle: {
+        backgroundColor: Colors.darkGrayBackground,
+        borderBottomWidth: 0
+      },
+      headerLeft: <HeaderBackButton onPress={() => navigation.goBack(null)} />,
+      tabBarVisible: true,
+      gesturesEnabled: false
     })
   },
   TrackedMarkets: {

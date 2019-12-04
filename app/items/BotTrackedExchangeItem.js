@@ -23,6 +23,11 @@ export default class BotTrackedExchangeItem extends Component {
       const {navigate} = this.props.navigation;
       let botType = this.props.botType;
 
+      console.log(id)
+      console.log(botType)
+      console.log(exchangeTitle)
+      console.log(this.props.exchange)
+
       console.log("Exchange BOT TYPE: ",botType);
 
       navigate('TrackedMarkets', {exchange_id: id, exchangeTitle: exchangeTitle, exchange:this.props.exchange, botType:this.props.botType});

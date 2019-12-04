@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, Image, StyleSheet } from "react-native";
 import BotTrackedExchangeItem from "../items/BotTrackedExchangeItem";
+import BotTrackedSandboxExchangeItem from "../items/BotTrackedSandboxExchangeItem";
 import CommandSandboxExchangeItem from "../components/CommandSandboxExchangeItem.js";
 import { pullTrackedExchangesDocuments } from "../scripts/firebase.js";
 import styles from "../styles/BotDescription.style";
@@ -108,12 +109,22 @@ export default class LongTermBotDescription extends Component {
     }
 
     return (
-      <FlatList
-        ListEmptyComponent={this.renderExchanges}
-        data={this.state.exchangeList}
-        keyExtractor={this._keyExtractor}
-        renderItem={this._renderItem}
-      />
+      <View>
+        <BotTrackedSandboxExchangeItem
+          id="1"
+          title="Sandbox"
+          thumbnail="None"
+          exchange="coinbasepro"
+          navigation={this.props.navigation}
+          botType="MACD"
+        />
+        <FlatList
+          ListEmptyComponent={this.renderExchanges}
+          data={this.state.exchangeList}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}
+        />
+      </View>
     );
   }
 
