@@ -13,7 +13,6 @@ import ExchangeItem from "../items/ExchangeItem.js";
 import MarketItem from "../items/MarketItem.js";
 import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
-import RangeSlider from 'rn-range-slider';
 
 import { multi_day_sandbox_strategy_function } from "../scripts/Bots_Database.js";
 
