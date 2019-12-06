@@ -5,16 +5,17 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
+  Slider
 } from "react-native";
 import Exchanges from "./Exchanges.js";
 import ExchangeItem from "../items/ExchangeItem.js";
 import MarketItem from "../items/MarketItem.js";
 import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
-import RangeSlider from "react-native-range-slider";
+import RangeSlider from 'rn-range-slider';
 
-import { MultiDayBotClass, AggressiveBotClass, MACDBotClass, fetchHistory } from "../scripts/Bots_Database.js";
+import { multi_day_sandbox_strategy_function } from "../scripts/Bots_Database.js";
 
 import { addBotsSubCollection } from "../scripts/firebase.js";
 import {
@@ -43,83 +44,30 @@ export default class MultiDaySandboxImplementation extends Component {
       exchange: {},
       marketName:"",
       exchangeTitle:"",
+      numberOfHistoricalDays: 0,
+      USDStartingBalance:0.0,
+      lowHighDayWindow:0,
+
     };
   }
 
 
 
-  _displayPriceExtrema = data => {
-
-    const { params } = this.props.navigation.state;
-    this.state.rangeData = data;
-    this.state.daySelected = data.selectedMaximum;
-    this.state.exchangeTitle = params.exchangeTitle;
-    this.state.exchange = params.exchange;
-    // let tempExchange = params.exchange
-    this.state.marketName = params.marketName;
-    this.state.marketBalance = params.marketBalance;
-
-    // setTimeout(() => {
-    //
-    //   var marketName = params.marketName;
-    //   var exchange = params.exchange;
-    //   // buy on day low and high
-    //   var priceExtrema = 0.0;
-    //   let minPrice = 0
-    //
-    //   priceExtrema = fetchHistory(
-    //     this.state.exchangeTitle,
-    //     this.state.marketName.replace("-", "/"),
-    //     this.state.daySelected
-    //   ).then(priceExtrema => {
-    //     minPrice = priceExtrema[0];
-    //     maxPrice = priceExtrema[1];
-    //     console.log("\n\nIn Render Min Price: " + minPrice);
-    //     console.log("In Render Max Price: " + maxPrice);
-    //
-    //     this.setState({ minPrice, maxPrice });
-    //   });
-    // }, 1000);
-  };
 
 
 
-  _onImplementBot = () => {
+
+  implementBot = () => {
     const { params } = this.props.navigation.state;
 
 
-    let bot = new MultiDayBotClass(
-      params.exchange.name.toString(),
-      params.marketName,
-      false,
-      params.marketBalance,
-      this.state.btc_amount,
-      this.state.usd_amount,
-      this.state.daySelected,
-    );
+    console.log("Implementing Bot")
+    console.log(this.state.USDStartingBalance)
+    console.log(this.state.numberOfHistoricalDays)
+    console.log(this.state.lowHighDayWindow)
 
-    // let bot = new MACDBotClass(this.state.exchange,this.state.marketName,false, params.marketBalance, 0.5, 0.5);
+    multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance);
 
-    Alert.alert(
-      "Adding Bot",
-      "Are you sure?",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        {
-          text: "OK",
-          onPress: () => {
-            console.log("OK Pressed");
-            addBotsSubCollection(bot);
-
-          }
-        }
-      ],
-      { cancelable: false }
-    );
   };
 
   render() {
@@ -131,48 +79,59 @@ export default class MultiDaySandboxImplementation extends Component {
 
         <View>
           <Text style={Styles.title}>
-            {"SandBox Multiday Low and High Bot \n" + params.marketName}{" "}
+            {"SandBox"}
           </Text>
-          <Text style={Styles.price}>
-            {"Current Holdings: " +
-              params.marketBalance +
-              " " +
-              params.marketName.substring(0, params.marketName.indexOf("-"))}
+          <Text style={{textAlign: "center", fontSize: 24, fontWeight: "bold", color:"#797979"}}>
+            {"\n Multiday Low and High Bot \n" + params.marketName + "\n\n"}
           </Text>
 
 
+          <View style={Styles.inputRow}>
+            <Text style={Styles.detailText}>Starting Balance   $</Text>
+            <TextInput
+              style={Styles.editInfo}
+              onChangeText={(USDStartingBalance) => this.setState({ USDStartingBalance })}
+              value={this.state.USDStartingBalance}
+              placeholder="0.0"
+              placeholderTextColor="white"
+              height={40}
+            />
 
-          <Text style={Styles.selectDays}>
-            Select Day Range for Bot to Buy at Lows and Sell at Highs:
-          </Text>
+          </View>
+
+
+
+
+          <View style={Styles.inputRow}>
+            <Text style={Styles.detailText}>Run Bot   </Text>
+            <TextInput
+              style={Styles.editInfo}
+              onChangeText={(numberOfHistoricalDays) => this.setState({ numberOfHistoricalDays })}
+              value={this.state.numberOfHistoricalDays}
+              placeholder="0"
+              placeholderTextColor="white"
+              height={40}
+            />
+            <Text style={Styles.detailText}>   Days In the Past</Text>
+          </View>
         </View>
 
-        <View style={{ flexDirection: "row" }}>
-          <RangeSlider
-            disableRange
-            lineHeight={2}
-            handleDiameter={18}
-            minValue={0}
-            maxValue={100}
-            selectedMaximum={50}
-            style={{ flex: 1, height: 70, marginTop: 20, padding: 10 }}
-            onChange={data => {
-              this._displayPriceExtrema(data);
-            }}
-          />
-        </View>
+
+
+
+
 
         <View style={Styles.inputRow}>
-          <Text style={Styles.detailText}>Allow Bot to Use</Text>
+          <Text style={Styles.detailText}>Check Low and High Every   </Text>
           <TextInput
             style={Styles.editInfo}
-            onChangeText={btc_amount => this.setState({ btc_amount })}
-            value={this.state.btc_amount}
-            placeholder="0.0"
+            onChangeText={(lowHighDayWindow) => this.setState({ lowHighDayWindow })}
+            value={this.state.lowHighDayWindow}
+            placeholder="0"
             placeholderTextColor="white"
             height={40}
           />
-          <Text style={Styles.detailText}>BTC</Text>
+          <Text style={Styles.detailText}>   Days</Text>
         </View>
 
         {
@@ -191,9 +150,9 @@ export default class MultiDaySandboxImplementation extends Component {
         }
 
         <View style={{ paddingBottom: 20 }}>
-          <TouchableOpacity onPress={this._onImplementBot}>
+          <TouchableOpacity onPress={this.implementBot}>
             <View style={Styles.implement}>
-              <Text style={Styles.implementText}>Add Bot</Text>
+              <Text style={Styles.implementText}>Run Bot</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -319,25 +319,40 @@ export async function storeBotStrategyOrder(
 
 
 //Storing longtermBuyOrderObject in Bot's document
-export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray) {
+export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, sandBoxBotObject) {
   let currentUserID = getCurrentUserID();
   console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
 
-  //Loop through trade history data
-  tradeHistoryArray.forEach((tradeHistoryObject) => {
-    let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
-    let ref = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUserID)
-      .collection("bots")
-      .doc(botName)
-      .collection("Trades")
-      .doc(tradeObjectStorageName)
+  let botRef = firebase
+    .firestore()
+    .collection("users")
+    .doc(currentUserID)
+    .collection("bots")
+    .doc(botName);
 
-    ref.set(tradeHistoryObject);
+  botRef.set({sandBoxBotObject});
 
-  });
+  console.log(tradeHistoryArray)
+
+  setTimeout(()=>{
+
+    //Loop through trade history data
+    tradeHistoryArray.forEach((tradeHistoryObject) => {
+      let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
+      let ref = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc(botName)
+        .collection("Trades")
+        .doc(tradeObjectStorageName)
+
+      ref.set(tradeHistoryObject);
+
+    });
+
+  },1000);
 }
 
 

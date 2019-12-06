@@ -9,9 +9,9 @@ export default StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
-    color: Colors.white
+    color: Colors.lightBlue
   },
   price: {
     textAlign: "center",
@@ -62,7 +62,7 @@ export default StyleSheet.create({
   detailText: {
     textAlign: "left",
     flexDirection: "row",
-    color: Colors.white,
+    color: Colors.lightGray,
     fontSize: 18,
     fontWeight: "bold"
   },
@@ -73,7 +73,7 @@ export default StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     borderBottomWidth: 1,
-    borderColor: Colors.white
+    borderColor: Colors.darkBlue
   },
   inputRowItem: {
     flex: 0.33,

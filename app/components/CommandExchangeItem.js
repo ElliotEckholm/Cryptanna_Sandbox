@@ -179,37 +179,37 @@ export default class commandExchangeItem extends Component {
            let toggleBot_placeholder = false;
 
           // console.log("Command Bot Toggle", this.state.bots_toggle);
-           currentBots.forEach(function(bot){
-
-
-             let botExchangeName = bot.exchange.name;
-
-             let botexchange = bot.exchange;
-
-             // console.log("Command exchanges",exchangeName);
-
-              // let exchangeName = this.state.chart_exchange;
-              //
-              // console.log("\n\nMATCH BOT:",botExchangeName);
-              //   console.log("\n\nEXCHANGE BOT:",exchangeName);
-
-              if (botExchangeName == exchangeName){
-
-                  // console.log("\n\nMATCH BOT:", botExchangeName);
-                  // console.log("\n\nMATCH Exchange:", exchangeName);
-
-                   toggleBot_placeholder = true;
-                    // this.state.toggleBot = true;
-               }
-               else{
-                  // console.log("\n\n NO MATCH");
-                   toggleBot_placeholder = false;
-                   // this.setState({toggleBot:false});
-                    // this.state.toggleBot = false;
-               }
-
-
-           })
+           // currentBots.forEach(function(bot){
+           //
+           //
+           //   let botExchangeName = bot.exchange.name;
+           //
+           //   let botexchange = bot.exchange;
+           //
+           //   // console.log("Command exchanges",exchangeName);
+           //
+           //    // let exchangeName = this.state.chart_exchange;
+           //    //
+           //    // console.log("\n\nMATCH BOT:",botExchangeName);
+           //    //   console.log("\n\nEXCHANGE BOT:",exchangeName);
+           //
+           //    if (botExchangeName == exchangeName){
+           //
+           //        // console.log("\n\nMATCH BOT:", botExchangeName);
+           //        // console.log("\n\nMATCH Exchange:", exchangeName);
+           //
+           //         toggleBot_placeholder = true;
+           //          // this.state.toggleBot = true;
+           //     }
+           //     else{
+           //        // console.log("\n\n NO MATCH");
+           //         toggleBot_placeholder = false;
+           //         // this.setState({toggleBot:false});
+           //          // this.state.toggleBot = false;
+           //     }
+           //
+           //
+           // })
 
                 this.setState({toggleBot:toggleBot_placeholder});
 

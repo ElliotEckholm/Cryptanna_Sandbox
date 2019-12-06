@@ -12,7 +12,7 @@ import ExchangeItem from "../items/ExchangeItem.js";
 import MarketItem from "../items/MarketItem.js";
 import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
-import RangeSlider from "react-native-range-slider";
+// import RangeSlider from "react-native-range-slider";
 
 import { MultiDayBotClass, AggressiveBotClass, MACDBotClass, fetchHistory } from "../scripts/Bots_Database.js";
 
@@ -155,18 +155,7 @@ export default class SelectMarket extends Component {
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <RangeSlider
-            disableRange
-            lineHeight={2}
-            handleDiameter={18}
-            minValue={0}
-            maxValue={100}
-            selectedMaximum={50}
-            style={{ flex: 1, height: 70, marginTop: 20, padding: 10 }}
-            onChange={data => {
-              this._displayPriceExtrema(data);
-            }}
-          />
+        
         </View>
 
         <View style={Styles.inputRow}>
