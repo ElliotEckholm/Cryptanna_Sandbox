@@ -14,7 +14,6 @@ export default StyleSheet.create({
     shadowColor: Colors.black,
     shadowOpacity: 1.0,
     shadowRadius: 5,
-    borderBottomWidth:2,
     borderColor:'#fff',
     marginBottom:20
   },

@@ -344,11 +344,8 @@ loading() {
                   <Image
                     source={{uri: this.state.exchangeLogo}}
                     resizeMode="contain"
-                    style={{flex:.85,alignSelf:'center', justifyContent: 'center',paddingTop:10,paddingBottom:10,height:30,width:80}}
+                    style={{flex:1,alignSelf:'center', justifyContent: 'center',paddingTop:10,paddingBottom:10,height:30,width:80}}
                   />
-                  <View style={{flex:.15,alignSelf:'center',paddingTop:10,paddingBottom:10,}}>
-                       {this.toggleBotFunction(this.state.toggleBot)}
-                  </View>
               </View>
 
 

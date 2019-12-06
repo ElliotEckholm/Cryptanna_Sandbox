@@ -11,7 +11,7 @@ import {
   Image,
   ScrollView
 } from 'react-native';
-import styles from '../styles/Sandbox_Price_Line_Graph.style.js';
+import styles from '../styles/Command_Line_Graph.style.js';
 
 import ccxt, { yobit } from 'ccxt';
 import * as d3 from 'd3';
@@ -185,16 +185,6 @@ loading() {
 
       return (
           <View styles = {styles.container}>
-            <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
-                Sandbox
-            </Text>
-            <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
-                {this.state.graphTimeFrame} Days
-            </Text>
-            <Text style={[styles.exchangeTitle]} >
-              BTC/USD
-            </Text>
-
           <View styles = {styles.graphContainer}>
 
             {/*
@@ -204,6 +194,12 @@ loading() {
             {(
 
               <View style = {styles.graph}>
+                  <Text style={{color:'#fff', textAlign:'center', fontWeight:'bold'}}>
+                      Sandbox
+                  </Text>
+                  <Text  style={{color:Colors.lightGray, textAlign:'center', fontWeight:'bold',paddingTop:10}}>
+                      {this.state.graphTimeFrame} Days
+                  </Text>
                 <Surface width={width} height={height}>
                   <Group x={0} y={height/2}>
                     {

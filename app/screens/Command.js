@@ -159,22 +159,22 @@ export default class Command extends Component {
     });
   }
 
-  onToggle(isOn) {
-    if (isOn == false) {
-      this.setState({ bots_toggle: "Off" });
-      // pauseAllBots();
-    } else {
-      let priceArray = [];
-      let currentBots = [];
-      this.setState({ bots_toggle: "On" });
-      resumeAllBots();
-      fetchCurrentBots(currentBots);
-
-      setTimeout(() => {
-        this.commandBotRunner(this.state.exchangeList, currentBots);
-      }, 1000);
-    }
-  }
+  // onToggle(isOn) {
+  //   if (isOn == false) {
+  //     this.setState({ bots_toggle: "Off" });
+  //     pauseAllBots();
+  //   } else {
+  //     let priceArray = [];
+  //     let currentBots = [];
+  //     this.setState({ bots_toggle: "On" });
+  //     resumeAllBots();
+  //     fetchCurrentBots(currentBots);
+  //
+  //     setTimeout(() => {
+  //       this.commandBotRunner(this.state.exchangeList, currentBots);
+  //     }, 1000);
+  //   }
+  // }
 
   checkNumberOfExchanges() {
     // if (this.state.noExchanges !== "") {
@@ -243,27 +243,6 @@ export default class Command extends Component {
               ))}
               <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
             </ScrollView>
-          </View>
-        </View>
-
-        <View style={Styles.toggleContainer}>
-          <View style={{ flex: 0.5 }}>
-            <Text style={Styles.text}>Toggle All Bots</Text>
-          </View>
-          <View styles={{ flex: 0.1, textAlign: "right" }}>
-            <Text style={Styles.text}>{this.state.bots_toggle}</Text>
-          </View>
-          <View style={Styles.toggleSwitch}>
-            <ToggleSwitch
-              onColor={Colors.lightBlue}
-              offColor={Colors.lightGray}
-              size="large"
-              isOn={this.state.isOnDefaultToggleSwitch}
-              onToggle={isOnDefaultToggleSwitch => {
-                this.setState({ isOnDefaultToggleSwitch });
-                this.onToggle(isOnDefaultToggleSwitch);
-              }}
-            />
           </View>
         </View>
 

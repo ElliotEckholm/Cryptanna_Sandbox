@@ -37,11 +37,12 @@ export default StyleSheet.create({
     fontSize: 16
   },
   graphContainer: {
-    flex: 0.46
+    flex: 0.50,
+    borderBottomWidth:1,
+    borderColor:'#fff'
   },
   graphs: {
     flex: 0.9,
-    paddingTop: 20
   },
   toggleContainer: {
     flex: 0.1,
@@ -60,7 +61,7 @@ export default StyleSheet.create({
     justifyContent: "space-around"
   },
   exchangesContainer: {
-    flex: 0.34
+    flex: 0.4
   },
   topContainer: {
     flex: 0.3,
