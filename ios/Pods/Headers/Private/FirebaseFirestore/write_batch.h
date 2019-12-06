@@ -1,1 +1,1 @@
-../../../FirebaseFirestore/Firestore/core/include/firebase/firestore/write_batch.h
+../../../FirebaseFirestore/Firestore/core/src/firebase/firestore/api/write_batch.h

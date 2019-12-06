@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3C13B87822CE93C70D61670DC8AA16FF"
+               BlueprintIdentifier = "B3D7B9FC6E3326DC56EF1A0AE3992ECA"
+               BuildableName = "libPods-CryptannaReact-tvOSTests.a"
                BlueprintName = "Pods-CryptannaReact-tvOSTests"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libPods-CryptannaReact-tvOSTests.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
