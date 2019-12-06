@@ -502,7 +502,7 @@ function calculateMinMaxInDayRange(arr, begin, end) {
 }
 
 
-export async function multi_day_sandbox_strategy_function(maxHistoricalTime,priceRangeWindow, USDStartingBalance) {
+export async function multi_day_sandbox_strategy_function(maxHistoricalTime, priceRangeWindow, USDStartingBalance) {
 
   let market = "BTC/USD";
   let exchangeTitle = "coinbasepro";
@@ -512,6 +512,13 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
   let profitMargin = USDStartingBalance;
   let buyOrderCount = 0;
   let sellOrderCount = 0;
+
+  maxHistoricalTime = parseInt(maxHistoricalTime)
+
+  console.log("Starting Sandbox Multiday Bot")
+  console.log(maxHistoricalTime)
+  console.log(priceRangeWindow)
+  console.log(USDStartingBalance)
   // let maxHistoricalTime = 100;
 
   //Timeframe window to check for min and max price
@@ -524,7 +531,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
   fetchedHistoricalData = fetchHistory(exchangeTitle, market, maxHistoricalTime).then(
     fetchedHistoricalData => {
 
-      setTimeout(()=>{
+      // setTimeout(()=>{
 
       console.log(fetchedHistoricalData);
 
@@ -555,6 +562,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
 
         //Find local min and max for every X day window
         if (index >= priceRangeWindow){
+
           let indexMin = index - priceRangeWindow;
           let indexMax = index;
           // console.log("Index: ", index)
@@ -574,6 +582,8 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
 
           //Buy if current price is less than the min over the entire window buy
           if ((structuredHistoricalData[index].price <= profitMargin && localMinMax['min'] / structuredHistoricalData[index].price) > 0.90 && (buyOrderCount - sellOrderCount) == 0){
+
+
             console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
             console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
             buyOrderCount += 1
@@ -596,6 +606,8 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
 
           //Sell if current price is greater than the max over the entire window buy
           if (localMinMax['max'] < structuredHistoricalData[index].price && (buyOrderCount - sellOrderCount) == 1){
+
+
             console.log('\n\nSell at: ',structuredHistoricalData[index].price)
             console.log('\nSell Day: ',structuredHistoricalData[index].formattedTime)
             sellOrderCount += 1
@@ -627,21 +639,22 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime,pric
       console.log("\n\n Trade History")
       console.log(tradeHistoryArray)
 
-      let sandBoxBotObject = {
-        maxHistoricalTime:maxHistoricalTime,
-        priceRangeWindow: priceRangeWindow,
-        USDStartingBalance: USDStartingBalance,
-        finalProfitMargin: profitMargin,
 
-      }
 
       setTimeout(() => {
+        let sandBoxBotObject = {
+          maxHistoricalTime:maxHistoricalTime,
+          priceRangeWindow: priceRangeWindow,
+          USDStartingBalance: USDStartingBalance,
+          finalProfitMargin: profitMargin,
+
+        }
         storeBotSandboxTradeHistory("Sandbox_MultiDay_Bot", tradeHistoryArray,sandBoxBotObject);
-      }, 1000);
+      }, 2000);
 
 
 
-    },4000);
+    // },1000);
     }
   );
 

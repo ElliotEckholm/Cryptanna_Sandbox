@@ -8,7 +8,7 @@ import SandboxPriceLineGraph from "../charts/Sandbox_Price_Line_Graph.js";
 import Exchanges from "./Exchanges.js";
 import Spinner from "./../config/Spinner";
 import firebase from "react-native-firebase";
-import { getCurrentUserID } from "./../scripts/firebase";
+
 
 import ccxt from "ccxt";
 import * as d3 from "d3";
@@ -17,7 +17,9 @@ import Morph from "art/morph/path";
 import { fetchTicker, sandbox_exchange } from "../scripts/ccxt.js";
 import {
   writeSandBoxBalance,
-  fetchSandBoxBalance
+  fetchSandBoxBalance,
+  fetchSandboxBotData,
+  fetchSandboxBotTradeHistory
 } from "../scripts/firebase.js";
 
 let marketLoaded = false;
@@ -34,11 +36,18 @@ export default class Sandbox extends Component {
       currentPrice: "",
       USDBalance: "",
       BTCBalance: "",
-      loading: true
+      loading: true,
+      sandboxBotTradeHistory:[],
+      sandboxBotData:[],
     };
   }
 
   componentDidMount() {
+    const { params } = this.props.navigation.state;
+
+
+
+
     this.props.navigation.addListener("willFocus", route => {
       this.runInterval = true;
       console.log("screen mounted!", this.runInterval);
@@ -51,6 +60,28 @@ export default class Sandbox extends Component {
 
     setInterval(() => {
       if (this.runInterval == true) {
+
+        console.log("\n\nParams",params)
+
+
+        let fetchedSandboxBotData = []
+        // fetchSandboxBotData(params.firebaseBotName,fetchedSandboxBotData)
+
+        let fetchedSandboxBotTradeHistory = []
+        fetchSandboxBotTradeHistory("Sandbox_MultiDay_Bot",fetchedSandboxBotTradeHistory)
+
+        setTimeout(()=>{
+          console.log("Sandbox BOT Data")
+          console.log(fetchedSandboxBotData)
+          console.log("Sandbox BOT Trade History Data")
+          console.log(fetchedSandboxBotTradeHistory)
+
+          // fetchedSandboxBotData.forEach(()=>{
+          //   this.set
+          // })
+
+        },1000);
+
         console.log("SET interval from Sandbox");
         const { params } = this.props.navigation.state;
         let market = "BTC/USD";

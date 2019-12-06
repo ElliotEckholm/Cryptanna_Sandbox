@@ -499,6 +499,43 @@ export async function fetchSandBoxBalance(pulledSandboxBalance) {
   });
 }
 
+//Fetching Bot Data
+export async function fetchSandboxBotData(botName,fetchedSandboxBotData) {
+    let currentUserID = getCurrentUserID();
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(botName);
+
+    ref.get().then(botDoc => {
+      fetchedSandboxBotData.push(botDoc._data);
+    });
+
+}
+
+//Fetching Bot Trade History
+export async function fetchSandboxBotTradeHistory(botName,fetchedSandboxBotTradeHistory) {
+    let currentUserID = getCurrentUserID();
+
+    let ref = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(botName)
+      .collection("Trades");
+
+      ref.get().then(fetchedBotTradeHistory => {
+        fetchedBotTradeHistory.forEach(tradeHistoryObject => {
+          fetchedSandboxBotTradeHistory.push(tradeHistoryObject._data);
+        });
+      });
+
+}
+
 //Adding an exchange subcollection
 export async function addExchangeSubCollection(
   exchangeName,

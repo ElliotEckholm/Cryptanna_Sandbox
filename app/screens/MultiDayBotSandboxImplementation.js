@@ -58,14 +58,17 @@ export default class MultiDaySandboxImplementation extends Component {
 
   implementBot = () => {
     const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
 
 
-    console.log("Implementing Bot")
-    console.log(this.state.USDStartingBalance)
-    console.log(this.state.numberOfHistoricalDays)
-    console.log(this.state.lowHighDayWindow)
+    // console.log("Implementing Bot")
+    // console.log(this.state.USDStartingBalance)
+    // console.log(this.state.numberOfHistoricalDays)
+    // console.log(this.state.lowHighDayWindow)
 
     multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance);
+
+    navigate("Sandbox", {botName: "Multiday Low and High Bot", firebaseBotName: "Sandbox_MultiDay_Bot"})
 
   };
 
@@ -89,7 +92,7 @@ export default class MultiDaySandboxImplementation extends Component {
             <Text style={Styles.detailText}>Starting Balance   $</Text>
             <TextInput
               style={Styles.editInfo}
-              onChangeText={(USDStartingBalance) => this.setState({ USDStartingBalance })}
+              onChangeText={(text) => this.setState({ USDStartingBalance: text })}
               value={this.state.USDStartingBalance}
               placeholder="0.0"
               placeholderTextColor="white"
@@ -105,7 +108,7 @@ export default class MultiDaySandboxImplementation extends Component {
             <Text style={Styles.detailText}>Run Bot   </Text>
             <TextInput
               style={Styles.editInfo}
-              onChangeText={(numberOfHistoricalDays) => this.setState({ numberOfHistoricalDays })}
+              onChangeText={(text) => this.setState({ numberOfHistoricalDays:text })}
               value={this.state.numberOfHistoricalDays}
               placeholder="0"
               placeholderTextColor="white"
@@ -124,7 +127,7 @@ export default class MultiDaySandboxImplementation extends Component {
           <Text style={Styles.detailText}>Check Low and High Every   </Text>
           <TextInput
             style={Styles.editInfo}
-            onChangeText={(lowHighDayWindow) => this.setState({ lowHighDayWindow })}
+            onChangeText={(text) => this.setState({ lowHighDayWindow : text})}
             value={this.state.lowHighDayWindow}
             placeholder="0"
             placeholderTextColor="white"
