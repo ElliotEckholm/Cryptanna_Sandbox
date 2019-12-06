@@ -8,9 +8,9 @@ target 'CryptannaReact' do
 
   # Pods for CryptannaReact
   # Required by RNFirebase
-pod 'Firebase/Core', '~> 5.11.0'
-pod 'Firebase/Auth', '~> 5.11.0'
-pod 'Firebase/Firestore', '~> 5.11.0'
+pod 'Firebase/Core', '~> 6.3.0'
+pod 'Firebase/Auth', '~> 6.3.0'
+pod 'Firebase/Firestore', '~> 6.3.0'
 
   target 'CryptannaReact-tvOSTests' do
     inherit! :search_paths

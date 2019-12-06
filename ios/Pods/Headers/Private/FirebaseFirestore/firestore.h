@@ -1,1 +1,1 @@
-../../../FirebaseFirestore/Firestore/core/include/firebase/firestore/firestore.h
+../../../FirebaseFirestore/Firestore/core/src/firebase/firestore/api/firestore.h

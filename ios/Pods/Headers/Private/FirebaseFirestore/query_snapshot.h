@@ -1,1 +1,1 @@
-../../../FirebaseFirestore/Firestore/core/include/firebase/firestore/query_snapshot.h
+../../../FirebaseFirestore/Firestore/core/src/firebase/firestore/api/query_snapshot.h
