@@ -12,7 +12,6 @@ import ExchangeItem from "../items/ExchangeItem.js";
 import MarketItem from "../items/MarketItem.js";
 import ccxt from "ccxt";
 import Styles from "../styles/BotSelectMarket.style";
-// import RangeSlider from "react-native-range-slider";
 
 import { MultiDayBotClass, AggressiveBotClass, MACDBotClass, fetchHistory } from "../scripts/Bots_Database.js";
 
@@ -155,7 +154,7 @@ export default class SelectMarket extends Component {
         </View>
 
         <View style={{ flexDirection: "row" }}>
-        
+
         </View>
 
         <View style={Styles.inputRow}>
