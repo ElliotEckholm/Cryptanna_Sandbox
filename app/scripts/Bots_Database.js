@@ -324,7 +324,7 @@ async function MACD_strategy_function(bot) {
       console.log(tradeHistoryArray)
 
       setTimeout(() => {
-        storeBotSandboxTradeHistory(bot.name, tradeHistoryArray);
+        // storeBotSandboxTradeHistory(bot.name, tradeHistoryArray);
       }, 1000);
 
     }, 1000);
@@ -647,9 +647,11 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
           priceRangeWindow: priceRangeWindow,
           USDStartingBalance: USDStartingBalance,
           finalProfitMargin: profitMargin,
+          botName: "Sandbox_MultiDay_Bot",
+          mostRecentRun: true
 
         }
-        storeBotSandboxTradeHistory("Sandbox_MultiDay_Bot", tradeHistoryArray,sandBoxBotObject);
+        storeBotSandboxTradeHistory(sandBoxBotObject.botName, tradeHistoryArray,sandBoxBotObject);
       }, 2000);
 
 

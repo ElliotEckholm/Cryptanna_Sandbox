@@ -352,7 +352,34 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
 
     });
 
-  },1000);
+  },3000);
+
+
+  //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
+  let currentBots = [];
+  fetchCurrentBots(currentBots);
+
+  setTimeout(() => {
+
+    currentBots.forEach(sandboxBot => {
+
+      if (sandboxBot.sandBoxBotObject.botName == botName){
+          sandboxBot.sandBoxBotObject.mostRecentRun = true;
+      }else{
+          sandboxBot.sandBoxBotObject.mostRecentRun = false;
+      }
+
+      let ref = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc(sandboxBot.sandBoxBotObject.botName);
+
+      ref.set(sandboxBot);
+    });
+  }, 2000);
+
 }
 
 
@@ -500,39 +527,68 @@ export async function fetchSandBoxBalance(pulledSandboxBalance) {
 }
 
 //Fetching Bot Data
-export async function fetchSandboxBotData(botName,fetchedSandboxBotData) {
+export async function fetchSandboxBotData(fetchedSandboxBotData) {
     let currentUserID = getCurrentUserID();
+    console.log("Called Fetch Sandbox Bot Field Data")
 
-    let ref = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUserID)
-      .collection("bots")
-      .doc(botName);
+    //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
+    let currentBots = [];
+    fetchCurrentBots(currentBots);
 
-    ref.get().then(botDoc => {
-      fetchedSandboxBotData.push(botDoc._data);
-    });
+    setTimeout(() => {
+
+      currentBots.forEach(function(sandboxBot)  {
+
+        if (sandboxBot.sandBoxBotObject.mostRecentRun == true){
+
+          fetchedSandboxBotData.push(sandboxBot.sandBoxBotObject);
+
+        }
+
+      });
+    }, 2000);
+
+
 
 }
 
 //Fetching Bot Trade History
-export async function fetchSandboxBotTradeHistory(botName,fetchedSandboxBotTradeHistory) {
+export async function fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory) {
     let currentUserID = getCurrentUserID();
 
-    let ref = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUserID)
-      .collection("bots")
-      .doc(botName)
-      .collection("Trades");
+      console.log("\n\nFetching Sandboc Trade History")
 
-      ref.get().then(fetchedBotTradeHistory => {
-        fetchedBotTradeHistory.forEach(tradeHistoryObject => {
-          fetchedSandboxBotTradeHistory.push(tradeHistoryObject._data);
+
+      //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
+      let currentBots = [];
+      fetchCurrentBots(currentBots);
+
+      setTimeout(() => {
+
+        currentBots.forEach(function(sandboxBot)  {
+
+          if (sandboxBot.sandBoxBotObject.mostRecentRun == true){
+
+
+            let ref = firebase
+              .firestore()
+              .collection("users")
+              .doc(currentUserID)
+              .collection("bots")
+              .doc(sandboxBot.sandBoxBotObject.botName)
+              .collection("Trades");
+
+              ref.get().then(fetchedBotTradeHistory => {
+
+                fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+                  fetchedSandboxBotTradeHistory.push(tradeHistoryObject._data);
+
+                });
+              });
+          }
+
         });
-      });
+      }, 2000);
 
 }
 

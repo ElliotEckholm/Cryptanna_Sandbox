@@ -59,7 +59,7 @@ export default class Command extends Component {
   componentDidMount() {
     this.firstTimeUser();
 
-    pauseAllBots();
+    // pauseAllBots();
     setTimeout(() => {
       this.setState({ loading: false });
     }, 7000);
@@ -163,7 +163,7 @@ export default class Command extends Component {
   onToggle(isOn) {
     if (isOn == false) {
       this.setState({ bots_toggle: "Off" });
-      pauseAllBots();
+      // pauseAllBots();
     } else {
       let priceArray = [];
       let currentBots = [];

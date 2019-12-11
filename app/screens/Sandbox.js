@@ -38,51 +38,51 @@ export default class Sandbox extends Component {
       BTCBalance: "",
       loading: true,
       sandboxBotTradeHistory:[],
-      sandboxBotData:[],
+      sandboxBotFieldData:{},
     };
   }
 
   componentDidMount() {
-    const { params } = this.props.navigation.state;
+    const { params } = this.props.navigation;
 
 
 
 
     this.props.navigation.addListener("willFocus", route => {
       this.runInterval = true;
-      console.log("screen mounted!", this.runInterval);
+      // console.log("screen mounted!", this.runInterval);
     });
 
     this.props.navigation.addListener("didBlur", route => {
       this.runInterval = false;
-      console.log("\n\n\nunmounted in sandbox", this.runInterval);
+      // console.log("\n\n\nunmounted in sandbox", this.runInterval);
     });
 
     setInterval(() => {
       if (this.runInterval == true) {
 
-        console.log("\n\nParams",params)
+        // console.log("\n\nParams",this.props.navigation.params.firebaseBotName)
 
 
-        let fetchedSandboxBotData = []
-        // fetchSandboxBotData(params.firebaseBotName,fetchedSandboxBotData)
+        fetchedSandboxBotData = []
+        fetchSandboxBotData(fetchedSandboxBotData)
 
-        let fetchedSandboxBotTradeHistory = []
-        fetchSandboxBotTradeHistory("Sandbox_MultiDay_Bot",fetchedSandboxBotTradeHistory)
+        fetchedSandboxBotTradeHistory = []
+        fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory)
 
         setTimeout(()=>{
-          console.log("Sandbox BOT Data")
-          console.log(fetchedSandboxBotData)
-          console.log("Sandbox BOT Trade History Data")
-          console.log(fetchedSandboxBotTradeHistory)
 
-          // fetchedSandboxBotData.forEach(()=>{
-          //   this.set
-          // })
 
-        },1000);
 
-        console.log("SET interval from Sandbox");
+          fetchedSandboxBotData.forEach(fieldData => {
+            this.setState({sandboxBotFieldData: fieldData})
+          })
+
+          this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory})
+
+        },3000);
+
+        // console.log("SET interval from Sandbox");
         const { params } = this.props.navigation.state;
         let market = "BTC/USD";
 
@@ -135,7 +135,7 @@ export default class Sandbox extends Component {
   }
 
   onPress = () => {
-    console.log("on press clicked");
+    // console.log("on press clicked");
     this.setState({ buyButtonClicked: true });
     setTimeout(() => {
       this.setState({ buyButtonClicked: false });
@@ -167,9 +167,20 @@ export default class Sandbox extends Component {
             justifyContent: "space-around"
           }}
         >
+
           <Text style={Styles.balance}>
-            Balance: ${this.state.USDBalance} ({this.state.BTCBalance} in BTC)
+            {this.state.sandboxBotFieldData.botName}
           </Text>
+
+          <Text style={Styles.balance}>
+            Starting Balance: ${this.state.sandboxBotFieldData.USDStartingBalance} {"\n"}
+            Ending Balance: ${this.state.sandboxBotFieldData.finalProfitMargin}
+          </Text>
+          <Text style={Styles.balance}>
+           Profit/Loss Margin: ${this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance}
+          </Text>
+
+
 
           <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
 
