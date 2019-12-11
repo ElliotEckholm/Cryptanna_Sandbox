@@ -116,7 +116,7 @@ export default class LongTermBotDescription extends Component {
           thumbnail="None"
           exchange="coinbasepro"
           navigation={this.props.navigation}
-          botType="MACD"
+          botType="MultiDay"
         />
         <FlatList
           ListEmptyComponent={this.renderExchanges}

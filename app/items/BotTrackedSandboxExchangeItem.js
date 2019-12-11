@@ -35,7 +35,15 @@ export default class BotTrackedSandboxExchangeItem extends Component {
 
       console.log("Exchange BOT TYPE: ",botType);
 
-      navigate('MultiDayBotSandboxImplementation', {exchange_id: id, exchangeTitle: exchangeTitle, exchange: sandboxExchange, botType:this.props.botType,marketName : marketName, marketBalance : marketBalance});
+      if (botType == 'MACD'){
+        navigate('MACDBotSandboxImplementation', {exchange_id: id, exchangeTitle: exchangeTitle, exchange: sandboxExchange, botType:this.props.botType,marketName : marketName, marketBalance : marketBalance});
+
+      }
+      else if (botType == 'MultiDay'){
+        navigate('MultiDayBotSandboxImplementation', {exchange_id: id, exchangeTitle: exchangeTitle, exchange: sandboxExchange, botType:this.props.botType,marketName : marketName, marketBalance : marketBalance});
+
+      }
+
     }
 
 

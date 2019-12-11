@@ -13,7 +13,7 @@ import MarketItem from '../items/MarketItem.js';
 import ccxt from 'ccxt';
 import Styles from "../styles/BotSelectMarket.style";
 
-import {MACDBotClass} from '../scripts/Bots_Database.js';
+import {MACD_strategy_function} from '../scripts/Bots_Database.js';
 
 import {addBotsSubCollection} from '../scripts/firebase.js';
 import {fetchTicker,fetchMarket_badway,fetchMarkets_Item_Info,fetchTicker_promise} from '../scripts/ccxt.js';
@@ -29,6 +29,8 @@ export default class SelectMarket extends Component {
       marketObj:[],
       btc_amount:0.0,
       usd_amount: 0.0,
+      numberOfHistoricalDays: 0,
+      USDStartingBalance: 0.0,
 
     };
 
@@ -38,28 +40,11 @@ export default class SelectMarket extends Component {
 
   _onImplementBot = () => {
     const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
 
-    let bot = new MACDBotClass(params.exchange,params.marketName,false, params.marketBalance, this.state.btc_amount, this.state.usd_amount);
+    MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
 
-
-    Alert.alert(
-      'Adding Bot',
-      'Are you sure?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel'
-        },
-        { text: 'OK', onPress: () => {
-          console.log('OK Pressed')
-          addBotsSubCollection(bot);
-        } }
-      ],
-      { cancelable: false }
-    );
-
-
+    navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
   }
 
 
@@ -74,45 +59,43 @@ export default class SelectMarket extends Component {
         />
 
         <View >
-          <Text style={Styles.title}>{'MACD Trader \n' +params.marketName+' Market'} </Text>
-          <Text style={Styles.price}> {'Current Holdings: '+params.marketBalance+' '+params.marketName.substring(0, params.marketName.indexOf('-'))}</Text>
+        <Text style={Styles.title}>
+          {"SandBox"}
+        </Text>
+        <Text style={{textAlign: "center", fontSize: 24, fontWeight: "bold", color:"#797979"}}>
+          {"\n Moving Average Bot \n" + params.marketName + "\n\n"}
+        </Text>
 
 
-
-        </View>
-        <View style = {Styles.inputRow}>
-            <Text style = {Styles.detailText}>
-              Basic Trader will Buy
-            </Text>
-            <TextInput
-            style = {Styles.editInfo}
-            onChangeText={btc_amount => this.setState({ btc_amount })}
-            value={this.state.btc_amount}
+        <View style={Styles.inputRow}>
+          <Text style={Styles.detailText}>Starting Balance   $</Text>
+          <TextInput
+            style={Styles.editInfo}
+            onChangeText={(text) => this.setState({ USDStartingBalance: text })}
+            value={this.state.USDStartingBalance}
             placeholder="0.0"
             placeholderTextColor="white"
-            height = {40}
-            />
-            <Text style = {Styles.detailText}>
-              BTC
-            </Text>
+            height={40}
+          />
+
         </View>
 
-        <View style = {Styles.inputRow}>
-            <Text style = {Styles.detailText}>
-              For the Price of
-            </Text>
-            <TextInput
-            style = {Styles.editInfo}
-            onChangeText={usd_amount => this.setState({ usd_amount })}
-            value={this.state.usd_amount}
-            placeholder="0.0"
+
+
+
+        <View style={Styles.inputRow}>
+          <Text style={Styles.detailText}>Run Bot   </Text>
+          <TextInput
+            style={Styles.editInfo}
+            onChangeText={(text) => this.setState({ numberOfHistoricalDays:text })}
+            value={this.state.numberOfHistoricalDays}
+            placeholder="0"
             placeholderTextColor="white"
-            height = {40}
-            />
-            <Text style = {Styles.detailText}>
-              USD
-            </Text>
+            height={40}
+          />
+          <Text style={Styles.detailText}>   Days In the Past</Text>
         </View>
+      </View>
 
         <TouchableOpacity onPress={this._onImplementBot}>
         <View style={Styles.implement}>
