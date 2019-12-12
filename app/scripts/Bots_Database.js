@@ -173,6 +173,8 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
           tradeHistoryObject.currentProfitMargin = profitMargin;
           tradeHistoryObject.count = buyOrderCount;
+          tradeHistoryObject.index = index;
+
 
           tradeHistoryArray.push(tradeHistoryObject);
 
@@ -195,6 +197,7 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
           tradeHistoryObject.currentProfitMargin = profitMargin;
           tradeHistoryObject.count = sellOrderCount;
+          tradeHistoryObject.index = index;
 
           tradeHistoryArray.push(tradeHistoryObject);
         }
@@ -505,6 +508,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
             tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
             tradeHistoryObject.currentProfitMargin = profitMargin;
             tradeHistoryObject.count = buyOrderCount;
+            tradeHistoryObject.index = index;
 
             tradeHistoryArray.push(tradeHistoryObject);
           }
@@ -530,6 +534,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
             tradeHistoryObject.unixTime = structuredHistoricalData[index].unixTime;
             tradeHistoryObject.currentProfitMargin = profitMargin;
             tradeHistoryObject.count = sellOrderCount;
+            tradeHistoryObject.index = index;
 
             tradeHistoryArray.push(tradeHistoryObject);
 

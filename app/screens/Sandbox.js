@@ -80,6 +80,8 @@ export default class Sandbox extends Component {
 
           this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory})
 
+          // console.log(this.state.sandboxBotTradeHistory)
+
         },3000);
 
         // console.log("SET interval from Sandbox");
@@ -182,7 +184,7 @@ export default class Sandbox extends Component {
 
 
 
-          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
+          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} tradeHistory={this.state.sandboxBotTradeHistory}/>
 
           {this.showCurrentBitcoinPrice()}
         </View>

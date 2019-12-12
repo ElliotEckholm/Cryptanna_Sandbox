@@ -215,7 +215,7 @@ loading() {
       return (
           // Top title of which exchange you are following
           <View styles = {styles.container}>
-            
+
               <View styles={styles.graphContainer}>
                 {/*
                 - If state variable of lineGraph is true
@@ -315,7 +315,7 @@ loading() {
      exchange = this.props.chart_exchange;
      market = market.replace("-","/");
      // console.log('\n\n\n LINE',market);
-     console.log("FETCH HISTORY TEST", exchange.timeframes);
+    console.log("FETCH HISTORY TEST", exchange.timeframes);
     let sleep = (ms) => new Promise (resolve => setTimeout (resolve, ms));
     if (exchange.has.fetchOHLCV) {
           await sleep (exchange.rateLimit) // milliseconds
@@ -400,8 +400,8 @@ loading() {
           //             .y(centerPriceLine)
           //             .curve(shape.curveLinear)([0,100]);
 
-          //How to make circle in center of graph
-          //make sure stroke is 10
+          // //How to make circle in center of graph
+          // //make sure stroke is 10
           // let centerPriceLine = scaleY((max- (max-min)/2))
           // let circle = shape.line()
           //               ///use scale functions here

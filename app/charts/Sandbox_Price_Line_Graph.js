@@ -28,7 +28,7 @@ import Command from '../screens/Command.js';
 import ExchangeDescription from '../screens/ExchangeDescription.js';
 
 
-import {fetchSandBoxBalance, getCurrentUserID} from '../scripts/firebase.js';
+import {fetchSandBoxBalance, getCurrentUserID, fetchSandboxBotTradeHistory} from '../scripts/firebase.js';
 import {fetchTicker,fetchBalance , sandbox_exchange, coinbase_exchange} from '../scripts/ccxt.js';
 
 const { Surface, Group, Shape, ArtGroup, Path } = ART;
@@ -86,7 +86,8 @@ export default class Sandbox_Price_Line_Graph extends Component {
     yAxis: [],
     minY: [],
     maxY:[],
-    buy:[],
+    buyDotList:[],
+    sellDotList:[],
     graphTimeFrame: 300,
 
     loading: true,
@@ -97,11 +98,52 @@ export default class Sandbox_Price_Line_Graph extends Component {
     //SHOW PIE GRAPH FIRST THEN THE LINE GRAPH
     showPie: true,
     showLineGraph: true,
+    sandboxBotTradeHistory:  [],
 
   };
 
   constructor(props) {
     super(props);
+
+  }
+
+  // _onExchangeSelect = () => {
+  //   console.log('Exchange Selected!',sandbox_exchange.name.toString());
+  //   const {navigate} = this.props.navigation;
+  //   navigate('ExchangeDescription',{exchangeName: sandbox_exchange.name.toString(), exchange:sandbox_exchange});
+  // }
+
+  showPieGraph(){
+    //updating the component to show a line graph
+    this.setState(previousState => {
+      return ({ balanceList: this.state.balanceList,
+               sectionAngles: this.state.sectionAngles,
+               loading: false,
+               showPie: true,
+               showLineGraph: true,
+               });
+    })
+  }
+
+  componentDidMount(){
+        this.setState({
+            chart_exchange: sandbox_exchange,
+        });
+
+    // setInterval(()=>{
+      fetchedSandboxBotTradeHistory = []
+      fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory)
+
+      setTimeout(()=>{
+
+
+        this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory})
+
+        // console.log("Mounting Price Graph: ", this.state.sandboxBotTradeHistory)
+
+
+    // },4000)
+
     console.log("IN Line graph",sandbox_exchange);
       fetchBalance(sandbox_exchange, this.state.balanceList)
       .then(() => {
@@ -128,30 +170,8 @@ export default class Sandbox_Price_Line_Graph extends Component {
       })
       console.log("Outside fetch in Holdings",this.state.balanceList);
       this.fetchHistory(coinbase_exchange);
-  }
 
-  // _onExchangeSelect = () => {
-  //   console.log('Exchange Selected!',sandbox_exchange.name.toString());
-  //   const {navigate} = this.props.navigation;
-  //   navigate('ExchangeDescription',{exchangeName: sandbox_exchange.name.toString(), exchange:sandbox_exchange});
-  // }
-
-  showPieGraph(){
-    //updating the component to show a line graph
-    this.setState(previousState => {
-      return ({ balanceList: this.state.balanceList,
-               sectionAngles: this.state.sectionAngles,
-               loading: false,
-               showPie: true,
-               showLineGraph: true,
-               });
-    })
-  }
-
-  componentDidMount(){
-        this.setState({
-            chart_exchange: sandbox_exchange,
-        });
+    },1000);
   }
 
 loading() {
@@ -233,6 +253,21 @@ loading() {
                         stroke={Colors.white}
                       />
                     }
+
+                    {this.state.buyDotList.map((buyDot) => (
+                      <Shape
+                        d={buyDot}
+                        strokeWidth={6}
+                        stroke={Colors.green}
+                      />
+                    ))}
+                    {this.state.sellDotList.map((sellDot) => (
+                      <Shape
+                        d={sellDot}
+                        strokeWidth={6}
+                        stroke={Colors.red}
+                      />
+                    ))}
                   </Group>
                 </Surface>
               </View>
@@ -265,7 +300,12 @@ loading() {
           // let maxList = [];
           let yAxisArr = [];
           let i;
+
+
           for(i = 0; i <= historyList.length - 1; i++){
+
+
+
             if(historyList[i][4] < min){
               min = historyList[i][4];
             }
@@ -291,6 +331,8 @@ loading() {
           //LINE INFORMATION DATA
           let scaleX =  scaleTime().domain([0,historyList.length - 1]).range([xOffset + 40 ,width - xOffset - 20]);
           let scaleY =  scaleLinear().domain([min - min/4,max + max/4]).range([height + yOffset - 20,yOffset + 10]);
+
+          console.log("\n\n Scaled X: ", scaleX)
 
           //THIS IS WHAT I HAVE TO USE DATA WITH AND FORMAT HOW THE DATA IS ORGANIZED
           let newLine = shape.line()
@@ -318,10 +360,43 @@ loading() {
                       .y(scaleY(max))
                       .curve(shape.curveLinear)([-0.5,0.5]);
 
-          let buy = shape.line()
-                      .x(d => (scaleX(10) ))
-                      .y(scaleY(max))
-                      .curve(shape.curveLinear)([-0.5,0.5]);
+
+
+          console.log("Max in Line Graph: ", max)
+          console.log("Scaled in Price Line Graph: ", scaleY(max))
+          //How to make circle in center of graph
+          //make sure stroke is 10
+          let buyDotList = []
+          let sellDotList = []
+          this.state.sandboxBotTradeHistory.forEach((tradeHistoryObject)=>{
+
+            if (tradeHistoryObject.type == "Buy"){
+              let buyDot = shape.line()
+                            ///use scale functions here
+                          .x(scaleX(tradeHistoryObject.index))
+                          .y(scaleY(tradeHistoryObject.price))
+                          .curve(shape.curveLinear)
+                          //use normal 0-this.state.timeframe here
+                          ([-4,4]);
+
+              buyDotList.push(buyDot)
+            }
+            if (tradeHistoryObject.type == "Sell"){
+              let sellDot = shape.line()
+                            ///use scale functions here
+                          .x(scaleX(tradeHistoryObject.index))
+                          .y(scaleY(tradeHistoryObject.price))
+                          .curve(shape.curveLinear)
+                          //use normal 0-this.state.timeframe here
+                          ([-4,4]);
+
+              sellDotList.push(sellDot)
+            }
+
+
+          })
+
+
 
 
 
@@ -335,13 +410,15 @@ loading() {
                       xAxis:xAxis,
                       yAxis:yAxis,
                       minY:minY,
-                      maxY,maxY,buy,
+                      maxY:maxY,
                       showLineGraph:true,
 
                       //Pie Information
                       sectionAngles: this.state.sectionAngles,
                       showPie: false,
                       loading: false,
+                      buyDotList: buyDotList,
+                      sellDotList: sellDotList
                       });
           });
 
