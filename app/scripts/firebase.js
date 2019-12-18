@@ -323,6 +323,13 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
   let currentUserID = getCurrentUserID();
   console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
 
+  firebase.firestore()
+  .collection("users")
+  .doc(currentUserID)
+  .collection("bots")
+  .doc(botName)
+  .delete();
+
   let botRef = firebase
     .firestore()
     .collection("users")
@@ -335,6 +342,8 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
   console.log(tradeHistoryArray)
 
   setTimeout(()=>{
+
+
 
     //Loop through trade history data
     tradeHistoryArray.forEach((tradeHistoryObject) => {

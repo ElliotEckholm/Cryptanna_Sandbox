@@ -130,7 +130,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
             chart_exchange: sandbox_exchange,
         });
 
-    // setInterval(()=>{
+    setInterval(()=>{
       fetchedSandboxBotTradeHistory = []
       fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory)
 
@@ -172,7 +172,9 @@ export default class Sandbox_Price_Line_Graph extends Component {
       this.fetchHistory(coinbase_exchange);
 
     },1000);
-  }
+
+  },4000);
+}
 
 loading() {
       if (this.state.loading) {

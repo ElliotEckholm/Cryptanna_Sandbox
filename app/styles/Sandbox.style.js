@@ -30,6 +30,24 @@ export default StyleSheet.create({
     fontWeight: "400",
     color: Colors.white
   },
+  finalLossMargin: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "400",
+    color: Colors.red
+  },
+  finalProfitMargin: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "400",
+    color: Colors.green
+  },
+  botName: {
+    textAlign: "center",
+    fontSize: 22,
+    fontWeight: "bold",
+    color: Colors.lightBlue
+  },
   priceText: {
     textAlign: "center",
     fontSize: 16,

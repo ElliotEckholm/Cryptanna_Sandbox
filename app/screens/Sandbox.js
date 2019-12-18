@@ -38,7 +38,7 @@ export default class Sandbox extends Component {
       BTCBalance: "",
       loading: true,
       sandboxBotTradeHistory:[],
-      sandboxBotFieldData:{},
+      sandboxBotFieldData:{botName:""},
     };
   }
 
@@ -82,6 +82,8 @@ export default class Sandbox extends Component {
 
           // console.log(this.state.sandboxBotTradeHistory)
 
+            this.setState({   loading: false });
+
         },3000);
 
         // console.log("SET interval from Sandbox");
@@ -105,7 +107,7 @@ export default class Sandbox extends Component {
               Number(marketInfo.info.price).toFixed(2);
             this.setState({
               currentPrice: Number(marketInfo.info.price).toFixed(2),
-              loading: false
+
             });
           })
           .catch(err => {
@@ -132,6 +134,9 @@ export default class Sandbox extends Component {
             this.setState({ balanceList: [placeHolderObj] });
           }
         }, 2000);
+
+
+
       }
     }, 4000);
   }
@@ -154,6 +159,22 @@ export default class Sandbox extends Component {
     );
   }
 
+  showFinalMargin = () => {
+    if ((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) <= 0){
+      return (
+        <Text style={Styles.finalLossMargin}>
+         Margin: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance)}
+        </Text>
+      )
+    }else{
+      return (
+        <Text style={Styles.finalProfitMargin}>
+         Margin: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance)}
+        </Text>
+      )
+    }
+  }
+
   render() {
     let currentPrice = JSON.stringify(this.state.marketObj.currentPrice);
     return (
@@ -170,18 +191,16 @@ export default class Sandbox extends Component {
           }}
         >
 
-          <Text style={Styles.balance}>
-            {this.state.sandboxBotFieldData.botName}
+          <Text style={Styles.botName}>
+            {this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")}
           </Text>
 
           <Text style={Styles.balance}>
-            Starting Balance: ${this.state.sandboxBotFieldData.USDStartingBalance} {"\n"}
-            Ending Balance: ${this.state.sandboxBotFieldData.finalProfitMargin}
-          </Text>
-          <Text style={Styles.balance}>
-           Profit/Loss Margin: ${this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance}
+            Starting Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+            Ending Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
           </Text>
 
+          {this.showFinalMargin()}
 
 
           <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} tradeHistory={this.state.sandboxBotTradeHistory}/>
