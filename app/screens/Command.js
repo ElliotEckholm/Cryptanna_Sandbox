@@ -43,10 +43,10 @@ export default class Command extends Component {
       text: "Type Amount Here",
       exchangeList: [],
       bots_toggle: "Off",
-      totalBalance: "...",
+      totalBalance: 0.0,
       totalBalanceList: [],
       noExchanges: "",
-      loading: true
+      loading: true,
     };
 
     const { navigate } = this.props.navigation;
@@ -59,70 +59,69 @@ export default class Command extends Component {
   componentDidMount() {
     this.firstTimeUser();
 
-    // pauseAllBots();
-    setTimeout(() => {
-      this.setState({ loading: false });
-    }, 7000);
+    // setInterval(() => {
 
-    setInterval(() => {
-      //fetch current exchanges
-      let pulledExchangeList = [];
-      pullTrackedExchangesDocuments(pulledExchangeList);
+    this.focusListener = this.props.navigation.addListener('willFocus', payload => {
+      this.waitForExchangesFetch()
+    });
 
-      setTimeout(() => {
-        //EXCHANGES
-        let _exchangeList = [];
-        let exchangeTotalBalance = 0.0;
-        let totalBalance = 0.0;
-
-        pulledExchangeList.forEach(exchange => {
-          let name = exchange.name
-            .toString()
-            .toLowerCase()
-            .replace(/\s+/g, "");
-          let setExchange = new ccxt[name]();
-
-          exchangeTotalBalance = 0.0;
-          setExchange.apiKey = exchange.apiKey;
-          setExchange.secret = exchange.secret;
-          setExchange.password = exchange.passphrase;
-
-          //make sandbox custom url
-          if (exchange.name == "gdax") {
-            setExchange.urls.api =
-              "https://api-public.sandbox.pro.coinbase.com";
-          }
-
-          _exchangeList.push(setExchange);
-
-          //Fetch current markets
-          let pulledMarkets = [];
-          pullTrackedMarketDocuments(exchange.name, pulledMarkets);
-
-          setTimeout(() => {
-            pulledMarkets.forEach((market, id) => {
-              if (market.marketName != "USD-USD") {
-                exchangeTotalBalance += market.marketBalance;
-              }
-            });
-          }, 1000);
-        });
-        setTimeout(() => {
-          this.state.exchangeList.length == 0
-            ? this.setState({ noExchanges: "No Exchange(s) Added" })
-            : this.setState({ noExchanges: "" });
-
-          this.state.totalBalanceList = [];
-          totalBalance += exchangeTotalBalance;
-          this.state.totalBalanceList.push(totalBalance);
-
-          this.setState({ totalBalance: Number(totalBalance).toFixed(2) });
-        }, 2000);
-
-        this.setState({ exchangeList: _exchangeList });
-      }, 3000);
-    }, 4000);
+    // }, 4000);
   }
+
+  waitForExchangesFetch = async() => {
+
+    //fetch current exchanges
+    let pulledExchangeList = [];
+    await pullTrackedExchangesDocuments(pulledExchangeList).then( () => {
+
+
+      //EXCHANGES
+      let _exchangeList = [];
+
+      let totalBalance = 0.0;
+
+      pulledExchangeList.forEach(exchange => {
+        let name = exchange.name
+          .toString()
+          .toLowerCase()
+          .replace(/\s+/g, "");
+        let setExchange = new ccxt[name]();
+
+
+        setExchange.apiKey = exchange.apiKey;
+        setExchange.secret = exchange.secret;
+        setExchange.password = exchange.passphrase;
+
+        //make sandbox custom url
+        if (exchange.name == "gdax") {
+          setExchange.urls.api =
+            "https://api-public.sandbox.pro.coinbase.com";
+        }
+
+        _exchangeList.push(setExchange);
+
+        //Fetch current markets
+        let pulledMarkets = [];
+        pullTrackedMarketDocuments(exchange.name, pulledMarkets).then( () => {
+
+
+          pulledMarkets.forEach((market, id) => {
+            if (market.marketName != "USD-USD") {
+              totalBalance += market.marketBalance;
+            }
+          });
+
+          this.setState({ totalBalance: Math.round(Number(totalBalance)) });
+        });
+
+      });
+
+      this.setState({ exchangeList: _exchangeList, loading: false });
+    });
+
+  }
+
+
 
   firstTimeUser() {
     firebase

@@ -643,13 +643,12 @@ export async function pullTrackedExchangesDocuments(pulledExchangeList) {
   let docList = [];
 
   // let exchange = new Exchange(10, true, 'none', 'no_apis');
-  let ref = firebase
+  await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)
-    .collection("exchanges");
-
-  ref.get().then(exchanges => {
+    .collection("exchanges")
+    .get().then(exchanges => {
     exchanges.forEach(function(doc) {
       // doc.data() is never undefined for query doc snapshots
       // console.log(doc);
@@ -667,15 +666,14 @@ export async function pullTrackedMarketDocuments(
   pulledMarketsList
 ) {
   let currentUserID = getCurrentUserID();
-  let ref = firebase
+  await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)
     .collection("exchanges")
     .doc(exchangeName)
-    .collection("markets");
-
-  ref.get().then(markets => {
+    .collection("markets")
+    .get().then(markets => {
     markets.forEach(function(doc) {
       pulledMarketsList.push(doc._data);
     });
