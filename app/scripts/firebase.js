@@ -124,47 +124,47 @@ export async function addBotsSubCollection(bot) {
 export async function fetchCurrentBots(currentBots) {
   let currentUserID = getCurrentUserID();
 
-  let ref = firebase
+  await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)
-    .collection("bots");
-
-  ref.get().then(botDoc => {
-    botDoc.forEach(doc => {
-      currentBots.push(doc._data);
+    .collection("bots")
+    .get()
+    .then(botDoc => {
+      botDoc.forEach(doc => {
+        currentBots.push(doc._data);
     });
   });
 }
 
 //pausing all users bots
-export async function pauseAllBots() {
-  let currentUserID = getCurrentUserID();
-  // console.log('Pausing bot for: ', getCurrentUserEmail());
-
-  let currentBots = [];
-
-  fetchCurrentBots(currentBots);
-
-  setTimeout(() => {
-    // console.log("Fetched Bots:",currentBots);
-
-    currentBots.forEach(function(bot) {
-      // console.log("Each bot:", bot);
-
-      bot.running = false;
-
-      let ref = firebase
-        .firestore()
-        .collection("users")
-        .doc(currentUserID)
-        .collection("bots")
-        .doc(bot.name);
-
-      ref.set(bot);
-    });
-  }, 2000);
-}
+// export async function pauseAllBots() {
+//   let currentUserID = getCurrentUserID();
+//   // console.log('Pausing bot for: ', getCurrentUserEmail());
+//
+//   let currentBots = [];
+//
+//   fetchCurrentBots(currentBots);
+//
+//   setTimeout(() => {
+//     // console.log("Fetched Bots:",currentBots);
+//
+//     currentBots.forEach(function(bot) {
+//       // console.log("Each bot:", bot);
+//
+//       bot.running = false;
+//
+//       let ref = firebase
+//         .firestore()
+//         .collection("users")
+//         .doc(currentUserID)
+//         .collection("bots")
+//         .doc(bot.name);
+//
+//       ref.set(bot);
+//     });
+//   }, 2000);
+// }
 
 //pausing all users bots
 export async function resumeAllBots() {
@@ -173,26 +173,23 @@ export async function resumeAllBots() {
 
   let currentBots = [];
 
-  fetchCurrentBots(currentBots);
-
-  setTimeout(() => {
-    // console.log("Fetched Bots:",currentBots);
-
+  await fetchCurrentBots(currentBots).then(()=>{
     currentBots.forEach(function(bot) {
-      // console.log("Each bot:", bot);
+
 
       bot.running = true;
 
-      let ref = firebase
+      firebase
         .firestore()
         .collection("users")
         .doc(currentUserID)
         .collection("bots")
-        .doc(bot.name);
-
-      ref.set(bot);
+        .doc(bot.name)
+        .set(bot);
     });
-  }, 2000);
+
+  })
+
 }
 
 //Checking if specific bot is running or not
@@ -323,53 +320,46 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
   let currentUserID = getCurrentUserID();
   console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
 
-  firebase.firestore()
+
+  //delete pre-existing bot if there
+  await firebase.firestore()
   .collection("users")
   .doc(currentUserID)
   .collection("bots")
   .doc(botName)
-  .delete();
+  .delete().then(()=>{
 
-  let botRef = firebase
-    .firestore()
-    .collection("users")
-    .doc(currentUserID)
-    .collection("bots")
-    .doc(botName);
+    //recreate the bot with new data
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUserID)
+      .collection("bots")
+      .doc(botName)
+      .set({sandBoxBotObject});
 
-  botRef.set({sandBoxBotObject});
+      //Loop through trade history data
+      tradeHistoryArray.forEach((tradeHistoryObject) => {
+        let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
+        let ref = firebase
+          .firestore()
+          .collection("users")
+          .doc(currentUserID)
+          .collection("bots")
+          .doc(botName)
+          .collection("Trades")
+          .doc(tradeObjectStorageName)
 
-  console.log(tradeHistoryArray)
+        ref.set(tradeHistoryObject);
 
-  setTimeout(()=>{
+      });
 
-
-
-    //Loop through trade history data
-    tradeHistoryArray.forEach((tradeHistoryObject) => {
-      let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
-      let ref = firebase
-        .firestore()
-        .collection("users")
-        .doc(currentUserID)
-        .collection("bots")
-        .doc(botName)
-        .collection("Trades")
-        .doc(tradeObjectStorageName)
-
-      ref.set(tradeHistoryObject);
-
-    });
-
-  },3000);
+  })
 
 
   //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
   let currentBots = [];
-  fetchCurrentBots(currentBots);
-
-  setTimeout(() => {
-
+  await fetchCurrentBots(currentBots).then(()=>{
     currentBots.forEach(sandboxBot => {
 
       if (sandboxBot.sandBoxBotObject.botName == botName){
@@ -387,7 +377,8 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
 
       ref.set(sandboxBot);
     });
-  }, 2000);
+  })
+
 
 }
 
@@ -542,10 +533,7 @@ export async function fetchSandboxBotData(fetchedSandboxBotData) {
 
     //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
     let currentBots = [];
-    fetchCurrentBots(currentBots);
-
-    setTimeout(() => {
-
+    await fetchCurrentBots(currentBots).then(()=>{
       currentBots.forEach(function(sandboxBot)  {
 
         if (sandboxBot.sandBoxBotObject.mostRecentRun == true){
@@ -555,9 +543,7 @@ export async function fetchSandboxBotData(fetchedSandboxBotData) {
         }
 
       });
-    }, 2000);
-
-
+    })
 
 }
 
@@ -565,29 +551,26 @@ export async function fetchSandboxBotData(fetchedSandboxBotData) {
 export async function fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory) {
     let currentUserID = getCurrentUserID();
 
-      console.log("\n\nFetching Sandboc Trade History")
+      console.log("\n\nFetching Sandbox Trade History")
 
 
-      //Change all other sandbox bot most recent run == to false so only the latest run bot is shown in the sandbox tab
+
       let currentBots = [];
-      fetchCurrentBots(currentBots);
-
-      setTimeout(() => {
+      await fetchCurrentBots(currentBots).then(()=>{
 
         currentBots.forEach(function(sandboxBot)  {
 
           if (sandboxBot.sandBoxBotObject.mostRecentRun == true){
 
 
-            let ref = firebase
+            firebase
               .firestore()
               .collection("users")
               .doc(currentUserID)
               .collection("bots")
               .doc(sandboxBot.sandBoxBotObject.botName)
-              .collection("Trades");
-
-              ref.get().then(fetchedBotTradeHistory => {
+              .collection("Trades")
+              .get().then(fetchedBotTradeHistory => {
 
                 fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
                   fetchedSandboxBotTradeHistory.push(tradeHistoryObject._data);
@@ -597,7 +580,13 @@ export async function fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory)
           }
 
         });
-      }, 2000);
+
+      })
+
+
+
+
+
 
 }
 

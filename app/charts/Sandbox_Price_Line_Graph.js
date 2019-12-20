@@ -88,7 +88,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     maxY:[],
     buyDotList:[],
     sellDotList:[],
-    graphTimeFrame: 300,
+    graphTimeFrame: this.props.timeFrame,
 
     loading: true,
 
@@ -107,11 +107,6 @@ export default class Sandbox_Price_Line_Graph extends Component {
 
   }
 
-  // _onExchangeSelect = () => {
-  //   console.log('Exchange Selected!',sandbox_exchange.name.toString());
-  //   const {navigate} = this.props.navigation;
-  //   navigate('ExchangeDescription',{exchangeName: sandbox_exchange.name.toString(), exchange:sandbox_exchange});
-  // }
 
   showPieGraph(){
     //updating the component to show a line graph
@@ -126,55 +121,22 @@ export default class Sandbox_Price_Line_Graph extends Component {
   }
 
   componentDidMount(){
-        this.setState({
-            chart_exchange: sandbox_exchange,
-        });
 
-    setInterval(()=>{
-      fetchedSandboxBotTradeHistory = []
-      fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory)
+      this.waitForTradeHistoryFetch();
 
-      setTimeout(()=>{
-
-
-        this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory})
-
-        // console.log("Mounting Price Graph: ", this.state.sandboxBotTradeHistory)
-
-
-    // },4000)
-
-    console.log("IN Line graph",sandbox_exchange);
-      fetchBalance(sandbox_exchange, this.state.balanceList)
-      .then(() => {
-          // balanceList = newData;
-          colors = d3.scaleLinear()
-          .domain([0, this.state.balanceList.length]).range([255, 0]);
-
-          for(var key in this.state.balanceList){
-            marketColors[this.state.balanceList[key].name] = `rgb(70,70,70)`;
-          }
-
-          let sectionAngles = d3.pie().value(d => d.holdings)(this.state.balanceList.filter(exchange => exchange.name != "USD-USD"));
-          this.setState(previousState => {
-            return ({ balanceList: this.state.balanceList,
-                     sectionAngles: sectionAngles,
-                     loading: false,
-                     showPie: true,
-                     showLineGraph: true,
-                     });
-          });
-          console.log("Inside fetch in Holdings",this.state.balanceList);
-      })
-      .catch(err => {
-      })
-      console.log("Outside fetch in Holdings",this.state.balanceList);
-      this.fetchHistory(coinbase_exchange);
-
-    },1000);
-
-  },4000);
 }
+
+waitForTradeHistoryFetch = async() => {
+
+  let fetchedSandboxBotTradeHistory = [];
+
+  await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+      this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
+      this.fetchHistory(coinbase_exchange);
+  })
+
+}
+
 
 loading() {
       if (this.state.loading) {
@@ -321,8 +283,8 @@ loading() {
           // console.log("Sandbox price history length: "+ historyList.length)
           // console.log("Sandbox price history : "+ historyList)
 
-          console.log("Sandbox Min: "+ min);
-          console.log("Sandbox Max: "+ max);
+          // console.log("Sandbox Min: "+ min);
+          // console.log("Sandbox Max: "+ max);
           yAxisArr[0] = {x:0,y:min - min/4};
           yAxisArr[i - 1] = {x:i - 1 ,y:max + max/4};
 
@@ -330,7 +292,7 @@ loading() {
           let scaleX =  scaleTime().domain([0,historyList.length - 1]).range([xOffset + 40 ,width - xOffset - 20]);
           let scaleY =  scaleLinear().domain([min - min/4,max + max/4]).range([height + yOffset - 20,yOffset + 10]);
 
-          console.log("\n\n Scaled X: ", scaleX)
+          // console.log("\n\n Scaled X: ", scaleX)
 
           //THIS IS WHAT I HAVE TO USE DATA WITH AND FORMAT HOW THE DATA IS ORGANIZED
           let newLine = shape.line()
@@ -360,8 +322,8 @@ loading() {
 
 
 
-          console.log("Max in Line Graph: ", max)
-          console.log("Scaled in Price Line Graph: ", scaleY(max))
+          // console.log("Max in Line Graph: ", max)
+          // console.log("Scaled in Price Line Graph: ", scaleY(max))
           //How to make circle in center of graph
           //make sure stroke is 10
           let buyDotList = []

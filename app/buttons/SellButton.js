@@ -29,7 +29,7 @@ export default class BuyButton extends Component {
 
               setInterval(() => {
                   if (this.props.runInterval == true){
-                console.log('SET interval from SellButton');
+                // console.log('SET interval from SellButton');
                 let market = "BTC/USD";
 
                 let exchangeTitle = "coinbasepro";

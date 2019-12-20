@@ -29,7 +29,7 @@ export default class BuyButton extends Component {
           // Its on sandbox, here and buy button?
             let refresh = setInterval(() => {
                 if (this.props.runInterval == true){
-                  console.log('SET interval from BuyButton');
+                  // console.log('SET interval from BuyButton');
                   let market = "BTC/USD";
                   let exchangeTitle = "coinbasepro";
                   let exchange = new ccxt[exchangeTitle] ();
