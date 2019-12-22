@@ -62,7 +62,7 @@ export default StyleSheet.create({
   detailText: {
     textAlign: "left",
     flexDirection: "row",
-    color: Colors.lightGray,
+    color: "white",
     fontSize: 18,
     fontWeight: "bold"
   },

@@ -87,6 +87,10 @@ export default class MultiDaySandboxImplementation extends Component {
             {"\n Multiday Low and High Bot \n" + params.marketName + "\n\n"}
           </Text>
 
+          <Text style={{textAlign: "center", fontSize: 16, fontWeight: "bold", color:"#797979", paddingBottom: 20}}>
+            User selects the timeframe the bot will buy and sell at. For example the bot will buy at 10, 50, or
+            100 day lows and sell at 10, 50, or 100 day highs.
+          </Text>
 
           <View style={Styles.inputRow}>
             <Text style={Styles.detailText}>Starting Balance   $</Text>

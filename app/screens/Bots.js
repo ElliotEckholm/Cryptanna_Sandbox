@@ -33,8 +33,10 @@ export default class Bots extends Component {
     const { navigate } = this.props.navigation;
     setTimeout(
       () =>
-        navigate("MACDBotDescription", {
-          selectedBot: this.state.selectedBot
+        navigate("MACDBotSandboxImplementation", {
+          selectedBot: this.state.selectedBot,
+          marketName: 'BTC/USD'
+
         }),
       20
     );
@@ -44,8 +46,9 @@ export default class Bots extends Component {
     const { navigate } = this.props.navigation;
     setTimeout(
       () =>
-        navigate("MultiDayBotDescription", {
-          selectedBot: this.state.selectedBot
+        navigate("MultiDayBotSandboxImplementation", {
+          selectedBot: this.state.selectedBot,
+          marketName: 'BTC/USD'
         }),
       20
     );

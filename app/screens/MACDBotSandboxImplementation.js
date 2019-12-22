@@ -66,6 +66,13 @@ export default class SelectMarket extends Component {
           {"\n Moving Average Bot \n" + params.marketName + "\n\n"}
         </Text>
 
+        <Text style={{textAlign: "center", fontSize: 16, fontWeight: "bold", color:"#797979", paddingBottom: 20}}>
+          Trades on long term Exponential Moving Average and short term
+          Exponential Moving Average intersections to predict market trend. If
+          market is predcicted to move upwards, the bot will buy. If
+          the market is predcicted to move downwards, the bot will sell.
+        </Text>
+
 
         <View style={Styles.inputRow}>
           <Text style={Styles.detailText}>Starting Balance   $</Text>
