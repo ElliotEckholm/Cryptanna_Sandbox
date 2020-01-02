@@ -39,12 +39,30 @@ export default class SelectMarket extends Component {
   }
 
   _onImplementBot = () => {
-    const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
 
-    MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
+    if (this.state.numberOfHistoricalDays > 300){
+      Alert.alert(
+        "Use a Lower Historical Timeframe",
+        "300 Days is the Max Historical Timeframe",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }else{
+      const { params } = this.props.navigation.state;
+      const { navigate } = this.props.navigation;
 
-    navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
+      MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
+
+      navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
+    }
+
   }
 
 
@@ -70,7 +88,7 @@ export default class SelectMarket extends Component {
           Trades on long term Exponential Moving Average and short term
           Exponential Moving Average intersections to predict market trend. If
           market is predcicted to move upwards, the bot will buy. If
-          the market is predcicted to move downwards, the bot will sell.
+          the market is predcicted to move downwards, the bot will sell. 300 Days is the Max Historical Timeframe.
         </Text>
 
 
@@ -100,8 +118,9 @@ export default class SelectMarket extends Component {
             placeholderTextColor="white"
             height={40}
           />
-          <Text style={Styles.detailText}>   Days In the Past</Text>
+          <Text style={Styles.detailText}>   Days In the Past </Text>
         </View>
+
       </View>
 
         <TouchableOpacity onPress={this._onImplementBot}>

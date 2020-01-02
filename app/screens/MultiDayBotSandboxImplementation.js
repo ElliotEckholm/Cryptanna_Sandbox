@@ -57,18 +57,44 @@ export default class MultiDaySandboxImplementation extends Component {
 
 
   implementBot = () => {
-    const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
 
+    if (this.state.numberOfHistoricalDays > 300){
+      Alert.alert(
+        "Use a Lower Historical Timeframe",
+        "300 Days is the Max Historical Timeframe",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }
+    else if (this.state.numberOfHistoricalDays > 0 && this.state.lowHighDayWindow > 0 && this.state.USDStartingBalance){
+      const { params } = this.props.navigation.state;
+      const { navigate } = this.props.navigation;
+      multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance);
+      navigate("Sandbox", {botName: "Multiday Low and High Bot", firebaseBotName: "Sandbox_MultiDay_Bot"})
 
-    // console.log("Implementing Bot")
-    // console.log(this.state.USDStartingBalance)
-    // console.log(this.state.numberOfHistoricalDays)
-    // console.log(this.state.lowHighDayWindow)
+    }else{
+      Alert.alert(
+        "Please Input Values for Starting Balance, Historical Timeframe and Timeframe window",
+        "Try again",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }
 
-    multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance);
-
-    navigate("Sandbox", {botName: "Multiday Low and High Bot", firebaseBotName: "Sandbox_MultiDay_Bot"})
 
   };
 
@@ -89,7 +115,7 @@ export default class MultiDaySandboxImplementation extends Component {
 
           <Text style={{textAlign: "center", fontSize: 16, fontWeight: "bold", color:"#797979", paddingBottom: 20}}>
             User selects the timeframe the bot will buy and sell at. For example the bot will buy at 10, 50, or
-            100 day lows and sell at 10, 50, or 100 day highs.
+            100 day lows and sell at 10, 50, or 100 day highs. 300 Days is the Max Historical Timeframe.
           </Text>
 
           <View style={Styles.inputRow}>

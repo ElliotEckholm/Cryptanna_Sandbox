@@ -36,6 +36,7 @@ export default class Sandbox extends Component {
       buyAmount: "",
       currentPrice_string: "",
       currentPrice: "",
+      currentPriceLoading: true,
       USDBalance: "",
       BTCBalance: "",
       loading: true,
@@ -43,6 +44,10 @@ export default class Sandbox extends Component {
       sandboxBotFieldData:{},
       botFieldDataLoading: true,
       botTradingHistoryLoading: true,
+      USDStartingBalance: 2000.0,
+      finalProfitMargin: 0.0,
+      maxHistoricalTime: 300,
+
 
     };
   }
@@ -50,13 +55,13 @@ export default class Sandbox extends Component {
   componentDidMount() {
 
 
-    // this.props.navigation.addListener("willFocus", route => {
+    this.props.navigation.addListener("willFocus", route => {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
       this.waitForSandboxBalanceFetch()
 
       // console.log("screen mounted!", this.runInterval);
-    // });
+    });
 
     // this.props.navigation.addListener("didBlur", route => {
     //   this.runInterval = false;
@@ -96,6 +101,7 @@ export default class Sandbox extends Component {
           Number(marketInfo.info.price).toFixed(2);
         this.setState({
           currentPrice: Number(marketInfo.info.price).toFixed(2),
+          currentPriceLoading: false,
 
         });
       })
@@ -137,7 +143,7 @@ export default class Sandbox extends Component {
   };
 
   showCurrentBitcoinPrice() {
-    if (this.state.loading) {
+    if (this.state.currentPriceLoading) {
       return <Spinner />;
     }
 
@@ -160,6 +166,40 @@ export default class Sandbox extends Component {
         </Text>
       )
     }
+  }
+
+  renderBotData(){
+    if(this.state.sandboxBotFieldData){
+      return (
+
+        <View>
+        <Text style={Styles.botName}>
+            {this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")}
+          </Text>
+
+          <Text style={Styles.balance}>
+            Starting Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+            Current Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
+          </Text>
+          {this.showFinalMargin()}
+
+          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.sandboxBotFieldData.maxHistoricalTime} />
+        </View>
+      )
+    }
+    else{
+      return (
+
+        <View>
+          <Text style={Styles.balance}>
+            Starting Balance: ${Math.round(this.state.USDStartingBalance)} {"\n"}
+            Current Balance: ${Math.round(this.state.finalProfitMargin)}
+          </Text>
+          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.maxHistoricalTime} />
+        </View>
+      )
+    }
+
   }
 
   loading = ()=>{
@@ -185,24 +225,11 @@ export default class Sandbox extends Component {
             }}
           >
 
-            <Text style={Styles.botName}>
-              {
-                this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")
-              }
-            </Text>
+            {this.renderBotData()}
 
-            <Text style={Styles.balance}>
-              Starting Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
-              Ending Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
-            </Text>
-
-            {this.showFinalMargin()}
-
-
-            <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.sandboxBotFieldData.maxHistoricalTime} />
 
             {
-              // this.showCurrentBitcoinPrice()
+              this.showCurrentBitcoinPrice()
             }
           </View>
 

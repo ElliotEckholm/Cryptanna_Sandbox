@@ -47,6 +47,7 @@ export default class Command extends Component {
       totalBalanceList: [],
       noExchanges: "",
       loading: true,
+      maxHistoricalTime: 300,
     };
 
     const { navigate } = this.props.navigation;
@@ -241,7 +242,7 @@ export default class Command extends Component {
               {this.state.exchangeList.map(exchange => (
                 <PriceLineGraph chart_exchange={exchange} />
               ))}
-              <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
+              <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.maxHistoricalTime} />
             </ScrollView>
           </View>
         </View>

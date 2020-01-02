@@ -697,7 +697,7 @@ export function createNewUserObject() {
   console.log("Creating User Object for user:");
   console.log(currentUserID);
 
-  addSandBoxSubCollection(1000000);
+  // addSandBoxSubCollection(1000000);
 
   let name = getCurrentUserID();
   let email = getCurrentUserEmail();
@@ -705,7 +705,7 @@ export function createNewUserObject() {
   firebase
     .firestore()
     .collection("users")
-    .doc(currentUserID)
+    .doc(email)
     .set({
       firstTimeUser: true,
       accountInfo: {
