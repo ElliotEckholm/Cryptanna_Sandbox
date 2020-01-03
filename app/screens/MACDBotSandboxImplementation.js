@@ -55,8 +55,11 @@ export default class SelectMarket extends Component {
         { cancelable: false }
       );
     }else{
+    
       const { params } = this.props.navigation.state;
       const { navigate } = this.props.navigation;
+
+
 
       MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
 

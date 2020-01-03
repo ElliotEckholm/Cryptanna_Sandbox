@@ -10,7 +10,7 @@ import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBot
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
-  let exchange = new ccxt[exchangeTitle]();
+  let exchange = sandbox_exchange;
   let min = parseFloat(Infinity);
   let max = parseFloat(-Infinity);
 

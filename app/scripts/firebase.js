@@ -28,16 +28,7 @@ class Market {
   }
 }
 
-class Sandbox {
-  constructor(usd_balance) {
-    this.balance = [
-      { holdings: usd_balance, name: "USD" },
-      { holdings: 0.0, name: "BTC" },
-      { holdings: 0.0, name: "LTC" },
-      { holdings: 0.0, name: "ETH" }
-    ];
-  }
-}
+
 // let longtermBuyOrderObject = {
 //     orderId:orderId,
 //     orderType:orderType,
@@ -440,12 +431,19 @@ export async function fetchBotStrategySellOrder(bot, longtermSellOrderObject) {
 
 
 
-//Adding an exchange subcollection
-export async function addSandBoxSubCollection(starting_usd_balance) {
+//Adding an sandbox object to user
+export async function addSandBoxSubCollection() {
+
   let currentUserID = getCurrentUserID();
   console.log("Adding sandbox collection to: ", getCurrentUserEmail());
 
-  let sandbox = new Sandbox(starting_usd_balance);
+  let sandboxObject = {
+    starting_usd_balance : 1000000,
+    current_usd_balance : 0.0,
+    margin : 0.0,
+    current_usd_balance : 0.0,
+  }
+
   let ref = firebase
     .firestore()
     .collection("users")
@@ -453,7 +451,7 @@ export async function addSandBoxSubCollection(starting_usd_balance) {
     .collection("sandbox")
     .doc("sandbox_coinbase");
 
-  ref.set(sandbox);
+  ref.set(sandboxObject);
 }
 
 //Adding an exchange subcollection
@@ -697,10 +695,12 @@ export function createNewUserObject() {
   console.log("Creating User Object for user:");
   console.log(currentUserID);
 
-  // addSandBoxSubCollection(1000000);
+  addSandBoxSubCollection();
 
   let name = getCurrentUserID();
   let email = getCurrentUserEmail();
+
+
 
   firebase
     .firestore()
@@ -719,7 +719,7 @@ export function createNewUserObject() {
 
 //retrieve current user logged in
 export function getCurrentUserID() {
-  return firebase.auth().currentUser.uid;
+  return firebase.auth().currentUser.email;
 }
 
 export function getCurrentUserEmail() {
