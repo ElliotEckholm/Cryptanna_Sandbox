@@ -43,10 +43,10 @@ export default class Sandbox extends Component {
       sandboxBotTradeHistory:[],
       sandboxBotFieldData:{},
       botFieldDataLoading: true,
-      botTradingHistoryLoading: true,
       USDStartingBalance: 2000.0,
       finalProfitMargin: 0.0,
       maxHistoricalTime: 300,
+
 
 
     };
@@ -58,9 +58,9 @@ export default class Sandbox extends Component {
     this.props.navigation.addListener("willFocus", route => {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
-      this.waitForSandboxBalanceFetch()
+      this.waitForSandboxBalanceFetch();
+      // this.waitForTradeHistoryFetch();
 
-      // console.log("screen mounted!", this.runInterval);
     });
 
     // this.props.navigation.addListener("didBlur", route => {
@@ -69,11 +69,24 @@ export default class Sandbox extends Component {
     // });
 
   }
+  //
+  // waitForTradeHistoryFetch = async() => {
+  //
+  //   let fetchedSandboxBotTradeHistory = [];
+  //
+  //   await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+  //       console.log("Bot Trade History: ", fetchedSandboxBotTradeHistory)
+  //       this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, botTradeHistoryLoading: false})
+  //
+  //   })
+  //
+  // }
 
   waitForSandboxDataFetch = async() => {
 
     fetchedSandboxBotData = []
     await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
+      // console.log("Bot Data: ", fetchedSandboxBotData)
       this.setState({sandboxBotFieldData: fetchedSandboxBotData[0], botFieldDataLoading:false})
 
     })
@@ -115,22 +128,10 @@ export default class Sandbox extends Component {
     fetchSandBoxBalance(pulledSandboxBalance);
 
     setTimeout(() => {
-      if (pulledSandboxBalance[0] != undefined) {
-        pulledSandboxBalance[0].forEach(balance => {
-          if (balance.name == "USD") {
-            this.setState({ USDBalance: balance.holdings });
-          }
-          if (balance.name == "BTC") {
-            this.setState({ BTCBalance: balance.holdings });
-          }
-        });
-      } else {
-        let placeHolderObj = {
-          name: "",
-          holdings: 0.0
-        };
-        this.setState({ balanceList: [placeHolderObj] });
-      }
+
+        console.log("Pulled Sandbox Balance: ",pulledSandboxBalance);
+
+
     }, 2000);
   }
 
@@ -169,7 +170,7 @@ export default class Sandbox extends Component {
   }
 
   renderBotData(){
-    if(this.state.sandboxBotFieldData){
+    if(this.state.sandboxBotFieldData ){
       return (
 
         <View>
@@ -183,7 +184,7 @@ export default class Sandbox extends Component {
           </Text>
           {this.showFinalMargin()}
 
-          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.sandboxBotFieldData.maxHistoricalTime} />
+          <SandboxPriceLineGraph/>
         </View>
       )
     }
@@ -195,7 +196,7 @@ export default class Sandbox extends Component {
             Starting Balance: ${Math.round(this.state.USDStartingBalance)} {"\n"}
             Current Balance: ${Math.round(this.state.finalProfitMargin)}
           </Text>
-          <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} timeFrame={this.state.maxHistoricalTime} />
+          <SandboxPriceLineGraph/>
         </View>
       )
     }
@@ -210,7 +211,7 @@ export default class Sandbox extends Component {
         </View>
       );
     }else{
-      console.log(this.state.sandboxBotFieldData);
+      console.log("Bot Data: ",this.state.sandboxBotFieldData);
       return (
         <View style={Styles.container}>
           <View style={{ flex: 0.1 }}>
@@ -236,7 +237,9 @@ export default class Sandbox extends Component {
           <View style={{ flex: 0.25 }}>
             <BuyButton onPress={this.onPress} runInterval={this.runInterval} />
 
-            <SellButton runInterval={this.runInterval} />
+            {
+            // <SellButton runInterval={this.runInterval} />
+          }
           </View>
         </View>
       );

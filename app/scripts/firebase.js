@@ -439,9 +439,9 @@ export async function addSandBoxSubCollection() {
 
   let sandboxObject = {
     starting_usd_balance : 1000000,
-    current_usd_balance : 0.0,
+    current_usd_balance : 1000000,
     margin : 0.0,
-    current_usd_balance : 0.0,
+    current_btc_balance : 0.0,
   }
 
   let ref = firebase
@@ -455,48 +455,29 @@ export async function addSandBoxSubCollection() {
 }
 
 //Adding an exchange subcollection
-export async function writeSandBoxBalance(
-  currency,
-  new_btc_balance,
-  new_usd_balance
-) {
+export async function writeSandBoxBalance(new_btc_balance,new_usd_balance) {
   let sandbox_object = [];
-
+  let currentUserID = getCurrentUserID();
   console.log(
     "Writing sandbox exchange collection to: ",
     getCurrentUserEmail()
   );
 
+  let sandboxObject = {
+    starting_usd_balance : 1000000,
+    current_usd_balance : new_usd_balance,
+    margin : 1000000 - new_usd_balance,
+    current_usd_balance :new_btc_balance,
+  }
+
   let ref = firebase
     .firestore()
     .collection("users")
-    .doc(getCurrentUserID())
-    .collection("sandbox");
+    .doc(currentUserID)
+    .collection("sandbox")
+    .doc("sandbox_coinbase");
 
-  ref.get().then(sandbox_exchanges => {
-    sandbox_exchanges.forEach(doc => {
-      const balances = doc._data.balance;
-      balances.forEach(balance => {
-        sandbox_object.push(balance);
-      });
-    });
-
-    for (let i = 0; i < sandbox_object.length; i++) {
-      if (sandbox_object[i].name === "USD") {
-        sandbox_object[i].holdings = new_usd_balance;
-      }
-
-      if (sandbox_object[i].name === "BTC") {
-        sandbox_object[i].holdings = new_btc_balance;
-      }
-    }
-
-    // TODO: automate the process of selecting the coins in the DB
-
-    ref.doc("sandbox_coinbase").set({
-      balance: sandbox_object
-    });
-  });
+  ref.set(sandboxObject);
 }
 
 //Adding an exchange subcollection
@@ -508,19 +489,12 @@ export async function fetchSandBoxBalance(pulledSandboxBalance) {
     .firestore()
     .collection("users")
     .doc(currentUserID)
-    .collection("sandbox");
+    .collection("sandbox")
+    .doc("sandbox_coinbase")
+    .get().then(sandbox_exchange => {
 
-  ref.get().then(sandbox_exchanges => {
-    sandbox_exchanges.forEach(doc => {
-      // let balanceObj = {};
-      // balanceObj.holdings = doc._data.balance.holdings;
-      // balanceObj.name = doc._data.balance.name;
+      pulledSandboxBalance.push(sandbox_exchange._data);
 
-      // console.log('DEBUGG');
-      // console.log(doc._data.balance);
-
-      pulledSandboxBalance.push(doc._data.balance);
-    });
   });
 }
 
@@ -699,7 +673,6 @@ export function createNewUserObject() {
 
   let name = getCurrentUserID();
   let email = getCurrentUserEmail();
-
 
 
   firebase

@@ -4,7 +4,7 @@ import firebase from 'react-native-firebase';
 
 import {pauseAllBots} from './firebase.js'
 
-let sandbox_id = 'coinbasepro';
+let sandbox_id = 'gdax';
 let sandbox_symbols = ['BTC/USD'];
 export let sandbox_exchange = new ccxt[sandbox_id] ();
 

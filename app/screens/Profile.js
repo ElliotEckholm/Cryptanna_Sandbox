@@ -15,8 +15,7 @@ import Styles from "../styles/Profile.style";
 import firebase from "react-native-firebase";
 
 /////////////Functionality imports//////////
-import { signOutUser } from "../scripts/firebase.js";
-import { getCurrentUserID, getCurrentUser } from "../scripts/firebase.js";
+import { getCurrentUserID, getCurrentUser, signOutUser } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 ////////////Navigation imports/////////////
@@ -88,6 +87,11 @@ export default class Profile extends Component {
       <View style={Styles.container}>
         <View style={Styles.titleContainer}>
           <Text style={Styles.title}>SETTINGS</Text>
+        </View>
+
+        <View style={Styles.userEmailContainer}>
+          <Text style={Styles.email}>User: </Text>
+          <Text style={Styles.email}>{getCurrentUserID()}</Text>
         </View>
 
         <View style={Styles.bodyContainer}>

@@ -28,7 +28,7 @@ import Command from '../screens/Command.js';
 import ExchangeDescription from '../screens/ExchangeDescription.js';
 
 
-import {fetchSandBoxBalance, getCurrentUserID, fetchSandboxBotTradeHistory} from '../scripts/firebase.js';
+import {fetchSandBoxBalance, getCurrentUserID, fetchSandboxBotTradeHistory, fetchSandboxBotData} from '../scripts/firebase.js';
 import {fetchTicker,fetchBalance , sandbox_exchange, coinbase_exchange} from '../scripts/ccxt.js';
 
 const { Surface, Group, Shape, ArtGroup, Path } = ART;
@@ -88,7 +88,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     maxY:[],
     buyDotList:[],
     sellDotList:[],
-    graphTimeFrame: this.props.timeFrame,
+    graphTimeFrame: 0,
 
     loading: true,
 
@@ -98,7 +98,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     //SHOW PIE GRAPH FIRST THEN THE LINE GRAPH
     showPie: true,
     showLineGraph: true,
-    sandboxBotTradeHistory:  [],
+    sandboxBotTradeHistory: [],
 
   };
 
@@ -121,8 +121,24 @@ export default class Sandbox_Price_Line_Graph extends Component {
   }
 
   componentDidMount(){
-
+      console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
       this.waitForTradeHistoryFetch();
+      this.waitForSandboxDataFetch();
+
+
+
+}
+
+waitForSandboxDataFetch = async() => {
+
+  fetchedSandboxBotData = []
+  await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
+    // console.log("Bot Data: ", fetchedSandboxBotData)
+    console.log("Max Historical Time: ", fetchedSandboxBotData[0].maxHistoricalTime)
+    this.setState({graphTimeFrame: fetchedSandboxBotData[0].maxHistoricalTime, botFieldDataLoading:false})
+    this.fetchHistory(coinbase_exchange);
+
+  })
 
 }
 
@@ -132,7 +148,7 @@ waitForTradeHistoryFetch = async() => {
 
   await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
       this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
-      this.fetchHistory(coinbase_exchange);
+
   })
 
 }
