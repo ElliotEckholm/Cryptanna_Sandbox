@@ -33,22 +33,15 @@ export default class Sandbox extends Component {
     this.runInterval = true;
     this.state = {
       marketObj: [],
-      buyAmount: "",
       currentPrice_string: "",
       currentPrice: "",
       currentPriceLoading: true,
-      USDBalance: "",
-      BTCBalance: "",
-      loading: true,
-      sandboxBotTradeHistory:[],
       sandboxBotFieldData:{},
       botFieldDataLoading: true,
       USDStartingBalance: 2000.0,
       finalProfitMargin: 0.0,
       maxHistoricalTime: 300,
-
-
-
+      sandBoxBalanceObject:{}
     };
   }
 
@@ -59,7 +52,6 @@ export default class Sandbox extends Component {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
       this.waitForSandboxBalanceFetch();
-      // this.waitForTradeHistoryFetch();
 
     });
 
@@ -69,18 +61,7 @@ export default class Sandbox extends Component {
     // });
 
   }
-  //
-  // waitForTradeHistoryFetch = async() => {
-  //
-  //   let fetchedSandboxBotTradeHistory = [];
-  //
-  //   await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
-  //       console.log("Bot Trade History: ", fetchedSandboxBotTradeHistory)
-  //       this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, botTradeHistoryLoading: false})
-  //
-  //   })
-  //
-  // }
+
 
   waitForSandboxDataFetch = async() => {
 
@@ -125,14 +106,11 @@ export default class Sandbox extends Component {
 
   waitForSandboxBalanceFetch = async()=> {
     let pulledSandboxBalance = [];
-    fetchSandBoxBalance(pulledSandboxBalance);
+    await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
 
-    setTimeout(() => {
-
-        console.log("Pulled Sandbox Balance: ",pulledSandboxBalance);
-
-
-    }, 2000);
+      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      this.setState({sandBoxBalanceObject: pulledSandboxBalance})
+    });
   }
 
   onPress = () => {
@@ -170,12 +148,14 @@ export default class Sandbox extends Component {
   }
 
   renderBotData(){
-    if(this.state.sandboxBotFieldData ){
+    if(this.state.sandboxBotFieldData){
       return (
 
         <View>
         <Text style={Styles.botName}>
-            {this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")}
+            {
+              this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")
+            }
           </Text>
 
           <Text style={Styles.balance}>
@@ -204,7 +184,7 @@ export default class Sandbox extends Component {
   }
 
   loading = ()=>{
-    if (this.state.botFieldDataLoading && this.state.botTradingHistoryLoading){
+    if (this.state.botFieldDataLoading){
       return (
         <View style={{ paddingTop: "50%" }}>
           <Spinner />

@@ -485,7 +485,7 @@ export async function fetchSandBoxBalance(pulledSandboxBalance) {
   let currentUserID = getCurrentUserID();
   // console.log('Fetching sandbox exchange collection to: ', getCurrentUserEmail());
 
-  let ref = firebase
+  await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)

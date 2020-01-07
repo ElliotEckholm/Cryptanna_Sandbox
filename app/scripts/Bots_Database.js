@@ -6,7 +6,7 @@ import {
   sandbox_exchange,
   fetchOrder
 } from "../scripts/ccxt.js";
-import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder, storeBotSandboxTradeHistory } from "../scripts/firebase.js";
+import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder, storeBotSandboxTradeHistory,fetchSandBoxBalance } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
@@ -71,6 +71,13 @@ export async function fetchHistory(exchangeTitle, market, timeFrame) {
   }
 }
 
+async function waitForSandboxBalanceFetch(sandBoxBalanceObject) {
+  let pulledSandboxBalance = [];
+  await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
+    console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+  });
+}
+
 function EMACalc(mArray, mRange) {
   let k = 2 / (mRange + 1);
   // first item is just the same as the first item in the input
@@ -88,6 +95,8 @@ function EMACalc(mArray, mRange) {
 
 export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBalance) {
   console.log("MACD Bot Initiated");
+
+  console.log("Sandbox Balance For MACD Bot: ", waitForSandboxBalanceFetch())
 
   let market = "BTC/USD";
   let exchangeTitle = "coinbasepro";
