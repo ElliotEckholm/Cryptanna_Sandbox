@@ -71,12 +71,7 @@ export async function fetchHistory(exchangeTitle, market, timeFrame) {
   }
 }
 
-async function waitForSandboxBalanceFetch(sandBoxBalanceObject) {
-  let pulledSandboxBalance = [];
-  await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
-    console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
-  });
-}
+
 
 function EMACalc(mArray, mRange) {
   let k = 2 / (mRange + 1);
@@ -93,10 +88,11 @@ function EMACalc(mArray, mRange) {
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBalance) {
-  console.log("MACD Bot Initiated");
+export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBalance, sandBoxBalanceObject) {
+  console.log("MACD Bot Initiated with balance: ",sandBoxBalanceObject);
 
-  console.log("Sandbox Balance For MACD Bot: ", waitForSandboxBalanceFetch())
+
+
 
   let market = "BTC/USD";
   let exchangeTitle = "coinbasepro";
@@ -225,6 +221,9 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
 
     }
   );
+
+      //subtract amount used by bot from total sandbox balance
+      let sandboxCurrentBalance = sandBoxBalanceObject.starting_usd_balance - profitMargin;
 
       //Store Buys and Sells Array in Firebase
       console.log("\n\n Trade History")

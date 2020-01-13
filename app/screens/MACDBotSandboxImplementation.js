@@ -15,7 +15,7 @@ import Styles from "../styles/BotSelectMarket.style";
 
 import {MACD_strategy_function} from '../scripts/Bots_Database.js';
 
-import {addBotsSubCollection} from '../scripts/firebase.js';
+import {addBotsSubCollection, fetchSandBoxBalance} from '../scripts/firebase.js';
 import {fetchTicker,fetchMarket_badway,fetchMarkets_Item_Info,fetchTicker_promise} from '../scripts/ccxt.js';
 
 let marketLoaded = false;
@@ -31,11 +31,34 @@ export default class SelectMarket extends Component {
       usd_amount: 0.0,
       numberOfHistoricalDays: 0,
       USDStartingBalance: 0.0,
+      sandBoxBalanceObject: {},
+      loadingSandboxBalance: true,
 
     };
 
 
 
+  }
+
+  componentDidMount(){
+
+    this.props.navigation.addListener("willFocus", route => {
+      this.waitForSandboxBalanceFetch();
+
+    });
+
+
+
+  }
+
+  waitForSandboxBalanceFetch = async()=> {
+    pulledSandboxBalance = [];
+    await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
+
+      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      this.setState({sandBoxBalanceObject: pulledSandboxBalance[0], loadingSandboxBalance: false})
+
+    });
   }
 
   _onImplementBot = () => {
@@ -55,13 +78,14 @@ export default class SelectMarket extends Component {
         { cancelable: false }
       );
     }else{
-    
+
       const { params } = this.props.navigation.state;
       const { navigate } = this.props.navigation;
 
+      console.log("Sandbox Balance For MACD Bot: ", this.state.sandBoxBalanceObject)
 
 
-      MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
+      MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance,this.state.sandBoxBalanceObject)
 
       navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
     }
