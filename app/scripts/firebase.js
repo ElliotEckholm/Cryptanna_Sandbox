@@ -440,7 +440,7 @@ export async function addSandBoxSubCollection() {
   let sandboxObject = {
     starting_usd_balance : 1000000,
     current_usd_balance : 1000000,
-    margin : 0.0,
+    starting_BTC_balance : 0.0,
     current_btc_balance : 0.0,
   }
 
@@ -455,7 +455,7 @@ export async function addSandBoxSubCollection() {
 }
 
 //Adding an exchange subcollection
-export async function writeSandBoxBalance(new_btc_balance,new_usd_balance) {
+export async function writeSandBoxBalance(sandboxBalanceObject) {
   let sandbox_object = [];
   let currentUserID = getCurrentUserID();
   console.log(
@@ -463,21 +463,16 @@ export async function writeSandBoxBalance(new_btc_balance,new_usd_balance) {
     getCurrentUserEmail()
   );
 
-  let sandboxObject = {
-    starting_usd_balance : 1000000,
-    current_usd_balance : new_usd_balance,
-    margin : 1000000 - new_usd_balance,
-    current_usd_balance :new_btc_balance,
-  }
 
-  let ref = firebase
+
+  let ref = await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)
     .collection("sandbox")
     .doc("sandbox_coinbase");
 
-  ref.set(sandboxObject);
+  ref.set(sandboxBalanceObject);
 }
 
 //Adding an exchange subcollection

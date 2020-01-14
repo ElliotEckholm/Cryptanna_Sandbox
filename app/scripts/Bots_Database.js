@@ -6,7 +6,8 @@ import {
   sandbox_exchange,
   fetchOrder
 } from "../scripts/ccxt.js";
-import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder, storeBotSandboxTradeHistory,fetchSandBoxBalance } from "../scripts/firebase.js";
+import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder,
+  storeBotSandboxTradeHistory,fetchSandBoxBalance, writeSandBoxBalance } from "../scripts/firebase.js";
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
@@ -92,14 +93,12 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
   console.log("MACD Bot Initiated with balance: ",sandBoxBalanceObject);
 
 
-
-
   let market = "BTC/USD";
   let exchangeTitle = "coinbasepro";
   let tradeHistoryArray = [];
 
   //Only allow one buy order at a time
-  let profitMargin = USDStartingBalance;
+  let profitMargin = sandBoxBalanceObject.starting_usd_balance;
   let buyOrderCount = 0;
   let sellOrderCount = 0;
 
@@ -222,14 +221,17 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
     }
   );
 
-      //subtract amount used by bot from total sandbox balance
-      let sandboxCurrentBalance = sandBoxBalanceObject.starting_usd_balance - profitMargin;
+
 
       //Store Buys and Sells Array in Firebase
       console.log("\n\n Trade History")
       console.log(tradeHistoryArray)
 
       setTimeout(() => {
+
+        //subtract amount used by bot from total sandbox balance
+        sandBoxBalanceObject.current_usd_balance = (sandBoxBalanceObject.starting_usd_balance + (profitMargin - sandBoxBalanceObject.starting_usd_balance));
+
         let sandBoxBotObject = {
           maxHistoricalTime:maxHistoricalTime,
           USDStartingBalance: USDStartingBalance,
@@ -238,6 +240,7 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           mostRecentRun: true
 
         }
+        writeSandBoxBalance(sandBoxBalanceObject);
         storeBotSandboxTradeHistory(sandBoxBotObject.botName, tradeHistoryArray,sandBoxBotObject);
       }, 2000);
 
