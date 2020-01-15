@@ -47,8 +47,6 @@ export default class SelectMarket extends Component {
 
     });
 
-
-
   }
 
   waitForSandboxBalanceFetch = async()=> {

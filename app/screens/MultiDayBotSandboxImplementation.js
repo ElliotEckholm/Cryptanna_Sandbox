@@ -16,7 +16,7 @@ import Styles from "../styles/BotSelectMarket.style";
 
 import { multi_day_sandbox_strategy_function } from "../scripts/Bots_Database.js";
 
-import { addBotsSubCollection } from "../scripts/firebase.js";
+import { addBotsSubCollection,fetchSandBoxBalance } from "../scripts/firebase.js";
 import {
   fetchTicker,
   fetchMarket_badway,
@@ -46,13 +46,30 @@ export default class MultiDaySandboxImplementation extends Component {
       numberOfHistoricalDays: 0,
       USDStartingBalance:0.0,
       lowHighDayWindow:0,
+      sandBoxBalanceObject: {},
 
     };
   }
 
+  componentDidMount(){
+
+    this.props.navigation.addListener("willFocus", route => {
+      this.waitForSandboxBalanceFetch();
+
+    });
+
+  }
 
 
+  waitForSandboxBalanceFetch = async()=> {
+    pulledSandboxBalance = [];
+    await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
 
+      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      this.setState({sandBoxBalanceObject: pulledSandboxBalance[0]})
+
+    });
+  }
 
 
 
@@ -76,7 +93,11 @@ export default class MultiDaySandboxImplementation extends Component {
     else if (this.state.numberOfHistoricalDays > 0 && this.state.lowHighDayWindow > 0 && this.state.USDStartingBalance){
       const { params } = this.props.navigation.state;
       const { navigate } = this.props.navigation;
-      multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance);
+
+      console.log("Sandbox Balance For Multiday Bot: ", this.state.sandBoxBalanceObject)
+
+
+      multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance,this.state.sandBoxBalanceObject);
       navigate("Sandbox", {botName: "Multiday Low and High Bot", firebaseBotName: "Sandbox_MultiDay_Bot"})
 
     }else{

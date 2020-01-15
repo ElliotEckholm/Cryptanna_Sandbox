@@ -98,7 +98,7 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
   let tradeHistoryArray = [];
 
   //Only allow one buy order at a time
-  let profitMargin = sandBoxBalanceObject.starting_usd_balance;
+  let profitMargin = USDStartingBalance;//sandBoxBalanceObject.current_usd_balance;
   let buyOrderCount = 0;
   let sellOrderCount = 0;
 
@@ -230,7 +230,7 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
       setTimeout(() => {
 
         //subtract amount used by bot from total sandbox balance
-        sandBoxBalanceObject.current_usd_balance = (sandBoxBalanceObject.starting_usd_balance + (profitMargin - sandBoxBalanceObject.starting_usd_balance));
+        sandBoxBalanceObject.current_usd_balance = (sandBoxBalanceObject.current_usd_balance + (profitMargin - USDStartingBalance));
 
         let sandBoxBotObject = {
           maxHistoricalTime:maxHistoricalTime,
@@ -418,14 +418,15 @@ function calculateMinMaxInDayRange(arr, begin, end) {
 }
 
 
-export async function multi_day_sandbox_strategy_function(maxHistoricalTime, priceRangeWindow, USDStartingBalance) {
+export async function multi_day_sandbox_strategy_function(maxHistoricalTime, priceRangeWindow, USDStartingBalance, sandBoxBalanceObject) {
+  console.log("Multiday Bot Initiated with balance: ",sandBoxBalanceObject);
 
   let market = "BTC/USD";
   let exchangeTitle = "coinbasepro";
   let tradeHistoryArray = [];
 
   //Only allow one buy order at a time
-  let profitMargin = USDStartingBalance;
+  let profitMargin = USDStartingBalance;//sandBoxBalanceObject.current_usd_balance;
   let buyOrderCount = 0;
   let sellOrderCount = 0;
 
@@ -560,6 +561,9 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
 
 
       setTimeout(() => {
+        //subtract amount used by bot from total sandbox balance
+        sandBoxBalanceObject.current_usd_balance = (sandBoxBalanceObject.current_usd_balance + (profitMargin - USDStartingBalance));
+
         let sandBoxBotObject = {
           maxHistoricalTime:maxHistoricalTime,
           priceRangeWindow: priceRangeWindow,
@@ -569,6 +573,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
           mostRecentRun: true
 
         }
+        writeSandBoxBalance(sandBoxBalanceObject);
         storeBotSandboxTradeHistory(sandBoxBotObject.botName, tradeHistoryArray,sandBoxBotObject);
       }, 2000);
 

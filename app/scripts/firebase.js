@@ -318,7 +318,8 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
   .doc(currentUserID)
   .collection("bots")
   .doc(botName)
-  .delete().then(()=>{
+  .delete()
+  .then(()=>{
 
     //recreate the bot with new data
     firebase
@@ -327,23 +328,45 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
       .doc(currentUserID)
       .collection("bots")
       .doc(botName)
-      .set({sandBoxBotObject});
-
-      //Loop through trade history data
-      tradeHistoryArray.forEach((tradeHistoryObject) => {
-        let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
-        let ref = firebase
+      .set({sandBoxBotObject}).then(()=>{
+        firebase
           .firestore()
           .collection("users")
           .doc(currentUserID)
           .collection("bots")
           .doc(botName)
           .collection("Trades")
-          .doc(tradeObjectStorageName)
+          .get().then(fetchedBotTradeHistory => {
 
-        ref.set(tradeHistoryObject);
+            fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+              tradeHistoryObject._ref.delete();
+
+            });
+
+            // Loop through trade history data
+            tradeHistoryArray.forEach((tradeHistoryObject) => {
+              let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
+              let ref = firebase
+                .firestore()
+                .collection("users")
+                .doc(currentUserID)
+                .collection("bots")
+                .doc(botName)
+                .collection("Trades")
+                .doc(tradeObjectStorageName)
+
+              ref.set(tradeHistoryObject);
+
+            });
+          });
+
 
       });
+
+
+
+
+
 
   })
 

@@ -19,7 +19,8 @@ import {
   writeSandBoxBalance,
   fetchSandBoxBalance,
   fetchSandboxBotData,
-  fetchSandboxBotTradeHistory
+  fetchSandboxBotTradeHistory,
+  addSandBoxSubCollection
 } from "../scripts/firebase.js";
 
 let marketLoaded = false;
@@ -41,13 +42,12 @@ export default class Sandbox extends Component {
       USDStartingBalance: 2000.0,
       finalProfitMargin: 0.0,
       maxHistoricalTime: 300,
-      sandBoxBalanceObject:{}
+      sandBoxBalanceObject:{},
+      sandBoxBalanceLoading: true,
     };
   }
 
   componentDidMount() {
-
-
     this.props.navigation.addListener("willFocus", route => {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
@@ -109,7 +109,7 @@ export default class Sandbox extends Component {
     await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
 
       console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
-      this.setState({sandBoxBalanceObject: pulledSandboxBalance})
+      this.setState({sandBoxBalanceObject: pulledSandboxBalance[0], sandBoxBalanceLoading: false})
     });
   }
 
@@ -148,10 +148,14 @@ export default class Sandbox extends Component {
   }
 
   renderBotData(){
-    if(this.state.sandboxBotFieldData){
+    if(this.state.sandboxBotFieldData && this.state.sandBoxBalanceObject){
       return (
 
         <View>
+        <Text style={Styles.balance}>
+          Sandbox Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
+          Sandbox Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+        </Text>
         <Text style={Styles.botName}>
             {
               this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")
@@ -159,8 +163,8 @@ export default class Sandbox extends Component {
           </Text>
 
           <Text style={Styles.balance}>
-            Starting Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
-            Current Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
+            Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+            Current Bot Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
           </Text>
           {this.showFinalMargin()}
 
@@ -184,14 +188,14 @@ export default class Sandbox extends Component {
   }
 
   loading = ()=>{
-    if (this.state.botFieldDataLoading){
+    if (this.state.botFieldDataLoading || this.state.sandBoxBalanceLoading){
       return (
         <View style={{ paddingTop: "50%" }}>
           <Spinner />
         </View>
       );
     }else{
-      console.log("Bot Data: ",this.state.sandboxBotFieldData);
+      console.log("Bot Sanbox Object: ",this.state.sandBoxBotObject);
       return (
         <View style={Styles.container}>
           <View style={{ flex: 0.1 }}>

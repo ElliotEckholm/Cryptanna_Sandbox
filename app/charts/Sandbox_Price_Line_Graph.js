@@ -99,6 +99,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     showPie: true,
     showLineGraph: true,
     sandboxBotTradeHistory: [],
+    botFieldDataLoading: true,
 
   };
 
@@ -120,13 +121,12 @@ export default class Sandbox_Price_Line_Graph extends Component {
     })
   }
 
-  componentDidMount(){
-      console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
+componentDidMount(){
+
+    // this.props.navigation.addListener("willFocus", route => {
       this.waitForTradeHistoryFetch();
       this.waitForSandboxDataFetch();
-
-
-
+    // }
 }
 
 waitForSandboxDataFetch = async() => {
@@ -147,7 +147,9 @@ waitForTradeHistoryFetch = async() => {
   let fetchedSandboxBotTradeHistory = [];
 
   await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+
       this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
+      console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
 
   })
 
@@ -155,7 +157,7 @@ waitForTradeHistoryFetch = async() => {
 
 
 loading() {
-      if (this.state.loading) {
+      if (this.state.loading && this.state.botFieldDataLoading) {
           return (
             <Spinner/>
           );
@@ -371,6 +373,9 @@ loading() {
 
 
           })
+
+          console.log("Buy List:", buyDotList)
+          console.log("Sell List:", sellDotList)
 
 
 
