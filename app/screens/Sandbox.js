@@ -108,7 +108,7 @@ export default class Sandbox extends Component {
     let pulledSandboxBalance = [];
     await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
 
-      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      // console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
       this.setState({sandBoxBalanceObject: pulledSandboxBalance[0], sandBoxBalanceLoading: false})
     });
   }
@@ -195,7 +195,7 @@ export default class Sandbox extends Component {
         </View>
       );
     }else{
-      console.log("Bot Sanbox Object: ",this.state.sandBoxBotObject);
+      // console.log("Bot Sanbox Object: ",this.state.sandBoxBalanceObject);
       return (
         <View style={Styles.container}>
           <View style={{ flex: 0.1 }}>
@@ -219,7 +219,7 @@ export default class Sandbox extends Component {
           </View>
 
           <View style={{ flex: 0.25 }}>
-            <BuyButton onPress={this.onPress} runInterval={this.runInterval} />
+            <BuyButton onPress={this.onPress} runInterval={this.runInterval} sandboxObject = {this.state.sandBoxBalanceObject}/>
 
             {
             // <SellButton runInterval={this.runInterval} />

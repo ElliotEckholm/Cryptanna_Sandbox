@@ -279,6 +279,8 @@ loading() {
           let yAxisArr = [];
           let i;
 
+          console.log("\n\n Correct history: ", historyList);
+
 
           for(i = 0; i <= historyList.length - 1; i++){
 

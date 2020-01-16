@@ -19,10 +19,13 @@ export default class BuyButton extends Component {
         buy_amount: "",
         currentPrice_string: "",
         currentPrice: "",
+        sandboxObject: this.props.sandboxObject,
       };
     }
 
     componentDidMount() {
+
+      console.log("In buy button: ", this.state.sandboxObject.current_usd_balance);
 
       // let pulledSandboxBalance = [];
       // fetchSandBoxBalance(pulledSandboxBalance);

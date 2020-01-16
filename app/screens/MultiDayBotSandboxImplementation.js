@@ -65,7 +65,7 @@ export default class MultiDaySandboxImplementation extends Component {
     pulledSandboxBalance = [];
     await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
 
-      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      // console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
       this.setState({sandBoxBalanceObject: pulledSandboxBalance[0]})
 
     });
@@ -94,7 +94,7 @@ export default class MultiDaySandboxImplementation extends Component {
       const { params } = this.props.navigation.state;
       const { navigate } = this.props.navigation;
 
-      console.log("Sandbox Balance For Multiday Bot: ", this.state.sandBoxBalanceObject)
+      // console.log("Sandbox Balance For Multiday Bot: ", this.state.sandBoxBalanceObject)
 
 
       multi_day_sandbox_strategy_function(this.state.numberOfHistoricalDays,this.state.lowHighDayWindow,this.state.USDStartingBalance,this.state.sandBoxBalanceObject);

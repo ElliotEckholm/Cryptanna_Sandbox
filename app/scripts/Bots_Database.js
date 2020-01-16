@@ -4,6 +4,7 @@ import {
   fetchBalance,
   fetchTicker,
   sandbox_exchange,
+  coinbase_exchange,
   fetchOrder
 } from "../scripts/ccxt.js";
 import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBotStrategySellOrder,
@@ -11,9 +12,10 @@ import { isBotRunning, storeBotStrategyOrder, fetchBotStrategyBuyOrder, fetchBot
 import ccxt from "ccxt";
 
 export async function fetchHistory(exchangeTitle, market, timeFrame) {
-  let exchange = sandbox_exchange;
-  let min = parseFloat(Infinity);
-  let max = parseFloat(-Infinity);
+  let exchange = coinbase_exchange;
+  let min = (Infinity);
+  let max = (-Infinity);
+  // let max = parseInt(timeFrame);
 
 
   //convert timeFrame given in days to UTC time
@@ -28,8 +30,9 @@ export async function fetchHistory(exchangeTitle, market, timeFrame) {
   if (exchange.has.fetchOHLCV) {
     await sleep(exchange.rateLimit); // milliseconds
     let historyList = [];
+
     historyList = await exchange.fetchOHLCV(
-      market,
+      "BTC/USD",
       "1d",
       parsedUnixTime,
       undefined,
@@ -474,6 +477,7 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
         structuredHistoricalData.push(historicalPriceObject);
       }
 
+      console.log("\n\n Structured Price History: ", structuredHistoricalData)
       //Loop through structured historical data
       structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
