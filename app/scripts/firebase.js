@@ -305,6 +305,64 @@ export async function storeBotStrategyOrder(
   ref.set(longtermOrderObject);
 }
 
+export async function deleteAllSandboxBots() {
+
+  let currentUserID = getCurrentUserID();
+  console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
+
+
+  //delete pre-existing bot if there
+  await firebase.firestore()
+  .collection("users")
+  .doc(currentUserID)
+  .collection("bots")
+  .doc("Sandbox_MultiDay_Bot")
+  .delete()
+  .then(()=>{
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc("Sandbox_MultiDay_Bot")
+        .collection("Trades")
+        .get().then(fetchedBotTradeHistory => {
+
+          fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+            tradeHistoryObject._ref.delete();
+
+          });
+
+        });
+    });
+
+  //delete pre-existing bot if there
+  await firebase.firestore()
+  .collection("users")
+  .doc(currentUserID)
+  .collection("bots")
+  .doc("Sandbox_MACD_Bot")
+  .delete()
+  .then(()=>{
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc("Sandbox_MACD_Bot")
+        .collection("Trades")
+        .get().then(fetchedBotTradeHistory => {
+
+          fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+            tradeHistoryObject._ref.delete();
+
+          });
+
+        });
+    });
+
+}
+
 
 //Storing longtermBuyOrderObject in Bot's document
 export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, sandBoxBotObject) {
@@ -363,11 +421,6 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
 
       });
 
-
-
-
-
-
   })
 
 
@@ -395,8 +448,6 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
 
 
 }
-
-
 
 
 //Storing longtermBuyOrderObject in Bot's document

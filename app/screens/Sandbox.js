@@ -1,6 +1,6 @@
 //////////////UI imports//////////////
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
 import Styles from "../styles/Sandbox.style";
 import BuyButton from "../buttons/BuyButton.js";
 import SellButton from "../buttons/SellButton.js";
@@ -20,7 +20,8 @@ import {
   fetchSandBoxBalance,
   fetchSandboxBotData,
   fetchSandboxBotTradeHistory,
-  addSandBoxSubCollection
+  addSandBoxSubCollection,
+  deleteAllSandboxBots
 } from "../scripts/firebase.js";
 
 let marketLoaded = false;
@@ -112,6 +113,21 @@ export default class Sandbox extends Component {
       this.setState({sandBoxBalanceObject: pulledSandboxBalance[0], sandBoxBalanceLoading: false})
     });
   }
+  restartSandbox = () => {
+
+    deleteAllSandboxBots();
+
+    let defaultSandboxObject = {
+      starting_usd_balance: 1000000,
+      current_usd_balance: 1000000,
+      starting_btc_balance: 0.0,
+      current_btc_balance: 0.0,
+
+    }
+    writeSandBoxBalance(defaultSandboxObject);
+
+
+  }
 
   onPress = () => {
     // console.log("on press clicked");
@@ -153,8 +169,8 @@ export default class Sandbox extends Component {
 
         <View>
         <Text style={Styles.balance}>
-          Sandbox Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
-          Sandbox Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+          Starting Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
+          Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
         </Text>
         <Text style={Styles.botName}>
             {
@@ -169,6 +185,18 @@ export default class Sandbox extends Component {
           {this.showFinalMargin()}
 
           <SandboxPriceLineGraph/>
+        </View>
+      )
+    }else if(this.state.sandBoxBalanceObject){
+      return (
+
+        <View>
+        <Text style={Styles.balance}>
+          Starting Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
+          Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+        </Text>
+          
+        <SandboxPriceLineGraph/>
         </View>
       )
     }
@@ -219,11 +247,22 @@ export default class Sandbox extends Component {
           </View>
 
           <View style={{ flex: 0.25 }}>
-            <BuyButton onPress={this.onPress} runInterval={this.runInterval} sandboxObject = {this.state.sandBoxBalanceObject}/>
+            <BuyButton onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string} sandboxObject = {this.state.sandBoxBalanceObject}/>
 
             {
             // <SellButton runInterval={this.runInterval} />
           }
+          </View>
+          <View style={{paddingBottom: 10}}>
+            <TouchableOpacity onPress={this.restartSandbox}>
+              <View style={Styles.restartButton}>
+
+                <Text style={Styles.restartText} >
+                  Restart Sandbox
+                </Text>
+
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       );

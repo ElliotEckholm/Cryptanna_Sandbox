@@ -88,7 +88,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     maxY:[],
     buyDotList:[],
     sellDotList:[],
-    graphTimeFrame: 0,
+    graphTimeFrame: 300,
 
     loading: true,
 
@@ -108,7 +108,6 @@ export default class Sandbox_Price_Line_Graph extends Component {
 
   }
 
-
   showPieGraph(){
     //updating the component to show a line graph
     this.setState(previousState => {
@@ -121,40 +120,37 @@ export default class Sandbox_Price_Line_Graph extends Component {
     })
   }
 
-componentDidMount(){
+  componentDidMount(){
 
     // this.props.navigation.addListener("willFocus", route => {
       this.waitForTradeHistoryFetch();
       this.waitForSandboxDataFetch();
     // }
-}
+  }
 
-waitForSandboxDataFetch = async() => {
+  waitForSandboxDataFetch = async() => {
 
-  fetchedSandboxBotData = []
-  await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
-    // console.log("Bot Data: ", fetchedSandboxBotData)
-    console.log("Max Historical Time: ", fetchedSandboxBotData[0].maxHistoricalTime)
-    this.setState({graphTimeFrame: fetchedSandboxBotData[0].maxHistoricalTime, botFieldDataLoading:false})
-    this.fetchHistory(coinbase_exchange);
+    fetchedSandboxBotData = []
+    await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
+      // console.log("Bot Data: ", fetchedSandboxBotData)
+      // console.log("Max Historical Time: ", fetchedSandboxBotData[0].maxHistoricalTime)
+      this.setState({graphTimeFrame: fetchedSandboxBotData[0].maxHistoricalTime, botFieldDataLoading:false})
+      this.fetchHistory(coinbase_exchange);
 
-  })
+    })
 
-}
+  }
 
-waitForTradeHistoryFetch = async() => {
+  waitForTradeHistoryFetch = async() => {
 
-  let fetchedSandboxBotTradeHistory = [];
+    let fetchedSandboxBotTradeHistory = [];
+    await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
 
-  await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+        this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
+        // console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
 
-      this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
-      console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
-
-  })
-
-}
-
+    })
+  }
 
 loading() {
       if (this.state.loading && this.state.botFieldDataLoading) {
@@ -279,7 +275,7 @@ loading() {
           let yAxisArr = [];
           let i;
 
-          console.log("\n\n Correct history: ", historyList);
+          // console.log("\n\n Correct history: ", historyList);
 
 
           for(i = 0; i <= historyList.length - 1; i++){
@@ -375,13 +371,6 @@ loading() {
 
 
           })
-
-          console.log("Buy List:", buyDotList)
-          console.log("Sell List:", sellDotList)
-
-
-
-
 
 
 

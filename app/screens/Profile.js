@@ -90,7 +90,7 @@ export default class Profile extends Component {
         </View>
 
         <View style={Styles.userEmailContainer}>
-          <Text style={Styles.email}>User: </Text>
+          <Text style={Styles.email}>Email: </Text>
           <Text style={Styles.email}>{getCurrentUserID()}</Text>
         </View>
 

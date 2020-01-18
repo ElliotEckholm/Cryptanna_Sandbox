@@ -18,46 +18,28 @@ export default class BuyButton extends Component {
         balanceList: [],
         buy_amount: "",
         currentPrice_string: "",
-        currentPrice: "",
+        currentPrice: this.props.currentPrice,
         sandboxObject: this.props.sandboxObject,
+
       };
     }
 
     componentDidMount() {
 
-      console.log("In buy button: ", this.state.sandboxObject.current_usd_balance);
-
-      // let pulledSandboxBalance = [];
-      // fetchSandBoxBalance(pulledSandboxBalance);
-      //
-      // setTimeout(() => {
-      //
-      //     console.log("Pulled Sandbox Object in Buy Button: ",pulledSandboxBalance);
-      //
-      //
-      // }, 2000);
-
-        // fetchTicker(exchange,market,marketInfo)
-        // .then(() => {
-        //     this.setState(previousState => {
-        //       return ({ marketObj: marketInfo });
-        //     });
-        //
-        //     this.state.currentPrice_string = "Current Price of Bitcoin: $" + Number(marketInfo.info.price).toFixed(2);
-        //     this.state.currentPrice = Number(marketInfo.info.price).toFixed(2);
-        //
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // })
+      console.log("In buy button USD Balance: ", this.state.sandboxObject.current_usd_balance);
+      console.log("In buy button BTC Balance: ", this.state.sandboxObject.current_btc_balance);
+      console.log("In buy button Current Price: ", this.state.currentPrice);
 
     }
 
     _onBuy = () => {
 
 
-         new_btc_balance = 3000;
-         new_usd_balance = 1000;
+         new_btc_balance = 0.2;
+         new_usd_balance = 10000;
+         this.state.sandboxObject.current_usd_balance = new_usd_balance;
+         this.state.sandboxObject.current_btc_balance = new_btc_balance;
+
 
          // Alert.alert(
          //   "You dont have enough US Dollars to buy that amount of Bitcoin!",
@@ -73,8 +55,7 @@ export default class BuyButton extends Component {
          //   { cancelable: false }
          // );
 
-
-       writeSandBoxBalance(Number(new_btc_balance).toFixed(2), Number(new_usd_balance).toFixed(2));
+       writeSandBoxBalance(this.state.sandboxObject);
 
        this.setState({
            buy_amount: "",
