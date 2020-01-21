@@ -45,21 +45,34 @@ export default class Sandbox extends Component {
       maxHistoricalTime: 300,
       sandBoxBalanceObject:{},
       sandBoxBalanceLoading: true,
+      screenFocused: true,
     };
   }
 
+
+
   componentDidMount() {
+  
     this.props.navigation.addListener("willFocus", route => {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
       this.waitForSandboxBalanceFetch();
 
+      // setInterval(() => {
+      //   this.waitForSandboxDataFetch();
+      //   this.waitForTickerFetch();
+      //   this.waitForSandboxBalanceFetch();
+      // },1000);
+
+
+      this.setState({screenFocused: false})
+      console.log("\n\n\nScreen Focused: ", this.state.screenFocused);
     });
 
-    // this.props.navigation.addListener("didBlur", route => {
-    //   this.runInterval = false;
-    //   // console.log("\n\n\nunmounted in sandbox", this.runInterval);
-    // });
+    this.props.navigation.addListener("didBlur", route => {
+      this.setState({screenFocused: true})
+      console.log("\n\n\nScreen Focused: ", this.state.screenFocused);
+    });
 
   }
 
@@ -195,7 +208,7 @@ export default class Sandbox extends Component {
           Starting Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
           Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
         </Text>
-          
+
         <SandboxPriceLineGraph/>
         </View>
       )
@@ -249,9 +262,8 @@ export default class Sandbox extends Component {
           <View style={{ flex: 0.25 }}>
             <BuyButton onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string} sandboxObject = {this.state.sandBoxBalanceObject}/>
 
-            {
-            // <SellButton runInterval={this.runInterval} />
-          }
+            <SellButton  onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string} sandboxObject = {this.state.sandBoxBalanceObject} />
+
           </View>
           <View style={{paddingBottom: 10}}>
             <TouchableOpacity onPress={this.restartSandbox}>
