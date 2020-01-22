@@ -90,6 +90,21 @@ export default class MultiDaySandboxImplementation extends Component {
         { cancelable: false }
       );
     }
+    else if (this.state.USDStartingBalance > this.state.sandBoxBalanceObject.current_usd_balance){
+      Alert.alert(
+        "Not enough USD Balance Available",
+        "Use less starting balance",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }
     else if (this.state.numberOfHistoricalDays > 0 && this.state.lowHighDayWindow > 0 && this.state.USDStartingBalance){
       const { params } = this.props.navigation.state;
       const { navigate } = this.props.navigation;
@@ -130,6 +145,11 @@ export default class MultiDaySandboxImplementation extends Component {
           <Text style={Styles.title}>
             {"SandBox"}
           </Text>
+
+          <Text style={Styles.sandboxBalance}>
+            Current Balance: $ {Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+          </Text>
+
           <Text style={{textAlign: "center", fontSize: 24, fontWeight: "bold", color:"#797979"}}>
             {"\n Multiday Low and High Bot \n" + params.marketName + "\n\n"}
           </Text>

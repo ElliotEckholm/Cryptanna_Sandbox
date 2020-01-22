@@ -8,10 +8,17 @@ export default StyleSheet.create({
     justifyContent: "space-around"
   },
   title: {
+    paddingTop: 10,
     textAlign: "center",
     fontSize: 30,
     fontWeight: "bold",
     color: Colors.lightBlue
+  },
+  sandboxBalance: {
+    paddingTop: 10,
+    textAlign: "center",
+    fontSize: 20,
+    color: Colors.white
   },
   price: {
     textAlign: "center",
