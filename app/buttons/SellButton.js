@@ -28,63 +28,93 @@ export default class SellButton extends Component {
 
     waitForTickerFetch = async()=> {
 
-      let market = "BTC/USD";
-
-      let exchangeTitle = "coinbasepro";
-      let exchange = new ccxt[exchangeTitle]();
-      let marketInfo = {};
 
 
-      fetchTicker(exchange, market, marketInfo)
-        .then(() => {
-          marketLoaded = true;
-          this.setState(previousState => {
-            return { marketObj: marketInfo };
+        let market = "BTC/USD";
+
+        let exchangeTitle = "coinbasepro";
+        let exchange = new ccxt[exchangeTitle]();
+        let marketInfo = {};
+
+
+        fetchTicker(exchange, market, marketInfo)
+          .then(() => {
+            marketLoaded = true;
+            this.setState(previousState => {
+              return { marketObj: marketInfo };
+            });
+
+            let new_usd_balance = parseFloat(this.state.sandboxObject.current_usd_balance) + this.state.buyAmount;
+            let new_btc_balance =  this.state.buyAmount / parseFloat(this.state.currentPrice);
+
+            this.setState({
+              currentPrice: parseFloat(marketInfo.info.price).toFixed(2),
+              currentPriceLoading: false,
+
+            });
+
+            console.log("Trying to sell: ",new_btc_balance)
+
+            if (new_btc_balance > this.state.sandboxObject.current_btc_balance){
+              Alert.alert(
+                "Not enough BTC Balance Available To Sell",
+                "Sell less BTC",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+              );
+              this.setState({
+                buyAmount: ""
+              });
+            }else{
+
+              console.log("Buy Amount: ",this.state.buyAmount);
+              console.log("In buy button Current Price: ", this.state.currentPrice);
+
+
+
+
+              this.state.sandboxObject.current_usd_balance = parseFloat(new_usd_balance);
+              this.state.sandboxObject.current_btc_balance -=  parseFloat(new_btc_balance);
+
+
+              console.log("New USD balance: ",new_usd_balance);
+              console.log("New BTC balance: ",new_btc_balance);
+               // Alert.alert(
+               //   "You dont have enough US Dollars to buy that amount of Bitcoin!",
+               //   'Please Try Again',
+               //   [
+               //     {
+               //       text: 'Cancel',
+               //       onPress: () => console.log('Cancel Pressed'),
+               //       style: 'cancel'
+               //     },
+               //     { text: 'OK', onPress: () => console.log('OK Pressed') }
+               //   ],
+               //   { cancelable: false }
+               // );
+
+             writeSandBoxBalance(this.state.sandboxObject);
+             this.setState({
+               buyAmount: ""
+             });
+
+            }
+
+
+
+
+          })
+          .catch(err => {
+            console.log(err);
           });
 
-          this.setState({
-            currentPrice: parseFloat(marketInfo.info.price).toFixed(2),
-            currentPriceLoading: false,
-
-          });
-
-
-          console.log("Buy Amount: ",this.state.buyAmount);
-          console.log("In buy button Current Price: ", this.state.currentPrice);
-
-
-          let new_usd_balance = parseFloat(this.state.sandboxObject.current_usd_balance) + this.state.buyAmount;
-          let new_btc_balance =  this.state.buyAmount / parseFloat(this.state.currentPrice);
-
-          this.state.sandboxObject.current_usd_balance = parseFloat(new_usd_balance);
-          this.state.sandboxObject.current_btc_balance -=  parseFloat(new_btc_balance);
-
-
-          console.log("New USD balance: ",new_usd_balance);
-          console.log("New BTC balance: ",new_btc_balance);
-           // Alert.alert(
-           //   "You dont have enough US Dollars to buy that amount of Bitcoin!",
-           //   'Please Try Again',
-           //   [
-           //     {
-           //       text: 'Cancel',
-           //       onPress: () => console.log('Cancel Pressed'),
-           //       style: 'cancel'
-           //     },
-           //     { text: 'OK', onPress: () => console.log('OK Pressed') }
-           //   ],
-           //   { cancelable: false }
-           // );
-
-         writeSandBoxBalance(this.state.sandboxObject);
-         this.setState({
-           buyAmount: ""
-         });
-
-        })
-        .catch(err => {
-          console.log(err);
-        });
     }
 
     componentDidMount() {

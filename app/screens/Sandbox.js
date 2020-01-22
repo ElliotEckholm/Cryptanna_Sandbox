@@ -52,7 +52,7 @@ export default class Sandbox extends Component {
 
 
   componentDidMount() {
-  
+
     this.props.navigation.addListener("willFocus", route => {
       this.waitForSandboxDataFetch();
       this.waitForTickerFetch();
@@ -139,7 +139,7 @@ export default class Sandbox extends Component {
     }
     writeSandBoxBalance(defaultSandboxObject);
 
-
+    
   }
 
   onPress = () => {
