@@ -1,5 +1,8 @@
 import { Colors } from "./global/colors";
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions } from "react-native";
+
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
 
 export default StyleSheet.create({
   container: {
@@ -14,6 +17,25 @@ export default StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: Colors.white
+  },
+  restartButton: {
+    backgroundColor: Colors.darkGray,
+    borderColor: '#fff',
+    width:deviceWidth-225,
+    height:35,
+    borderRadius:4,
+    alignSelf: 'center',
+    borderWidth: 1,
+    // shadowOffset:{width: 0,height: 0},
+    // shadowColor: Colors.green,
+    // shadowOpacity: 1.0,
+    paddingTop:8
+  },
+  restartText: {
+    color: Colors.white,
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: 13,
   },
   inputContainer: {
     flex: 1,

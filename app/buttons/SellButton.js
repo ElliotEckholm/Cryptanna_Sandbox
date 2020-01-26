@@ -4,161 +4,158 @@ import { Icon } from 'react-native-elements';
 import Markets from '../screens/Markets.js';
 import styles from '../styles/SellButton.style.js';
 import ccxt from 'ccxt';
+import Spinner from "./../config/Spinner";
+import firebase from 'react-native-firebase';
 
 /////////////Functionality imports//////////
 import {fetchBalance,fetchTicker} from '../scripts/ccxt.js';
-import {writeSandBoxBalance, fetchSandBoxBalance, addExchangeSubCollection, getCurrentUserID, getUserData, addMarketSubCollection, addBotsSubCollection} from '../scripts/firebase.js';
+import {writeSandBoxBalance, fetchSandBoxBalance} from '../scripts/firebase.js';
 
-export default class BuyButton extends Component {
-      constructor(props) {
-        super(props);
-        this.state = {
-          marketObj:[],
-          balanceList: [],
-          sell_amount: "",
-          currentPrice_string: "",
-          currentPrice: "",
+export default class SellButton extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        marketObj:[],
+        balanceList: [],
+        buyAmount: 0.0,
+        currentPrice_string: "",
+        currentPrice: 0.0,
+        sandboxObject: this.props.sandboxObject,
+        currentPriceLoading: true,
 
-        };
-      }
+      };
+    }
 
-      componentWillMount() {
-          // TODO: turn this into one function?
-          // Its on sandbox, here and sell button?
+    waitForTickerFetch = async()=> {
 
 
-              setInterval(() => {
-                  if (this.props.runInterval == true){
-                // console.log('SET interval from SellButton');
-                let market = "BTC/USD";
 
-                let exchangeTitle = "coinbasepro";
-                let exchange = new ccxt[exchangeTitle] ();
-                let marketInfo= {};
+        let market = "BTC/USD";
 
-                let pulledSandboxBalance = [];
+        let exchangeTitle = "coinbasepro";
+        let exchange = new ccxt[exchangeTitle]();
+        let marketInfo = {};
 
-                fetchSandBoxBalance(pulledSandboxBalance);
 
-                setTimeout(() => {
-                    let _balanceList = [];
+        fetchTicker(exchange, market, marketInfo)
+          .then(() => {
+            marketLoaded = true;
+            this.setState(previousState => {
+              return { marketObj: marketInfo };
+            });
 
-                    if (pulledSandboxBalance[0] != undefined){
+            let new_usd_balance = parseFloat(this.state.sandboxObject.current_usd_balance) + this.state.buyAmount;
+            let new_btc_balance =  this.state.buyAmount / parseFloat(this.state.currentPrice);
 
-                      pulledSandboxBalance[0].forEach(balance => {
-                        _balanceList.push(balance)
-                      });
+            this.setState({
+              currentPrice: parseFloat(marketInfo.info.price).toFixed(2),
+              currentPriceLoading: false,
 
-                      this.setState({ balanceList:_balanceList });
+            });
 
-                    }else{
-                        let placeHolderObj = {
-                          name : '',
-                          holdings : 0.0
-                        }
-                        this.setState({ balanceList: [placeHolderObj] });
-                    }
-                }, 2000);
+            console.log("Trying to sell: ",new_btc_balance)
 
-                fetchTicker(exchange,market,marketInfo)
-                .then(() => {
-                    this.setState(previousState => {
-                      return ({ marketObj : marketInfo });
-                    });
-                      this.state.currentPrice = marketInfo.info.price;
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+            if (new_btc_balance > this.state.sandboxObject.current_btc_balance){
+              Alert.alert(
+                "Not enough BTC Balance Available To Sell",
+                "Sell less BTC",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+              );
+              this.setState({
+                buyAmount: ""
+              });
+            }else{
 
-                  }
-            }, 4000)
+              console.log("Buy Amount: ",this.state.buyAmount);
+              console.log("In buy button Current Price: ", this.state.currentPrice);
+
+
+
+
+              this.state.sandboxObject.current_usd_balance = parseFloat(new_usd_balance);
+              this.state.sandboxObject.current_btc_balance -=  parseFloat(new_btc_balance);
+
+
+              console.log("New USD balance: ",new_usd_balance);
+              console.log("New BTC balance: ",new_btc_balance);
+               // Alert.alert(
+               //   "You dont have enough US Dollars to buy that amount of Bitcoin!",
+               //   'Please Try Again',
+               //   [
+               //     {
+               //       text: 'Cancel',
+               //       onPress: () => console.log('Cancel Pressed'),
+               //       style: 'cancel'
+               //     },
+               //     { text: 'OK', onPress: () => console.log('OK Pressed') }
+               //   ],
+               //   { cancelable: false }
+               // );
+
+             writeSandBoxBalance(this.state.sandboxObject);
+             this.setState({
+               buyAmount: ""
+             });
+
+            }
+
+
+
+
+          })
+          .catch(err => {
+            console.log(err);
+          });
+
+    }
+
+    componentDidMount() {
+
+      // console.log("In buy button USD Balance: ", this.state.sandboxObject.current_usd_balance);
+      // console.log("In buy button BTC Balance: ", this.state.sandboxObject.current_btc_balance);
+      //
+      //
+      //
+
 
 
     }
 
-      // componentDidUnmount(){
-      //
-      //   clearInterval(this.state.interval);
-      //
-      //   console.log("unmounted in sell button");
-      // }
+    _onBuy = () => {
 
+        this.waitForTickerFetch();
 
-
-
-
-    _onSell = () => {
-        if (this.state.sell_amount != '' && this.state.balanceList.length > 0){
-          console.log("Buy price", this.state.currentPrice);
-          console.log("Sell amount", this.state.sell_amount);
-          let btc_sold = parseFloat(this.state.sell_amount) / parseFloat(this.state.currentPrice);
-          console.log("BTC Sold", btc_sold);
-
-          let current_btc_balance = 0.0;
-          let current_usd_balance = 0.0;
-          let new_btc_balance = 0.0;
-          let new_usd_balance = 0.0;
-
-          this.state.balanceList.forEach(balanceObj => {
-
-             if(balanceObj.name.toString() == 'USD'){
-                current_usd_balance = parseFloat(balanceObj.holdings);
-             }
-
-              if(balanceObj.name == 'BTC'){
-                  current_btc_balance = parseFloat(balanceObj.holdings);
-              }
-          });
-
-          console.log("Current USD SOLD Balance",current_usd_balance);
-
-          if ((current_btc_balance - parseFloat(btc_sold)) > 0.0){
-             new_btc_balance = (current_btc_balance - parseFloat(btc_sold));
-             console.log('BTC balance: ', new_btc_balance);
-
-             new_usd_balance = parseFloat(current_usd_balance) + parseFloat(this.state.sell_amount);
-             console.log('USD balance: ', new_usd_balance);
-          } else {
-
-            new_btc_balance = current_btc_balance;
-            new_usd_balance = current_usd_balance;
-
-           Alert.alert(
-             "You dont have enough Bitcoin to Sell!",
-             'Please Try Again',
-             [
-               {
-                 text: 'Cancel',
-                 onPress: () => console.log('Cancel Pressed'),
-                 style: 'cancel'
-               },
-               { text: 'OK', onPress: () => console.log('OK Pressed') }
-             ],
-             { cancelable: false }
-           );
-         }
-
-          writeSandBoxBalance('USD', Number(new_btc_balance).toFixed(2), Number(new_usd_balance).toFixed(2));
-
-          this.setState({
-              sell_amount: "",
-          });
-      }
     }
 
     render() {
+
+      // if (this.state.currentPriceLoading){
+      //   return (
+      //     <View style={{ paddingTop: "50%" }}>
+      //       <Spinner />
+      //     </View>
+      //   );
+      // }else{
         return(
+
             <View style={styles.buttons_container}>
 
-              <TextInput style={styles.amountInput}
-                onChangeText={(sell_amount) => this.setState({sell_amount : sell_amount})}
-                value={this.state.sell_amount}
-                placeholderTextColor={'white'}
-                placeholder = "0.0"
-              />
+                <TextInput style={styles.amountInput}
+                  onChangeText={(buyAmount) => this.setState({buyAmount : parseFloat(buyAmount)})}
+                  value={this.state.buyAmount}
+                  placeholderTextColor={'white'}
+                  placeholder = "$ 0.0"
+                />
 
-              <TouchableOpacity onPress={this._onSell}>
+              <TouchableOpacity onPress={this._onBuy}>
                 <View style={styles.sellButton}>
 
                    <Text style={styles.text} >
@@ -168,6 +165,8 @@ export default class BuyButton extends Component {
                 </View>
               </TouchableOpacity>
             </View>
+
         );
+      // }
     }
 }

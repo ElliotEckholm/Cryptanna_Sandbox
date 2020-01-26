@@ -28,7 +28,7 @@ import Command from '../screens/Command.js';
 import ExchangeDescription from '../screens/ExchangeDescription.js';
 
 
-import {fetchSandBoxBalance, getCurrentUserID, fetchSandboxBotTradeHistory} from '../scripts/firebase.js';
+import {fetchSandBoxBalance, getCurrentUserID, fetchSandboxBotTradeHistory, fetchSandboxBotData} from '../scripts/firebase.js';
 import {fetchTicker,fetchBalance , sandbox_exchange, coinbase_exchange} from '../scripts/ccxt.js';
 
 const { Surface, Group, Shape, ArtGroup, Path } = ART;
@@ -88,7 +88,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     maxY:[],
     buyDotList:[],
     sellDotList:[],
-    graphTimeFrame: this.props.timeFrame,
+    graphTimeFrame: 300,
 
     loading: true,
 
@@ -98,7 +98,8 @@ export default class Sandbox_Price_Line_Graph extends Component {
     //SHOW PIE GRAPH FIRST THEN THE LINE GRAPH
     showPie: true,
     showLineGraph: true,
-    sandboxBotTradeHistory:  [],
+    sandboxBotTradeHistory: [],
+    botFieldDataLoading: true,
 
   };
 
@@ -106,7 +107,6 @@ export default class Sandbox_Price_Line_Graph extends Component {
     super(props);
 
   }
-
 
   showPieGraph(){
     //updating the component to show a line graph
@@ -122,24 +122,38 @@ export default class Sandbox_Price_Line_Graph extends Component {
 
   componentDidMount(){
 
+    // this.props.navigation.addListener("willFocus", route => {
       this.waitForTradeHistoryFetch();
+      this.waitForSandboxDataFetch();
+    // }
+  }
 
-}
+  waitForSandboxDataFetch = async() => {
 
-waitForTradeHistoryFetch = async() => {
-
-  let fetchedSandboxBotTradeHistory = [];
-
-  await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
-      this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
+    fetchedSandboxBotData = []
+    await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
+      // console.log("Bot Data: ", fetchedSandboxBotData)
+      // console.log("Max Historical Time: ", fetchedSandboxBotData[0].maxHistoricalTime)
+      this.setState({graphTimeFrame: fetchedSandboxBotData[0].maxHistoricalTime, botFieldDataLoading:false})
       this.fetchHistory(coinbase_exchange);
-  })
 
-}
+    })
 
+  }
+
+  waitForTradeHistoryFetch = async() => {
+
+    let fetchedSandboxBotTradeHistory = [];
+    await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+
+        this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, loading: false})
+        // console.log("Price Line trading History: ", this.state.sandboxBotTradeHistory)
+
+    })
+  }
 
 loading() {
-      if (this.state.loading) {
+      if (this.state.loading && this.state.botFieldDataLoading) {
           return (
             <Spinner/>
           );
@@ -261,6 +275,8 @@ loading() {
           let yAxisArr = [];
           let i;
 
+          // console.log("\n\n Correct history: ", historyList);
+
 
           for(i = 0; i <= historyList.length - 1; i++){
 
@@ -355,10 +371,6 @@ loading() {
 
 
           })
-
-
-
-
 
 
 

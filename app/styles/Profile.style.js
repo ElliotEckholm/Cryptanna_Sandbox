@@ -25,6 +25,17 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: Colors.white
   },
+  userEmailContainer: {
+    flex: 0.1,
+    justifyContent: "center",
+    paddingTop: 30
+  },
+  email: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: Colors.white
+  },
   text: {
     fontSize: 16,
     color: Colors.white,

@@ -28,16 +28,7 @@ class Market {
   }
 }
 
-class Sandbox {
-  constructor(usd_balance) {
-    this.balance = [
-      { holdings: usd_balance, name: "USD" },
-      { holdings: 0.0, name: "BTC" },
-      { holdings: 0.0, name: "LTC" },
-      { holdings: 0.0, name: "ETH" }
-    ];
-  }
-}
+
 // let longtermBuyOrderObject = {
 //     orderId:orderId,
 //     orderType:orderType,
@@ -314,6 +305,64 @@ export async function storeBotStrategyOrder(
   ref.set(longtermOrderObject);
 }
 
+export async function deleteAllSandboxBots() {
+
+  let currentUserID = getCurrentUserID();
+  console.log("Adding sandbox bot trade history collection to: ", getCurrentUserEmail());
+
+
+  //delete pre-existing bot if there
+  await firebase.firestore()
+  .collection("users")
+  .doc(currentUserID)
+  .collection("bots")
+  .doc("Sandbox_MultiDay_Bot")
+  .delete()
+  .then(()=>{
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc("Sandbox_MultiDay_Bot")
+        .collection("Trades")
+        .get().then(fetchedBotTradeHistory => {
+
+          fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+            tradeHistoryObject._ref.delete();
+
+          });
+
+        });
+    });
+
+  //delete pre-existing bot if there
+  await firebase.firestore()
+  .collection("users")
+  .doc(currentUserID)
+  .collection("bots")
+  .doc("Sandbox_MACD_Bot")
+  .delete()
+  .then(()=>{
+      firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUserID)
+        .collection("bots")
+        .doc("Sandbox_MACD_Bot")
+        .collection("Trades")
+        .get().then(fetchedBotTradeHistory => {
+
+          fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+            tradeHistoryObject._ref.delete();
+
+          });
+
+        });
+    });
+
+}
+
 
 //Storing longtermBuyOrderObject in Bot's document
 export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, sandBoxBotObject) {
@@ -327,7 +376,8 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
   .doc(currentUserID)
   .collection("bots")
   .doc(botName)
-  .delete().then(()=>{
+  .delete()
+  .then(()=>{
 
     //recreate the bot with new data
     firebase
@@ -336,21 +386,38 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
       .doc(currentUserID)
       .collection("bots")
       .doc(botName)
-      .set({sandBoxBotObject});
-
-      //Loop through trade history data
-      tradeHistoryArray.forEach((tradeHistoryObject) => {
-        let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
-        let ref = firebase
+      .set({sandBoxBotObject}).then(()=>{
+        firebase
           .firestore()
           .collection("users")
           .doc(currentUserID)
           .collection("bots")
           .doc(botName)
           .collection("Trades")
-          .doc(tradeObjectStorageName)
+          .get().then(fetchedBotTradeHistory => {
 
-        ref.set(tradeHistoryObject);
+            fetchedBotTradeHistory.forEach(function(tradeHistoryObject) {
+              tradeHistoryObject._ref.delete();
+
+            });
+
+            // Loop through trade history data
+            tradeHistoryArray.forEach((tradeHistoryObject) => {
+              let tradeObjectStorageName = tradeHistoryObject.type +tradeHistoryObject.count.toString()
+              let ref = firebase
+                .firestore()
+                .collection("users")
+                .doc(currentUserID)
+                .collection("bots")
+                .doc(botName)
+                .collection("Trades")
+                .doc(tradeObjectStorageName)
+
+              ref.set(tradeHistoryObject);
+
+            });
+          });
+
 
       });
 
@@ -381,8 +448,6 @@ export async function storeBotSandboxTradeHistory(botName,tradeHistoryArray, san
 
 
 }
-
-
 
 
 //Storing longtermBuyOrderObject in Bot's document
@@ -440,12 +505,19 @@ export async function fetchBotStrategySellOrder(bot, longtermSellOrderObject) {
 
 
 
-//Adding an exchange subcollection
-export async function addSandBoxSubCollection(starting_usd_balance) {
+//Adding an sandbox object to user
+export async function addSandBoxSubCollection() {
+
   let currentUserID = getCurrentUserID();
   console.log("Adding sandbox collection to: ", getCurrentUserEmail());
 
-  let sandbox = new Sandbox(starting_usd_balance);
+  let sandboxObject = {
+    starting_usd_balance : 1000000,
+    current_usd_balance : 1000000,
+    starting_BTC_balance : 0.0,
+    current_btc_balance : 0.0,
+  }
+
   let ref = firebase
     .firestore()
     .collection("users")
@@ -453,52 +525,28 @@ export async function addSandBoxSubCollection(starting_usd_balance) {
     .collection("sandbox")
     .doc("sandbox_coinbase");
 
-  ref.set(sandbox);
+  ref.set(sandboxObject);
 }
 
 //Adding an exchange subcollection
-export async function writeSandBoxBalance(
-  currency,
-  new_btc_balance,
-  new_usd_balance
-) {
+export async function writeSandBoxBalance(sandboxBalanceObject) {
   let sandbox_object = [];
-
+  let currentUserID = getCurrentUserID();
   console.log(
     "Writing sandbox exchange collection to: ",
     getCurrentUserEmail()
   );
 
-  let ref = firebase
+
+
+  let ref = await firebase
     .firestore()
     .collection("users")
-    .doc(getCurrentUserID())
-    .collection("sandbox");
+    .doc(currentUserID)
+    .collection("sandbox")
+    .doc("sandbox_coinbase");
 
-  ref.get().then(sandbox_exchanges => {
-    sandbox_exchanges.forEach(doc => {
-      const balances = doc._data.balance;
-      balances.forEach(balance => {
-        sandbox_object.push(balance);
-      });
-    });
-
-    for (let i = 0; i < sandbox_object.length; i++) {
-      if (sandbox_object[i].name === "USD") {
-        sandbox_object[i].holdings = new_usd_balance;
-      }
-
-      if (sandbox_object[i].name === "BTC") {
-        sandbox_object[i].holdings = new_btc_balance;
-      }
-    }
-
-    // TODO: automate the process of selecting the coins in the DB
-
-    ref.doc("sandbox_coinbase").set({
-      balance: sandbox_object
-    });
-  });
+  ref.set(sandboxBalanceObject);
 }
 
 //Adding an exchange subcollection
@@ -506,23 +554,16 @@ export async function fetchSandBoxBalance(pulledSandboxBalance) {
   let currentUserID = getCurrentUserID();
   // console.log('Fetching sandbox exchange collection to: ', getCurrentUserEmail());
 
-  let ref = firebase
+  await firebase
     .firestore()
     .collection("users")
     .doc(currentUserID)
-    .collection("sandbox");
+    .collection("sandbox")
+    .doc("sandbox_coinbase")
+    .get().then(sandbox_exchange => {
 
-  ref.get().then(sandbox_exchanges => {
-    sandbox_exchanges.forEach(doc => {
-      // let balanceObj = {};
-      // balanceObj.holdings = doc._data.balance.holdings;
-      // balanceObj.name = doc._data.balance.name;
+      pulledSandboxBalance.push(sandbox_exchange._data);
 
-      // console.log('DEBUGG');
-      // console.log(doc._data.balance);
-
-      pulledSandboxBalance.push(doc._data.balance);
-    });
   });
 }
 
@@ -697,15 +738,16 @@ export function createNewUserObject() {
   console.log("Creating User Object for user:");
   console.log(currentUserID);
 
-  addSandBoxSubCollection(1000000);
+  addSandBoxSubCollection();
 
   let name = getCurrentUserID();
   let email = getCurrentUserEmail();
 
+
   firebase
     .firestore()
     .collection("users")
-    .doc(currentUserID)
+    .doc(email)
     .set({
       firstTimeUser: true,
       accountInfo: {
@@ -719,7 +761,7 @@ export function createNewUserObject() {
 
 //retrieve current user logged in
 export function getCurrentUserID() {
-  return firebase.auth().currentUser.uid;
+  return firebase.auth().currentUser.email;
 }
 
 export function getCurrentUserEmail() {

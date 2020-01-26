@@ -15,7 +15,7 @@ import Styles from "../styles/BotSelectMarket.style";
 
 import {MACD_strategy_function} from '../scripts/Bots_Database.js';
 
-import {addBotsSubCollection} from '../scripts/firebase.js';
+import {addBotsSubCollection, fetchSandBoxBalance} from '../scripts/firebase.js';
 import {fetchTicker,fetchMarket_badway,fetchMarkets_Item_Info,fetchTicker_promise} from '../scripts/ccxt.js';
 
 let marketLoaded = false;
@@ -31,6 +31,8 @@ export default class SelectMarket extends Component {
       usd_amount: 0.0,
       numberOfHistoricalDays: 0,
       USDStartingBalance: 0.0,
+      sandBoxBalanceObject: {},
+      loadingSandboxBalance: true,
 
     };
 
@@ -38,13 +40,70 @@ export default class SelectMarket extends Component {
 
   }
 
+  componentDidMount(){
+
+    this.props.navigation.addListener("willFocus", route => {
+      this.waitForSandboxBalanceFetch();
+
+    });
+
+  }
+
+  waitForSandboxBalanceFetch = async()=> {
+    pulledSandboxBalance = [];
+    await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
+
+      console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+      this.setState({sandBoxBalanceObject: pulledSandboxBalance[0], loadingSandboxBalance: false})
+
+    });
+  }
+
   _onImplementBot = () => {
-    const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
 
-    MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance)
+    if (this.state.numberOfHistoricalDays > 300){
+      Alert.alert(
+        "Use a Lower Historical Timeframe",
+        "300 Days is the Max Historical Timeframe",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }
+    else if (this.state.USDStartingBalance > this.state.sandBoxBalanceObject.current_usd_balance){
+      Alert.alert(
+        "Not enough USD Balance Available",
+        "Use less starting balance",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    }
+    else{
 
-    navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
+      const { params } = this.props.navigation.state;
+      const { navigate } = this.props.navigation;
+
+      console.log("Sandbox Balance For MACD Bot: ", this.state.sandBoxBalanceObject)
+
+
+      MACD_strategy_function(this.state.numberOfHistoricalDays, this.state.USDStartingBalance,this.state.sandBoxBalanceObject)
+
+      navigate("Sandbox", {botName: "MACD Bot", firebaseBotName: "Sandbox_MACD_Bot"})
+    }
+
   }
 
 
@@ -62,6 +121,11 @@ export default class SelectMarket extends Component {
         <Text style={Styles.title}>
           {"SandBox"}
         </Text>
+
+        <Text style={Styles.sandboxBalance}>
+          Current Balance: $ {Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+        </Text>
+
         <Text style={{textAlign: "center", fontSize: 24, fontWeight: "bold", color:"#797979"}}>
           {"\n Moving Average Bot \n" + params.marketName + "\n\n"}
         </Text>
@@ -70,7 +134,7 @@ export default class SelectMarket extends Component {
           Trades on long term Exponential Moving Average and short term
           Exponential Moving Average intersections to predict market trend. If
           market is predcicted to move upwards, the bot will buy. If
-          the market is predcicted to move downwards, the bot will sell.
+          the market is predcicted to move downwards, the bot will sell. 300 Days is the Max Historical Timeframe.
         </Text>
 
 
@@ -100,8 +164,9 @@ export default class SelectMarket extends Component {
             placeholderTextColor="white"
             height={40}
           />
-          <Text style={Styles.detailText}>   Days In the Past</Text>
+          <Text style={Styles.detailText}>   Days In the Past </Text>
         </View>
+
       </View>
 
         <TouchableOpacity onPress={this._onImplementBot}>

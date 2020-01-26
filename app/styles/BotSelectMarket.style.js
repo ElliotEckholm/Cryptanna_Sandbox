@@ -8,10 +8,17 @@ export default StyleSheet.create({
     justifyContent: "space-around"
   },
   title: {
+    paddingTop: 10,
     textAlign: "center",
     fontSize: 30,
     fontWeight: "bold",
     color: Colors.lightBlue
+  },
+  sandboxBalance: {
+    paddingTop: 10,
+    textAlign: "center",
+    fontSize: 20,
+    color: Colors.white
   },
   price: {
     textAlign: "center",
@@ -64,7 +71,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     color: "white",
     fontSize: 18,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   editInfo: {
     textAlign: "center",
@@ -73,7 +80,8 @@ export default StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     borderBottomWidth: 1,
-    borderColor: Colors.darkBlue
+    borderColor: Colors.darkBlue,
+
   },
   inputRowItem: {
     flex: 0.33,

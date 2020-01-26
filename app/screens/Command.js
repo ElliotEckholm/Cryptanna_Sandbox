@@ -28,7 +28,9 @@ import {
   pullTrackedMarketDocuments,
   fetchCurrentBots,
   pauseAllBots,
-  resumeAllBots
+  resumeAllBots,
+  getCurrentUserID,
+  fetchSandboxBotTradeHistory
 } from "../scripts/firebase.js";
 import { botRunner } from "../scripts/Bots_Database.js";
 import firebase from "react-native-firebase";
@@ -47,6 +49,9 @@ export default class Command extends Component {
       totalBalanceList: [],
       noExchanges: "",
       loading: true,
+      maxHistoricalTime: 300,
+      sandboxBotTradeHistory:[],
+      botTradeHistoryLoading: true,
     };
 
     const { navigate } = this.props.navigation;
@@ -66,6 +71,17 @@ export default class Command extends Component {
     });
 
     // }, 4000);
+  }
+
+  waitForTradeHistoryFetch = async() => {
+
+    let fetchedSandboxBotTradeHistory = [];
+
+    await fetchSandboxBotTradeHistory(fetchedSandboxBotTradeHistory).then(()=>{
+        this.setState({sandboxBotTradeHistory: fetchedSandboxBotTradeHistory, botTradeHistoryLoading: false})
+
+    })
+
   }
 
   waitForExchangesFetch = async() => {
@@ -127,7 +143,7 @@ export default class Command extends Component {
     firebase
       .firestore()
       .collection("users")
-      .doc(firebase.auth().currentUser.uid)
+      .doc(getCurrentUserID())
       .get()
       .then(doc => {
         if (doc.data().firstTimeUser) {
@@ -135,7 +151,7 @@ export default class Command extends Component {
           firebase
             .firestore()
             .collection("users")
-            .doc(firebase.auth().currentUser.uid)
+            .doc(getCurrentUserID())
             .update({
               firstTimeUser: false
             });
@@ -241,7 +257,9 @@ export default class Command extends Component {
               {this.state.exchangeList.map(exchange => (
                 <PriceLineGraph chart_exchange={exchange} />
               ))}
-              <SandboxPriceLineGraph btcBalance={this.state.BTCBalance} />
+              {
+                <SandboxPriceLineGraph/>
+              }
             </ScrollView>
           </View>
         </View>
