@@ -105,6 +105,8 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
   let buyOrderCount = 0;
   let sellOrderCount = 0;
 
+  let btcBalance = 0
+
   maxHistoricalTime = parseInt(maxHistoricalTime)
 
   console.log("Starting Sandbox Multiday Bot")
@@ -150,7 +152,6 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
       //Loop through structured historical data
       structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
-
         //------LOGIC for MACD Bot-------
 
         growingPriceArray.push(structuredHistoricalData[index].price);
@@ -163,14 +164,24 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
 
         standard_MACD = (shortTerm_EMA - longTerm_EMA)
 
-        if (structuredHistoricalData[index].price <= profitMargin && standard_MACD >= 0 ){
+        if (standard_MACD >= 0 ){
+
+          let percentageOfBTCPrice = (profitMargin / structuredHistoricalData[index].price)
+          let percentageOfUSDPrice = (percentageOfBTCPrice * structuredHistoricalData[index].price)
+
           console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
           console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
+          console.log('\nNew ProfitMargin: ',profitMargin)
 
-            buyOrderCount += 1
+          buyOrderCount += 1
 
-          //Subract Buy from Profit Margin
-          profitMargin -= structuredHistoricalData[index].price;
+
+          //add btc amount to sandbox object
+          sandBoxBalanceObject.current_btc_balance += percentageOfBTCPrice
+
+          //Subract Buy amount from Profit Margin
+          profitMargin -= percentageOfUSDPrice
+
 
           //Create trade history buy object and push to trade history array
           let tradeHistoryObject = {};
@@ -181,19 +192,27 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           tradeHistoryObject.currentProfitMargin = profitMargin;
           tradeHistoryObject.count = buyOrderCount;
           tradeHistoryObject.index = index;
+          tradeHistoryObject.percentageOfBTCPrice = percentageOfBTCPrice;
+          tradeHistoryObject.percentageOfUSDPrice = percentageOfUSDPrice;
 
 
           tradeHistoryArray.push(tradeHistoryObject);
 
         }
         if (standard_MACD < 0){
+
+          let percentageOfUSDPrice = (sandBoxBalanceObject.current_btc_balance * structuredHistoricalData[index].price)
+
           console.log('\n\n Sell at: ',structuredHistoricalData[index].price)
           console.log('\n Sell Day: ',structuredHistoricalData[index].formattedTime)
 
           sellOrderCount += 1
 
+          //subtract btc amount from sandbox object
+          sandBoxBalanceObject.current_btc_balance -= sandBoxBalanceObject.current_btc_balance
+
           //Add Sell to Profit Margin
-          profitMargin += structuredHistoricalData[index].price;
+          profitMargin += percentageOfUSDPrice
 
 
           //Create trade history sell object and push to trade history array
@@ -205,6 +224,8 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           tradeHistoryObject.currentProfitMargin = profitMargin;
           tradeHistoryObject.count = sellOrderCount;
           tradeHistoryObject.index = index;
+          tradeHistoryObject.percentageOfBTCPrice = percentageOfBTCPrice;
+          tradeHistoryObject.percentageOfUSDPrice = percentageOfUSDPrice;
 
           tradeHistoryArray.push(tradeHistoryObject);
         }
@@ -240,7 +261,8 @@ export async function MACD_strategy_function(maxHistoricalTime,  USDStartingBala
           USDStartingBalance: USDStartingBalance,
           finalProfitMargin: profitMargin,
           botName: "Sandbox_MACD_Bot",
-          mostRecentRun: true
+          mostRecentRun: true,
+          finalBTCbalance: sandBoxBalanceObject.current_btc_balance
 
         }
         writeSandBoxBalance(sandBoxBalanceObject);
@@ -481,8 +503,13 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
       //Loop through structured historical data
       structuredHistoricalData.forEach((historicalPriceObject, index) => {
 
+
+
+
         //Find local min and max for every X day window
         if (index >= priceRangeWindow){
+
+
 
           let indexMin = index - priceRangeWindow;
           let indexMax = index;
@@ -502,16 +529,24 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
           // console.log("Max Index: ",priceArray.indexOf(localMinMax['max']))
 
           //Buy if current price is less than the min over the entire window buy
-          if ((structuredHistoricalData[index].price <= profitMargin && localMinMax['min'] / structuredHistoricalData[index].price) > 0.90 && (buyOrderCount - sellOrderCount) == 0){
+          if ( (localMinMax['min'] / structuredHistoricalData[index].price) > 0.90 && (buyOrderCount - sellOrderCount) == 0){
 
+            let percentageOfBTCPrice = (profitMargin / structuredHistoricalData[index].price)
+            let percentageOfUSDPrice = (percentageOfBTCPrice * structuredHistoricalData[index].price)
 
             console.log('\n\nBUY at: ',structuredHistoricalData[index].price)
             console.log('\nBUY Day: ',structuredHistoricalData[index].formattedTime)
             buyOrderCount += 1
             console.log('\nBUY Count: ',buyOrderCount)
 
-            //Subract Buy from Profit Margin
-            profitMargin -= structuredHistoricalData[index].price;
+
+            //add btc amount to sandbox object
+            sandBoxBalanceObject.current_btc_balance += percentageOfBTCPrice
+
+
+            //Subract Buy amount from Profit Margin
+            profitMargin -= percentageOfUSDPrice
+
 
             //Create trade history buy object and push to trade history array
             let tradeHistoryObject = {};
@@ -522,22 +557,32 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
             tradeHistoryObject.currentProfitMargin = profitMargin;
             tradeHistoryObject.count = buyOrderCount;
             tradeHistoryObject.index = index;
+            tradeHistoryObject.percentageOfBTCPrice = percentageOfBTCPrice;
+            tradeHistoryObject.percentageOfUSDPrice = percentageOfUSDPrice;
 
             tradeHistoryArray.push(tradeHistoryObject);
+
+            console.log('\npercentageOfBTCPrice: ',percentageOfBTCPrice)
+            console.log('\nprofitMargin: ',profitMargin)
           }
 
           //Sell if current price is greater than the max over the entire window buy
           if (localMinMax['max'] < structuredHistoricalData[index].price && (buyOrderCount - sellOrderCount) == 1){
 
 
+            let percentageOfUSDPrice = (sandBoxBalanceObject.current_btc_balance * structuredHistoricalData[index].price)
+
             console.log('\n\nSell at: ',structuredHistoricalData[index].price)
             console.log('\nSell Day: ',structuredHistoricalData[index].formattedTime)
             sellOrderCount += 1
             console.log('\nSell Count: ',sellOrderCount)
 
-            //Add Sell to Profit Margin
-            profitMargin += structuredHistoricalData[index].price;
 
+            //subtract btc amount from sandbox object
+            sandBoxBalanceObject.current_btc_balance -= sandBoxBalanceObject.current_btc_balance
+
+            //Add Sell to Profit Margin
+            profitMargin += percentageOfUSDPrice
 
             //Create trade history sell object and push to trade history array
             let tradeHistoryObject = {};
@@ -548,8 +593,12 @@ export async function multi_day_sandbox_strategy_function(maxHistoricalTime, pri
             tradeHistoryObject.currentProfitMargin = profitMargin;
             tradeHistoryObject.count = sellOrderCount;
             tradeHistoryObject.index = index;
+            tradeHistoryObject.percentageOfUSDPrice = percentageOfUSDPrice;
 
             tradeHistoryArray.push(tradeHistoryObject);
+
+            console.log('\percentageOfUSDPrice: ',percentageOfUSDPrice)
+            console.log('\nprofitMargin: ',profitMargin)
 
           }
 

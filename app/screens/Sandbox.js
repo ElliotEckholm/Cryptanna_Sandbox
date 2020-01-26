@@ -52,32 +52,35 @@ export default class Sandbox extends Component {
 
 
   componentDidMount() {
+    var sandboxSetInterval;
 
     this.props.navigation.addListener("willFocus", route => {
-      this.waitForSandboxDataFetch();
+      this.waitForSandboxBotDataFetch();
       this.waitForTickerFetch();
       this.waitForSandboxBalanceFetch();
 
-      // setInterval(() => {
-      //   this.waitForSandboxDataFetch();
-      //   this.waitForTickerFetch();
-      //   this.waitForSandboxBalanceFetch();
-      // },1000);
+      sandboxSetInterval = setInterval(() => {
+        this.waitForSandboxBotDataFetch();
+        this.waitForTickerFetch();
+        this.waitForSandboxBalanceFetch();
+      },1000);
+
 
 
       this.setState({screenFocused: false})
-      console.log("\n\n\nScreen Focused: ", this.state.screenFocused);
+      console.log("\n\n\nSandbox Screen Focused: ", this.state.screenFocused);
     });
 
     this.props.navigation.addListener("didBlur", route => {
+      clearInterval(sandboxSetInterval);
       this.setState({screenFocused: true})
-      console.log("\n\n\nScreen Focused: ", this.state.screenFocused);
+      console.log("\n\n\nSandbox Screen Focused: ", this.state.screenFocused);
     });
 
   }
 
 
-  waitForSandboxDataFetch = async() => {
+  waitForSandboxBotDataFetch = async() => {
 
     fetchedSandboxBotData = []
     await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
@@ -139,7 +142,7 @@ export default class Sandbox extends Component {
     }
     writeSandBoxBalance(defaultSandboxObject);
 
-    
+
   }
 
   onPress = () => {
@@ -161,16 +164,17 @@ export default class Sandbox extends Component {
   }
 
   showFinalMargin = () => {
-    if ((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) <= 0){
+    if (((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice)) <= 0){
+      console.log("\n\nFINAL PROFIT: ", (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))
       return (
         <Text style={Styles.finalLossMargin}>
-         Margin: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance)}
+         Margin: ${Math.round((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))}
         </Text>
       )
     }else{
       return (
         <Text style={Styles.finalProfitMargin}>
-         Margin: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance)}
+        Margin: ${Math.round((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))}
         </Text>
       )
     }
@@ -181,19 +185,27 @@ export default class Sandbox extends Component {
       return (
 
         <View>
-        <Text style={Styles.balance}>
-          Starting Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
-          Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
-        </Text>
         <Text style={Styles.botName}>
             {
               this.state.sandboxBotFieldData.botName.replace("_"," ").replace("_"," ")
             }
           </Text>
+        <Text style={Styles.balance}>
+
+        {
+          // Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+        }
+        USD Balance: ${(this.state.sandBoxBalanceObject.current_usd_balance).toFixed(1)}
+        {"\n"}BTC Balance: {(this.state.sandBoxBalanceObject.current_btc_balance).toFixed(3)}
+        </Text>
+
 
           <Text style={Styles.balance}>
-            Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
-            Current Bot Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
+          {
+            // Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+
+            // USD Bot Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
+          }
           </Text>
           {this.showFinalMargin()}
 
@@ -205,8 +217,11 @@ export default class Sandbox extends Component {
 
         <View>
         <Text style={Styles.balance}>
-          Starting Balance: ${Math.round(this.state.sandBoxBalanceObject.starting_usd_balance)} {"\n"}
-          Current Balance: ${Math.round(this.state.sandBoxBalanceObject.current_usd_balance)}
+        {
+          // Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+        }
+          USD Balance: ${(this.state.sandBoxBalanceObject.current_usd_balance).toFixed(1)}
+          {"\n"}BTC Balance: {(this.state.sandBoxBalanceObject.current_btc_balance).toFixed(3)}
         </Text>
 
         <SandboxPriceLineGraph/>
@@ -218,8 +233,11 @@ export default class Sandbox extends Component {
 
         <View>
           <Text style={Styles.balance}>
-            Starting Balance: ${Math.round(this.state.USDStartingBalance)} {"\n"}
-            Current Balance: ${Math.round(this.state.finalProfitMargin)}
+          {
+            // Starting Bot Balance: ${Math.round(this.state.sandboxBotFieldData.USDStartingBalance)} {"\n"}
+
+            // USD Bot Balance: ${Math.round(this.state.sandboxBotFieldData.finalProfitMargin)}
+          }
           </Text>
           <SandboxPriceLineGraph/>
         </View>

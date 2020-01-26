@@ -71,6 +71,7 @@ export default StyleSheet.create({
     color: Colors.lightBlue
   },
   priceText: {
+    paddingTop: 90,
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
