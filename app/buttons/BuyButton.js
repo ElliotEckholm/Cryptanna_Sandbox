@@ -20,10 +20,21 @@ export default class BuyButton extends Component {
         buyAmount: 0.0,
         currentPrice_string: "",
         currentPrice: 0.0,
-        sandboxObject: this.props.sandboxObject,
+        sandboxObject: {},
         currentPriceLoading: true,
 
       };
+    }
+
+
+    waitForSandboxBalanceFetch = async()=> {
+      let pulledSandboxBalance = [];
+      await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
+
+        // console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+        this.setState({sandboxObject: pulledSandboxBalance[0]})
+        this.waitForTickerFetch()
+      });
     }
 
     waitForTickerFetch = async()=> {
@@ -66,6 +77,7 @@ export default class BuyButton extends Component {
               currentPriceLoading: false,
 
             });
+
 
 
             console.log("Buy Amount: ",this.state.buyAmount);
@@ -117,7 +129,8 @@ export default class BuyButton extends Component {
 
     _onBuy = () => {
 
-        this.waitForTickerFetch();
+        this.waitForSandboxBalanceFetch();
+
 
     }
 

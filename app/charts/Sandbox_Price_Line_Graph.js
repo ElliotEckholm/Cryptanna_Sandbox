@@ -100,6 +100,7 @@ export default class Sandbox_Price_Line_Graph extends Component {
     showLineGraph: true,
     sandboxBotTradeHistory: [],
     botFieldDataLoading: true,
+    sandboxBotData: {}
 
   };
 
@@ -122,10 +123,10 @@ export default class Sandbox_Price_Line_Graph extends Component {
 
   componentDidMount(){
 
-    // this.props.navigation.addListener("willFocus", route => {
-      this.waitForTradeHistoryFetch();
+
       this.waitForSandboxDataFetch();
-    // }
+      this.waitForTradeHistoryFetch();
+
   }
 
   waitForSandboxDataFetch = async() => {
@@ -134,8 +135,14 @@ export default class Sandbox_Price_Line_Graph extends Component {
     await fetchSandboxBotData(fetchedSandboxBotData).then(()=>{
       // console.log("Bot Data: ", fetchedSandboxBotData)
       // console.log("Max Historical Time: ", fetchedSandboxBotData[0].maxHistoricalTime)
-      this.setState({graphTimeFrame: fetchedSandboxBotData[0].maxHistoricalTime, botFieldDataLoading:false})
-      this.fetchHistory(coinbase_exchange);
+      this.setState({sandboxBotData: fetchedSandboxBotData[0],botFieldDataLoading:false})
+      if (fetchedSandboxBotData[0]){
+          this.fetchHistory(coinbase_exchange,fetchedSandboxBotData[0].maxHistoricalTime, true)
+      }else{
+          this.fetchHistory(coinbase_exchange,this.state.graphTimeFrame, false)
+      }
+
+
 
     })
 
@@ -152,7 +159,13 @@ export default class Sandbox_Price_Line_Graph extends Component {
     })
   }
 
-loading() {
+  // renderGraph(){
+  //       if (this.state.sandboxBotTradeHistory && this.state.graphTimeFrame !=){
+  //
+  //       }
+  // }
+
+  loading() {
       if (this.state.loading && this.state.botFieldDataLoading) {
           return (
             <Spinner/>
@@ -253,10 +266,10 @@ loading() {
       );
   }
 
-   fetchHistory = async (exchange) => {
+   fetchHistory = async (exchange,timeFrame,botFetched) => {
      //convert timeFrame given in days to UTC time
      let d = new Date();
-     d.setDate(d.getDate() - (this.state.graphTimeFrame + 1));
+     d.setDate(d.getDate() - (timeFrame + 1));
      let parsedUnixTime = d.getTime();
      // console.log("FETCH HISTORY TEST", exchange);
     let sleep = (ms) => new Promise (resolve => setTimeout (resolve, ms));
@@ -344,33 +357,38 @@ loading() {
           //make sure stroke is 10
           let buyDotList = []
           let sellDotList = []
-          this.state.sandboxBotTradeHistory.forEach((tradeHistoryObject)=>{
-
-            if (tradeHistoryObject.type == "Buy"){
-              let buyDot = shape.line()
-                            ///use scale functions here
-                          .x(scaleX(tradeHistoryObject.index))
-                          .y(scaleY(tradeHistoryObject.price))
-                          .curve(shape.curveLinear)
-                          //use normal 0-this.state.timeframe here
-                          ([-4,4]);
-
-              buyDotList.push(buyDot)
-            }
-            if (tradeHistoryObject.type == "Sell"){
-              let sellDot = shape.line()
-                            ///use scale functions here
-                          .x(scaleX(tradeHistoryObject.index))
-                          .y(scaleY(tradeHistoryObject.price))
-                          .curve(shape.curveLinear)
-                          //use normal 0-this.state.timeframe here
-                          ([-4,4]);
-
-              sellDotList.push(sellDot)
-            }
 
 
-          })
+         if (botFetched == true) {
+           this.state.sandboxBotTradeHistory.forEach((tradeHistoryObject)=>{
+
+             if (tradeHistoryObject.type == "Buy"){
+               let buyDot = shape.line()
+                             ///use scale functions here
+                           .x(scaleX(tradeHistoryObject.index))
+                           .y(scaleY(tradeHistoryObject.price))
+                           .curve(shape.curveLinear)
+                           //use normal 0-this.state.timeframe here
+                           ([-4,4]);
+
+               buyDotList.push(buyDot)
+             }
+             if (tradeHistoryObject.type == "Sell"){
+               let sellDot = shape.line()
+                             ///use scale functions here
+                           .x(scaleX(tradeHistoryObject.index))
+                           .y(scaleY(tradeHistoryObject.price))
+                           .curve(shape.curveLinear)
+                           //use normal 0-this.state.timeframe here
+                           ([-4,4]);
+
+               sellDotList.push(sellDot)
+             }
+
+
+           })
+         }
+
 
 
 

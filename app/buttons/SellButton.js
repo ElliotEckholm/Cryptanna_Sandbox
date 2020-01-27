@@ -22,9 +22,21 @@ export default class SellButton extends Component {
         currentPrice: 0.0,
         sandboxObject: this.props.sandboxObject,
         currentPriceLoading: true,
+      
 
       };
     }
+
+    waitForSandboxBalanceFetch = async()=> {
+      let pulledSandboxBalance = [];
+      await fetchSandBoxBalance(pulledSandboxBalance).then(()=>{
+
+        // console.log("Pulled Sandbox Balance: ",pulledSandboxBalance[0]);
+        this.setState({sandboxObject: pulledSandboxBalance[0]})
+        this.waitForTickerFetch();
+      });
+    }
+
 
     waitForTickerFetch = async()=> {
 
@@ -129,10 +141,10 @@ export default class SellButton extends Component {
 
     }
 
-    _onBuy = () => {
+    _onSell = () => {
 
-        this.waitForTickerFetch();
 
+        this.waitForSandboxBalanceFetch();
     }
 
     render() {
@@ -155,7 +167,7 @@ export default class SellButton extends Component {
                   placeholder = "$ 0.0"
                 />
 
-              <TouchableOpacity onPress={this._onBuy}>
+              <TouchableOpacity onPress={this._onSell}>
                 <View style={styles.sellButton}>
 
                    <Text style={styles.text} >

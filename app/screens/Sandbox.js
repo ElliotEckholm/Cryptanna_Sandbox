@@ -164,17 +164,18 @@ export default class Sandbox extends Component {
   }
 
   showFinalMargin = () => {
-    if (((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice)) <= 0){
-      console.log("\n\nFINAL PROFIT: ", (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))
+    let totalProfitLossMargin = ((this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice) + this.state.sandBoxBalanceObject.current_usd_balance) - this.state.sandBoxBalanceObject.starting_usd_balance
+
+    if (totalProfitLossMargin <= 0){
       return (
         <Text style={Styles.finalLossMargin}>
-         Margin: ${Math.round((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))}
+         Margin: ${Math.round(totalProfitLossMargin)}
         </Text>
       )
     }else{
       return (
         <Text style={Styles.finalProfitMargin}>
-        Margin: ${Math.round((this.state.sandboxBotFieldData.finalProfitMargin - this.state.sandboxBotFieldData.USDStartingBalance) + (this.state.sandBoxBalanceObject.current_btc_balance * this.state.currentPrice))}
+          Margin: ${Math.round(totalProfitLossMargin)}
         </Text>
       )
     }
@@ -278,9 +279,8 @@ export default class Sandbox extends Component {
           </View>
 
           <View style={{ flex: 0.25 }}>
-            <BuyButton onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string} sandboxObject = {this.state.sandBoxBalanceObject}/>
-
-            <SellButton  onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string} sandboxObject = {this.state.sandBoxBalanceObject} />
+            <BuyButton onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string}/>
+            <SellButton  onPress={this.onPress} runInterval={this.runInterval} currentPrice={this.state.currentPrice_string}/>
 
           </View>
           <View style={{paddingBottom: 10}}>
